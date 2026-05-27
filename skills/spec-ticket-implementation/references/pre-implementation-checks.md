@@ -1,79 +1,55 @@
 # Pre-Implementation Checks
 
-Run BEFORE writing any code for a ticket.
+Run before writing code.
 
-## 1. Environment Verification
+## Environment And Baseline
 
-- [ ] Working directory is correct (project root)
-- [ ] Dependencies installed and up to date
-- [ ] Repository in clean state or has only unrelated changes
-- [ ] `specs/.readiness-report.yaml` exists and records approved specs
+- [ ] Working directory is the project root.
+- [ ] Dependencies are installed as the project expects.
+- [ ] Worktree is clean or unrelated changes are identified.
+- [ ] `specs/.readiness-report.yaml` exists and is approved.
+- [ ] Project verification commands are found in implementation docs, specs,
+      package scripts, Makefile, or build config.
+- [ ] Baseline verification is run and recorded.
 
-## 2. Baseline Verification
+If baseline failures are outside `write_scope`, record and continue. If they are
+inside scope, the ticket must fix them.
 
-Run the project's standard verification commands BEFORE any changes. Find these in:
-- The project's IMPLEMENTATION.md
-- The project's test strategy spec
-- Package scripts, Makefile, or build configuration
+## Ticket Parsing
 
-All verification commands must pass.
+- [ ] Frontmatter parsed: `id`, `wave`, `depends_on`, `blocked_by`,
+      `write_scope`, `read_scope`, `spec_refs`.
+- [ ] Ticket is executable/AFK, not blocked/HITL.
+- [ ] Dependencies are `done` or `merged` in `_status.yaml` or equivalent.
+- [ ] Acceptance criteria are mapped to public-interface tests.
+- [ ] Happy path, unhappy path, async/error/logging expectations are identified.
+- [ ] Approved interfaces/contracts and consumer expectations are identified.
+- [ ] Mock/fake/stub/placeholder permissions are checked.
+- [ ] Verification commands are copied exactly.
 
-### Handling Pre-Existing Failures
+Stop if dependencies are active or an acceptance criterion needs behavior missing
+from scoped specs.
 
-If failures exist outside this ticket's write scope:
-- Document them. Proceed with implementation.
-- Do not fix them.
+## Project Patterns
 
-If failures exist within this ticket's write scope:
-- Document them. These will be fixed by the implementation.
+- [ ] Naming, file structure, code style, and test style are understood.
+- [ ] Error handling and logging/observability conventions are understood.
+- [ ] Public API docs, type-safety, constants, and unit-name conventions are
+      understood.
 
-## 3. Ticket Parsing
+## Scoped Spec Reading
 
-Read the ticket file completely:
+Read only `read_scope` and `spec_refs`.
 
-- [ ] Frontmatter extracted: `id`, `wave`, `depends_on`, `blocked_by`, `write_scope`, `read_scope`, `spec_refs`
-- [ ] Context Digest understood
-- [ ] Implementation Approach noted
-- [ ] Acceptance Criteria listed
-- [ ] Verification Commands copied exactly
-- [ ] Ticket is executable/AFK, not blocked/HITL
-- [ ] No acceptance criterion requires behavior missing from `spec_refs`
+- [ ] Contracts, schemas, ports, flows, and error taxonomy are read.
+- [ ] Nullability, optionality, async behavior, cancellation, retries,
+      serialization, and cross-language/protocol type semantics are checked.
+- [ ] Public API inventory and execution semantics are read for changed public
+      surfaces.
+- [ ] Manifest version, digest, canonicalization, snapshot, replay,
+      compatibility, and validation-error rules are read when manifests apply.
+- [ ] Docs/example paths and public builder/helper paths are checked when public
+      surfaces change.
 
-## 4. Dependency Check
-
-Check the project's status tracking file (`_status.yaml` or equivalent):
-- [ ] All tickets in `depends_on` are `done` or `merged`
-- [ ] No tickets in `blocked_by` are still active
-
-If dependencies not satisfied: STOP. Return error. Do not implement.
-
-## 5. Project Pattern Review
-
-Read the project's implementation guide (`.agent/IMPLEMENTATION.md` or `specs/00-conventions.md`):
-- [ ] Naming conventions understood
-- [ ] File structure patterns understood
-- [ ] Code style understood
-- [ ] Testing patterns understood
-- [ ] Error handling patterns understood
-- [ ] Verification commands confirmed
-
-## 6. Scoped Spec Reading
-
-Read ONLY files in `read_scope` and `spec_refs`:
-- [ ] Contract schemas read
-- [ ] Port definitions read
-- [ ] Flow specs read
-- [ ] Error taxonomy checked
-- [ ] Public API inventory entries read for any changed SDK/API/CLI/config/schema/protocol/plugin/tool/policy/extension point
-- [ ] Execution semantics classification read for callable public surfaces
-- [ ] Durable manifest version, digest, canonicalization, snapshot, replay, compatibility, and validation-error rules read when manifests are in scope
-- [ ] Docs/example paths from the ticket or inventory checked for reachability
-- [ ] Public builder/helper path and any raw-ref escape hatch understood
-
-Do NOT read entire folders or unrelated files.
-
-If a required contract, error, API field, flow, policy, persistence behavior, or failure path is missing from scoped specs: STOP and write a spec gap. Do not infer during implementation.
-
-## 7. Ready
-
-All above complete before any code is written.
+Stop if a required contract, field, flow, policy, error, persistence rule,
+logging/audit behavior, or failure path is missing. Do not infer it.

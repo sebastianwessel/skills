@@ -46,6 +46,14 @@ self-contained capability packages, not as application code.
 
 - Keep `SKILL.md` concise. Move detailed reference material into one-level-deep
   files referenced directly from `SKILL.md`.
+- Every skill must make agents self-audit before completion when the task
+  involves judgment, generated artifacts, specs, plans, or implementation.
+  Self-audit means: reflect on assumptions, judge whether decisions are backed
+  by approved sources, identify gaps or contradictions, and report uncertainty
+  honestly instead of inventing missing information.
+- Self-audit must not replace verification. A skill should still require
+  deterministic checks, tests, scripts, or explicit evidence where those are
+  available.
 - Do not commit secrets, credentials, private data exports, local model caches,
   or generated archives.
 

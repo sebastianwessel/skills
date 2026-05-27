@@ -5,22 +5,21 @@ description: Use when implementing one approved spec plan ticket with strict rea
 
 # Spec Ticket Implementation
 
-Implement exactly one approved AFK ticket. Do not invent behavior, expand scope,
-or decide missing contracts.
+Implement exactly one approved AFK ticket. Follow specs exactly: contract-first,
+test-first, review-before-done. Stop on missing behavior instead of deciding it.
 
 ## Preflight
 
-Before editing:
+Before editing, load `references/pre-implementation-checks.md` and confirm:
 
-1. Confirm `specs/.readiness-report.yaml` is approved.
-2. Run available gates:
-   - `node skills/spec-architect/scripts/check_specs.mjs specs`
-   - `node skills/spec-implementation-planner/references/check_plan.mjs .`
-3. Run baseline verification.
-4. Parse ticket frontmatter: `depends_on`, `blocked_by`, `spec_refs`,
-   `read_scope`, `write_scope`, readiness fields.
-5. Confirm dependencies are done or merged.
-6. Read conventions and only scoped specs/context.
+- approved specs and plan gates pass:
+  - `node skills/spec-architect/scripts/check_specs.mjs specs`
+  - `node skills/spec-implementation-planner/references/check_plan.mjs .`
+- baseline verification is recorded
+- ticket dependencies are done or merged
+- `spec_refs`, `read_scope`, `write_scope`, acceptance criteria, interfaces,
+  error/logging expectations, and happy/unhappy paths are mapped
+- only scoped specs/context are needed
 
 If dependencies are missing, stop. If baseline failures are outside scope,
 record them and continue.
@@ -34,14 +33,21 @@ Stop and write a blocker when:
 - behavior, contract, API/event/job/stream, persistence, policy, error, failure
   path, or acceptance test is absent from scoped specs/ticket
 - implementation needs files outside `write_scope`
+- interface/type/nullability/async/error/logging semantics are missing or
+  inconsistent
+- a mock, fake, stub, placeholder, or test-only production path would be needed
+  without explicit ticket/spec approval
 - ticket asks the implementer to decide, infer, fill gaps, use judgment, ask
   humans, read all specs, or work "as appropriate"
 
 ## Discipline
 
 - Modify only `write_scope`.
-- Implement acceptance criteria one behavior at a time.
-- Test through public interfaces, including failure paths.
+- Follow `references/implementation-loop.md`: contract/interface first,
+  public-interface failing test first, minimal implementation, review.
+- Cover happy paths, unhappy paths, async/error paths, and required logging.
+- Use precise types, documented public APIs/enums/constants, centralized
+  constants, and unit-bearing names such as `timeout_in_ms`.
 - Keep default verification hermetic; external integrations stay opt-in.
 - Keep docs, examples, generated artifacts, public inventory, and execution
   semantics synced when public surfaces change.
@@ -52,11 +58,13 @@ Stop and write a blocker when:
 ## Done
 
 Done means: ticket verification passes, project verification for scope passes,
-all acceptance criteria have tests, no out-of-scope files changed, no TODO/FIXME
-remains, no behavior was invented, and status/changed-file tracking is updated.
+all acceptance criteria have happy/unhappy path tests, no out-of-scope files
+changed, no unapproved mocks/fakes/placeholders remain, review found no
+unresolved ticket-scope defect, and status/changed-file tracking is updated.
 
 Read references for full checklists:
 
 - `references/pre-implementation-checks.md`
+- `references/implementation-loop.md`
 - `references/definition-of-done.md`
 - `references/write-scope-discipline.md`

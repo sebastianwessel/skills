@@ -20,12 +20,14 @@ The CLI and public skill directory are introduced in Vercel's
 - Reads only ticket `spec_refs` and `read_scope`.
 - Writes only files listed by `write_scope`.
 - Stops on missing behavior, missing contracts, unresolved decisions, blocked dependencies, or insufficient scope.
-- Implements acceptance criteria through public interfaces and verifies each mapped test or command.
+- Implements approved interfaces/contracts first when they are in scope, then works test-first through public interfaces.
+- Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
+- Runs a ticket-level implementation-review-judge loop before marking work done.
 - Keeps default verification hermetic and separates opt-in external integration checks.
 
 ## How It Works
 
-The skill starts with preflight checks, then implements one behavior at a time from the ticket. If the ticket requires invention, extra scope, unclear behavior, or a missing contract, it writes a blocker instead of coding.
+The skill starts with preflight checks, maps approved interfaces and acceptance criteria to tests, implements one behavior at a time, then reviews its own work against the ticket. If the ticket requires invention, extra scope, unclear behavior, a missing contract, or a fake implementation, it writes a blocker instead of coding.
 
 ## Workflow
 
@@ -34,10 +36,12 @@ The skill starts with preflight checks, then implements one behavior at a time f
 3. Parse ticket frontmatter and readiness fields.
 4. Confirm dependencies are done or merged.
 5. Read project conventions and scoped specs only.
-6. Modify only `write_scope`.
-7. Add behavior tests and failure-path tests.
-8. Run ticket and project verification.
-9. Record files changed and completion evidence.
+6. Implement approved interfaces/contracts first when the ticket owns them.
+7. Add failing public-interface tests for happy and unhappy paths.
+8. Modify only `write_scope`.
+9. Run ticket and project verification.
+10. Run the implementation-review-judge loop.
+11. Record files changed and completion evidence.
 
 ## Included Files
 
@@ -45,10 +49,11 @@ The skill starts with preflight checks, then implements one behavior at a time f
 | --- | --- |
 | `skills/spec-ticket-implementation/SKILL.md` | Executable agent instructions and trigger metadata. |
 | `skills/spec-ticket-implementation/references/pre-implementation-checks.md` | Preflight checklist before editing. |
+| `skills/spec-ticket-implementation/references/implementation-loop.md` | Contract-first, test-first, quality, and review loop rules. |
 | `skills/spec-ticket-implementation/references/definition-of-done.md` | Completion checklist for one ticket. |
 | `skills/spec-ticket-implementation/references/write-scope-discipline.md` | Rules for strict write-scope enforcement. |
 | `skills/spec-ticket-implementation/evals/evals.json` | Evaluation scenarios for the skill. |
 
 ## Validation And Safety
 
-Use this skill only for one approved ticket at a time. If the agent needs to decide product behavior, change contracts, expand scope, or use files outside `write_scope`, the correct output is a blocker/spec gap, not code.
+Use this skill only for one approved ticket at a time. If the agent needs to decide product behavior, change contracts, expand scope, use files outside `write_scope`, or simulate missing work with mocks/fakes/placeholders, the correct output is a blocker/spec gap, not code.

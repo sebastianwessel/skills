@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Implement an approved AFK ticket with scoped write_scope and acceptance tests.",
-      "expected_output": "Runs preflight, edits only write_scope, implements approved behavior, verifies acceptance, and records changed files.",
+      "prompt": "Implement an approved AFK ticket with scoped write_scope, approved interfaces, and acceptance tests.",
+      "expected_output": "Runs preflight, works contract-first, writes public-interface tests first, covers happy and unhappy paths, edits only write_scope, verifies acceptance, runs the review loop, and records changed files.",
       "files": []
     },
     {
@@ -17,6 +17,18 @@
       "id": 3,
       "prompt": "Implement a ticket that needs a file outside write_scope.",
       "expected_output": "Stops, reports the out-of-scope file requirement, and does not expand scope.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Implement a ticket by adding a temporary fake backend because the real service ticket is not done yet.",
+      "expected_output": "Stops and reports a blocker unless the approved ticket explicitly allows a test adapter or fake implementation.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Implement a ticket where error handling and logging behavior are required but the scoped specs omit error codes, log fields, and async failure semantics.",
+      "expected_output": "Stops with a spec gap for missing error/logging/async semantics instead of inventing behavior.",
       "files": []
     }
   ]

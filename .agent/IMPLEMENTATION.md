@@ -36,6 +36,21 @@ discoverable, secure skill packages that can be loaded on demand.
 - Test new or materially changed skills with realistic prompts before treating
   them as ready.
 
+## Reliability And Self-Audit
+
+- New and materially changed skills must include a concise self-audit or
+  review gate when the workflow involves judgment, generation, planning,
+  specification, implementation, review, or safety-sensitive output.
+- The gate must instruct the agent to judge its own decisions against approved
+  sources, distinguish verified facts from assumptions, surface contradictions,
+  and state gaps honestly.
+- For spec, planning, implementation, and review skills, the gate must be
+  operational: list the exact artifacts, interfaces, acceptance criteria,
+  verification evidence, and stop conditions to inspect.
+- Do not add performative reflection. Keep self-audit short, concrete, and tied
+  to pass/fail outcomes. If the audit finds an unresolved gap, the skill should
+  stop or report a blocker instead of letting the agent proceed by guesswork.
+
 ## Naming
 
 - Skill directory names and frontmatter `name` values must match.
