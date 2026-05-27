@@ -31,8 +31,10 @@ Approved specs require:
   `contradiction_check`, `semantic_judge_gate`, `self_audit_gate`,
   `gate_simulation`
 - deterministic status, traceability, inferred defaults, risks, wave evidence,
-  production/release/supply-chain disposition, migration links, semantic judge
-  evidence, self-audit
+  production/release/supply-chain, migrations, semantic judge evidence,
+  self-audit
+- judge evidence: reviewer/model, time, scope, gate verdicts, traced paths,
+  ambiguous refs, gaps, uncertainty, verdict
 
 ## Inference Policy
 

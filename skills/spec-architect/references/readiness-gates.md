@@ -26,13 +26,18 @@ Semantic judge review is required before approval. Record verdict, evidence,
 gaps, uncertainty, and ambiguous implementation risk. Failed/missing judge
 blocks approval.
 
+Judge steps: read approved specs/registries/provenance/gaps only. For each gate,
+record `pass`, `fail`, or `n/a` with refs. Trace happy, unhappy, recovery,
+interface, security/privacy, production/release, and supply-chain paths. Fail if
+two agents could implement different valid behavior, or if decisions,
+contradictions, unsafe assumptions, inferred defaults, or judgment wording remain.
+
 ## Requirements And Structure
 
 Requirements, flows, contracts, and NFRs are necessary, singular, feasible,
 implementation-independent, unambiguous, consistent, verifiable, traceable.
-Use stable IDs, source/rationale, owner, priority/risk, verification method
-(`test`, `inspection`, `analysis`, `demo`), and links from business outcome to
-acceptance evidence. Mark N/A with evidence.
+Use stable IDs, source/rationale, owner, priority/risk, verification method, and
+links from business outcome to acceptance evidence. Mark N/A with evidence.
 
 Structure specs business-to-technical: outcome/rationale, scope, components,
 workflows, interfaces/data, frontend UX, operations, verification. Shared facts
