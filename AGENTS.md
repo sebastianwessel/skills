@@ -54,6 +54,10 @@ self-contained capability packages, not as application code.
 - Self-audit must not replace verification. A skill should still require
   deterministic checks, tests, scripts, or explicit evidence where those are
   available.
+- Spec-driven workflow skills must preserve enterprise reliability guarantees:
+  unhappy paths, security/privacy, data classification, log redaction, data
+  integrity, recovery, performance budgets, and no-leak/no-data-loss behavior
+  must be specified, planned, implemented, or reviewed explicitly.
 - Do not commit secrets, credentials, private data exports, local model caches,
   or generated archives.
 

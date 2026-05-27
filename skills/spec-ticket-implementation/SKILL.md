@@ -18,7 +18,8 @@ Before editing, load `references/pre-implementation-checks.md` and confirm:
 - baseline verification is recorded
 - ticket dependencies are done or merged
 - `spec_refs`, `read_scope`, `write_scope`, acceptance criteria, interfaces,
-  error/logging expectations, and happy/unhappy paths are mapped
+  error/logging/security/performance/recovery expectations, and happy/unhappy
+  paths are mapped
 - only scoped specs/context are needed
 
 If dependencies are missing, stop. If baseline failures are outside scope,
@@ -35,6 +36,8 @@ Stop and write a blocker when:
 - implementation needs files outside `write_scope`
 - interface/type/nullability/async/error/logging semantics are missing or
   inconsistent
+- security/privacy, log-level/redaction, performance, data-integrity, rollback,
+  recovery, or manual-intervention semantics are missing
 - a mock, fake, stub, placeholder, or test-only production path would be needed
   without explicit ticket/spec approval
 - ticket asks the implementer to decide, infer, fill gaps, use judgment, ask
@@ -46,6 +49,8 @@ Stop and write a blocker when:
 - Follow `references/implementation-loop.md`: contract/interface first,
   public-interface failing test first, minimal implementation, review.
 - Cover happy paths, unhappy paths, async/error paths, and required logging.
+- Preserve defined state transitions, rollback/compensation, recovery,
+  idempotency, and no-data-loss/no-leak guarantees.
 - Use precise types, documented public APIs/enums/constants, centralized
   constants, and unit-bearing names such as `timeout_in_ms`.
 - Keep default verification hermetic; external integrations stay opt-in.

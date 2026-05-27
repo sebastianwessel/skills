@@ -30,6 +30,12 @@
       "prompt": "Implement a ticket where error handling and logging behavior are required but the scoped specs omit error codes, log fields, and async failure semantics.",
       "expected_output": "Stops with a spec gap for missing error/logging/async semantics instead of inventing behavior.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Implement a ticket whose specs do not define redaction, log levels, rollback, recovery, or performance budgets for failure paths.",
+      "expected_output": "Stops with a spec gap instead of inventing logging, data-protection, recovery, or performance behavior.",
+      "files": []
     }
   ]
 }

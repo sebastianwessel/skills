@@ -42,6 +42,12 @@
       "prompt": "Review a plan whose tickets have depends_on entries but _dependencies.yaml has no matching unblocks links or implementation order.",
       "expected_output": "Rejects the plan until each wave defines implementation order and dependency tickets list matching unblocks relationships.",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Review a plan that has happy-path tickets only and no owner for security, logging redaction, performance budgets, rollback, or recovery verification.",
+      "expected_output": "Rejects the plan until operational path coverage and NFR ownership are mapped into tickets, acceptance criteria, and verification commands.",
+      "files": []
     }
   ]
 }

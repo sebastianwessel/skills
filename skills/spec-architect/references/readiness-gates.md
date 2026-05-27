@@ -1,76 +1,69 @@
 # Readiness Gates
 
-Specs must be precise enough for autonomous, parallel implementation without
-agent drift. Approval means every gate below passed or is explicitly not
-applicable with rationale.
+Specs are approvable only when every gate passes or is marked not applicable
+with evidence.
 
-## No Drift And Ambiguity
+## No Drift, Ambiguity, And Honesty
 
-- No ticket may require deciding product behavior, interfaces, errors, security,
-  data lifecycle, async behavior, migrations, tests, or acceptance criteria.
-- Replace `as appropriate`, `if needed`, `where possible`, `handle errors`,
-  `support auth`, `validate input`, `sync data`, `make configurable`, `TBD`, and
-  `TODO` with exact conditions, actions, contracts, or descoped decisions.
-- Keep one source of truth per fact. Summaries link to authoritative contracts.
-  Contradictions block approval.
+- No ticket may decide product behavior, interfaces, errors, security/privacy,
+  data lifecycle, async behavior, migrations, performance, observability,
+  recovery, tests, or acceptance.
+- Replace vague text such as `as appropriate`, `if needed`, `handle errors`,
+  `support auth`, `recover gracefully`, `log appropriately`, `securely`,
+  `performant`, `TBD`, and `TODO` with exact conditions and outcomes.
+- Keep one source of truth per fact; contradictions block approval.
+- Self-audit must list weakest assumptions, inferred defaults, evidence, and
+  blockers. Do not approve on confidence without evidence.
 
-## Self-Audit And Honesty
+## Interfaces And Runtime Semantics
 
-Before approval, explicitly challenge the spec set:
+Every boundary defines owner, audience, stability, version, inputs, outputs,
+validation, errors, auth/policy, lifecycle, observability, tests, compatibility.
 
-- list weakest assumptions, inferred defaults, and uncertainty
-- check whether each gate has evidence, not confidence language
-- reject self-approval when contradictions, gaps, or unverifiable claims remain
-- say what is blocked instead of presenting partial readiness as complete
+Cross-language/protocol specs include semantic mapping for source/wire/target
+types, required/optional/defaulted fields, `null`, `undefined`, omitted,
+zero/empty values, enum unknowns, precision, time zones, IDs, encoding,
+ordering, pagination, partial data, errors, and deprecation.
 
-## Interface Semantic Alignment
+Async specs define runtime model, ordering, concurrency, cancellation, timeout,
+retry budget, idempotency key, ack/commit boundary, lease/heartbeat,
+backpressure, DLQ/manual escalation, transactions, locks, and worker behavior.
 
-Every boundary must define name, owner, audience, stability, version, inputs,
-outputs, validation, errors, auth/policy, lifecycle, observability, tests, and
-compatibility.
+## Paths, Integrity, And Recovery
 
-For cross-language or protocol boundaries, include a semantic mapping table:
+Each workflow defines success plus relevant validation/auth failure, missing
+resource, dependency failure, timeout, cancellation, retry exhaustion,
+duplicate/idempotent replay, partial write, rollback/compensation, cleanup,
+recovery, manual intervention, and final state.
 
-- source type, wire/protocol type, target type
-- required/optional/defaulted fields
-- `null`, `undefined`, omitted, zero value, empty string/list/object behavior
-- enum unknowns, numeric precision, time zones, IDs, binary/text encoding
-- list/map ordering, pagination, partial data, error envelope, deprecation
+No path may leave data, jobs, locks, caches, sessions, or external side effects
+undefined. Define terminal states, compensating actions, retry limits, owner,
+and verification.
 
-Example: Go service + GraphQL + TypeScript client specs must define GraphQL
-nullable fields, omitted variables, resolver errors, generated TS optional
-properties, Go pointer/value/null handling, and end-to-end test fixtures.
+## Security, Privacy, Observability, Performance
 
-## Async And Runtime Semantics
+Define trust boundaries and data classification for public, internal,
+confidential, restricted, PII, secrets, and credentials where applicable.
 
-Mark every async boundary and runtime expectation:
+Define authn/authz, tenancy/isolation, input validation, output encoding, secret
+handling, retention, redaction, audit events, safe defaults, log levels, event
+names, fields, correlation IDs, metrics, traces, and leak-prevention rules.
 
-- sync request, async job, stream, event, queue, task, callback, scheduled work
-- ordering, concurrency, cancellation, timeout, retry budget, idempotency key
-- ack/commit boundary, lease/heartbeat, backpressure, DLQ/manual escalation
-- runtime model when relevant: Python `async`/thread/process, JS promises,
-  Go goroutines/context, worker pools, transactions, locks
+Define budgets and overload behavior for latency, throughput, memory/CPU,
+concurrency, pagination/batching, cache/index use, rate limits, timeouts,
+retries/backoff, backpressure, health checks, degraded mode, bounded
+self-healing, checkpoints, alerts, and escalation.
 
-## Wave And Parallel Readiness
+## Wave, Migration, And Rationale
 
 A wave may proceed only when it is independently implementable end to end and
-future integration contracts are stable. A backend service may precede a client
-only when service API/auth/errors/schemas/lifecycle/tests and client-facing
-compatibility rules are frozen; the later client must conform.
+future integration contracts are stable. Parallel tickets need disjoint write
+scope, frozen contracts, dependencies, acceptance matrix, and verification.
 
-Parallel tickets need write scope, read scope, frozen shared contracts,
-dependencies, acceptance matrix, verification commands, and `open_decisions: []`.
+Material changes to implemented behavior need `plans/migrations/<id>.md` with
+impact, compatibility, rollout, data migration/backfill, dual-read/write or
+adapter strategy, rollback, verification, and owner.
 
-## Migration Plans
-
-When specs materially change behavior that already has an implementation, add a
-separate plan under `plans/migrations/<id>.md` and link it from the affected
-spec/readiness report. Include impact, compatibility, rollout, data migration,
-backfill, dual-read/write or adapter strategy, rollback, verification, and owner.
-
-## Rationale
-
-Record decision reason when it prevents future drift: public contracts,
-architecture, security, data lifecycle, compatibility, migration, async model,
-provider/adapter choices, or non-obvious tradeoffs. Do not justify trivial field
-names or obvious local details.
+Record rationale for drift-prone decisions: public contracts, architecture,
+security, data lifecycle, compatibility, migration, async model,
+provider/adapter choices, or non-obvious tradeoffs.

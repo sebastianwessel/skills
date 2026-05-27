@@ -20,7 +20,6 @@ Run available gates before semantic review:
 
 - `node skills/spec-architect/scripts/check_specs.mjs specs`
 - `node skills/spec-implementation-planner/references/check_plan.mjs .`
-- `node skills/spec-implementation-planner/references/check_wave_readiness.mjs . <wave-id>`
 
 Stop if specs or plan are not approved, required evidence is missing, or the
 review scope cannot be identified.
@@ -31,7 +30,7 @@ review scope cannot be identified.
 2. Build a solution path matrix using `references/path-tracing.md`.
 3. Follow every relevant path end to end: request/input, validation, auth,
    routing, interface boundaries, domain logic, persistence, async work,
-   external boundaries, observability, response/output, cleanup.
+   external boundaries, observability, response/output, cleanup, recovery.
 4. Apply `references/review-gates.md` for spec drift, interfaces, tests,
    security, performance, robustness, maintainability, docs, and false work.
 5. Persist findings with `references/findings-format.md`.
@@ -43,13 +42,13 @@ review scope cannot be identified.
 Reject the wave/plan when any blocking issue exists:
 
 - spec drift in behavior, interfaces, types/nullability, async, errors, logging,
-  persistence, security, or public contracts
+  persistence, security, performance, recovery, or public contracts
 - missing, untested, or incorrect success/failure/retry/timeout/cancel/rollback/
   idempotency/recovery paths
 - missing acceptance, cross-layer contract, unhappy-path, or end-to-end tests
 - unapproved mocks, fakes, stubs, placeholders, no-ops, demo paths, or hidden flags
 - material security, privacy, data-loss, isolation, performance, resource-leak,
-  concurrency, maintainability, or public-contract risk
+  undefined-state, concurrency, maintainability, or public-contract risk
 - feedback cannot route to a ticket, planner remediation, or spec gap
 
 ## Persisted Output

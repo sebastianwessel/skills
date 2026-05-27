@@ -50,6 +50,9 @@ discoverable, secure skill packages that can be loaded on demand.
 - Do not add performative reflection. Keep self-audit short, concrete, and tied
   to pass/fail outcomes. If the audit finds an unresolved gap, the skill should
   stop or report a blocker instead of letting the agent proceed by guesswork.
+- Spec, planning, implementation, and review skills must treat security,
+  privacy, data integrity, recovery, observability, performance, unhappy paths,
+  and no-leak/no-data-loss behavior as first-class gates, not advisory cleanup.
 
 ## Naming
 

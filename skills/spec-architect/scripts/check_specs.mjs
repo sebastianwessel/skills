@@ -3,36 +3,25 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = path.resolve(process.argv[2] || "specs");
-const errors = [];
-const warnings = [];
+const errors = [], warnings = [];
 const gates = [
-  "no_drift_gate",
-  "ambiguity_gate",
-  "semantic_alignment_gate",
-  "async_semantics_gate",
-  "interface_gate",
-  "e2e_gate",
-  "wave_readiness",
-  "migration_gate",
-  "contradiction_check",
-  "self_audit_gate",
-  "gate_simulation",
+  "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
+  "async_semantics_gate", "interface_gate", "e2e_gate",
+  "unhappy_path_gate", "security_privacy_gate", "observability_gate",
+  "performance_resilience_gate", "data_integrity_recovery_gate",
+  "wave_readiness", "migration_gate", "contradiction_check",
+  "self_audit_gate", "gate_simulation",
 ];
-
 const fail = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 const at = (f) => path.join(root, f);
 const exists = (f) => fs.existsSync(at(f));
 const read = (f) => fs.readFileSync(at(f), "utf8");
 const rel = (f) => path.relative(root, f).split(path.sep).join("/");
-
-function files(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
-    const f = path.join(dir, e.name);
-    return e.isDirectory() ? files(f) : [f];
-  });
-}
+const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
+  const f = path.join(d, e.name);
+  return e.isDirectory() ? walk(f) : [f];
+}) : [];
 
 function yaml(text, file) {
   const data = {};
@@ -40,39 +29,32 @@ function yaml(text, file) {
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.replace(/\s+#.*$/, "");
     const m = line.match(/^(\s*)([A-Za-z0-9_.-]+):(?:\s*(.*))?$/);
-    if (!m || !line.trim().length || line.trim().startsWith("#")) continue;
+    if (!m || !line.trim() || line.trim().startsWith("#")) continue;
     const indent = m[1].length;
     while (stack.length > 1 && indent <= stack.at(-1).indent) stack.pop();
     const parent = stack.at(-1).obj;
-    let value = m[3] ?? "";
+    let value = (m[3] ?? "").replace(/^["']|["']$/g, "");
     if (value === "") {
       parent[m[2]] = {};
       stack.push({ indent, obj: parent[m[2]] });
     } else {
-      value = value.replace(/^["']|["']$/g, "");
       parent[m[2]] = value === "[]" ? [] : value;
     }
   }
-  if (!Object.keys(data).length) fail(`${file} does not contain parseable YAML keys`);
+  if (!Object.keys(data).length) fail(`${file} has no parseable YAML keys`);
   return data;
 }
 
 if (!fs.existsSync(root)) {
   fail(`Spec root does not exist: ${root}`);
 } else {
-  const all = files(root);
+  const all = walk(root);
   const text = all.map((f) => fs.readFileSync(f, "utf8")).join("\n");
-  const required = [
-    ".readiness-report.yaml",
-    "_registry.yaml",
-    "_provenance.yaml",
-    "00-vision.md",
-    "00-stack.md",
-    "00-conventions.md",
-    "00-architecture-overview.md",
-    "glossary.md",
-  ];
-  required.forEach((f) => !exists(f) && fail(`Missing required spec artifact: ${f}`));
+  [
+    ".readiness-report.yaml", "_registry.yaml", "_provenance.yaml",
+    "00-vision.md", "00-stack.md", "00-conventions.md",
+    "00-architecture-overview.md", "glossary.md",
+  ].forEach((f) => !exists(f) && fail(`Missing required spec artifact: ${f}`));
 
   let approved = false;
   if (exists(".readiness-report.yaml")) {
@@ -81,7 +63,7 @@ if (!fs.existsSync(root)) {
     approved = report.status === "approved";
     if (!["draft", "needs_human_review", "approved", "blocked"].includes(report.status)) fail(`Invalid readiness status: ${String(report.status)}`);
     if (!["pending", "approved"].includes(report.human_approval?.status)) fail("Missing or invalid human_approval.status");
-    if (approved && report.human_approval?.status !== "approved") fail("status approved requires human_approval.status approved");
+    if (approved && report.human_approval?.status !== "approved") fail("status approved requires human approval");
     if (approved) {
       gates.forEach((g) => report[g]?.status !== "passed" && fail(`Approved specs require ${g}.status passed`));
       if (!/\bopen_decisions:\s*\[\]/.test(reportText)) fail("Approved specs require open_decisions: []");
@@ -91,25 +73,32 @@ if (!fs.existsSync(root)) {
   for (const file of all) {
     const r = rel(file);
     const body = fs.readFileSync(file, "utf8");
-    if (/\.(json|schema)$/.test(file)) {
-      try { JSON.parse(body); } catch (e) { fail(`${r} is invalid JSON: ${e.message}`); }
-    }
+    if (/\.(json|schema)$/.test(file)) try { JSON.parse(body); } catch (e) { fail(`${r} invalid JSON: ${e.message}`); }
     if (/\.(ya?ml)$/.test(file)) yaml(body, r);
     if (/\b(TODO|TBD|FIXME|OPEN QUESTION|QUESTION:)\b/i.test(body)) fail(`${r} contains unresolved marker`);
     for (const m of body.matchAll(/\[[^\]]+\]\((?!https?:\/\/|#)([^)]+)\)/g)) {
       const target = m[1].split("#")[0];
-      if (target && !fs.existsSync(path.resolve(path.dirname(file), target))) fail(`${r} has broken relative link: ${m[1]}`);
+      if (target && !fs.existsSync(path.resolve(path.dirname(file), target))) fail(`${r} broken link: ${m[1]}`);
     }
   }
 
   if (approved) {
-    const ambiguous = /\b(as appropriate|if needed|where possible|to be determined|decide later|future work will decide|handle errors|support auth|validate input|make configurable|sync data)\b/i;
-    all.forEach((f) => ambiguous.test(fs.readFileSync(f, "utf8")) && fail(`${rel(f)} contains ambiguous implementation language`));
-    if (/\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|gRPC|protobuf)\b/i.test(text) && !/\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i.test(text)) {
-      fail("Cross-language/protocol specs require explicit semantic type/nullability mapping");
-    }
-    if (/\b(async|queue|stream|event|job|worker|callback|goroutine|promise|coroutine)\b/i.test(text) && !/\b(timeout|retry|cancellation|idempotency|ordering|concurrency|ack|backpressure)\b/i.test(text)) {
-      fail("Async specs require runtime, ordering, timeout, retry, cancellation, idempotency, and backpressure semantics");
+    const must = [
+      [/\b(as appropriate|if needed|where possible|to be determined|decide later|future work will decide|handle errors|support auth|validate input|make configurable|sync data|recover gracefully|log appropriately|securely|performant|best effort)\b/i, "ambiguous implementation language", true],
+      [/\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|gRPC|protobuf)\b/i, "Cross-language/protocol specs require type/nullability mapping", false, /\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i],
+      [/\b(async|queue|stream|event|job|worker|callback|goroutine|promise|coroutine)\b/i, "Async specs require runtime, ordering, timeout, retry, cancellation, idempotency, and backpressure semantics", false, /\b(timeout|retry|cancellation|idempotency|ordering|concurrency|ack|backpressure)\b/i],
+      [/\b(unhappy|failure path|validation failure|authorization|denial|timeout|retry|rollback|recovery|cancellation|manual intervention)\b/i, "Approved specs require unhappy-path and recovery behavior"],
+      [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Approved specs require security/privacy/data-classification behavior"],
+      [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Approved specs require observability/log-level/redaction behavior"],
+      [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Approved specs require performance/capacity/overload budgets"],
+      [/\b(data integrity|consistency|state transition|transaction|rollback|compensation|checkpoint|idempotency|recovery|self-healing|manual intervention|data loss)\b/i, "Approved specs require data integrity/recovery/data-loss prevention"],
+    ];
+    all.forEach((f) => {
+      const body = fs.readFileSync(f, "utf8");
+      if (must[0][0].test(body)) fail(`${rel(f)} contains ${must[0][1]}`);
+    });
+    for (const [trigger, msg, badOnly, required] of must.slice(1)) {
+      if (required ? trigger.test(text) && !required.test(text) : !trigger.test(text)) fail(msg);
     }
   }
 
@@ -117,7 +106,6 @@ if (!fs.existsSync(root)) {
     if (!/(^|\n)#+\s+Public API Inventory\b|public_api_inventory:/i.test(text)) fail("Public surface detected without Public API Inventory");
     if (!/execution_semantics:/i.test(text)) fail("Public API inventory must classify execution_semantics");
   }
-
   if (!exists("03-contracts")) warn("No specs/03-contracts directory found");
   if (!exists("03-flows")) warn("No specs/03-flows directory found");
 }

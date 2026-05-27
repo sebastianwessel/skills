@@ -21,8 +21,8 @@ Use these gates after building the path matrix.
 ## Security And Privacy
 
 - Auth, authorization, tenancy, isolation, input validation, output encoding,
-  secrets handling, redaction, audit logging, dependency use, and safe defaults
-  match specs and project conventions.
+  secrets handling, data classification, retention, redaction, log levels,
+  audit logging, dependency use, and safe defaults match specs and conventions.
 - No sensitive data leaks through logs, errors, metrics, traces, tests,
   fixtures, generated artifacts, caches, or persisted review files.
 
@@ -32,7 +32,10 @@ Use these gates after building the path matrix.
   memory/CPU bounds, concurrency, idempotency, rollback, cleanup, and recovery
   are implemented where required.
 - No unbounded loops, N+1 work, blocking async calls, duplicate side effects,
-  resource leaks, or hidden global state are introduced.
+  resource leaks, undefined states, data-loss paths, or hidden global state are
+  introduced.
+- Self-healing/recovery is bounded, idempotent, observable, and escalates when
+  retry/recovery budgets are exhausted.
 
 ## Maintainability And Public Surfaces
 
@@ -47,4 +50,3 @@ Use these gates after building the path matrix.
 
 Reject rather than guess when evidence is missing. Record assumptions, skipped
 commands, unreviewed paths, and residual risk in `review.md`.
-

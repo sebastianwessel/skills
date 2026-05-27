@@ -11,7 +11,7 @@ Create specs that let AI agents implement independently without inventing behavi
 
 A spec is ready only when an agent can implement its assigned scope without
 making product, architecture, interface, failure, security, data, async, type,
-migration, or verification decisions.
+migration, performance, recovery, observability, or verification decisions.
 
 ## Invariants
 
@@ -28,21 +28,25 @@ migration, or verification decisions.
 ## Workflow
 
 1. Select mode: `Create`, `Review/Approve`, `Update`, or `Fix Gap`.
-2. Update layered specs and active-wave end-to-end paths.
+2. Update layered specs and active-wave end-to-end paths, including unhappy
+   paths and recovery paths.
 3. Freeze every service/client/storage/event/job/adapter/CLI/config/policy/tool
    interface, including type/nullability and protocol semantics.
-4. Mark async/concurrency/runtime semantics explicitly.
-5. Add migration plans under `plans/migrations/` when implemented behavior
+4. Define security/privacy, data classification, log levels/redaction,
+   data-integrity/recovery, and performance/resilience budgets.
+5. Mark async/concurrency/runtime semantics explicitly.
+6. Add migration plans under `plans/migrations/` when implemented behavior
    changes materially.
-6. Run `references/readiness-gates.md`, `references/artifact-shapes.md`, and
+7. Run `references/readiness-gates.md`, `references/artifact-shapes.md`, and
    `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-7. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
-8. Record self-audit evidence in `.readiness-report.yaml`.
+8. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
+9. Record self-audit evidence in `.readiness-report.yaml`.
 
 ## Reference Map
 
 - `references/readiness-gates.md`: approval gates, semantic alignment, async,
-  migration, wave, parallel, rationale, and anti-drift rules.
+  security, privacy, resilience, observability, data integrity, migration, wave,
+  parallel, rationale, and anti-drift rules.
 - `references/artifact-shapes.md`: required artifacts, report fields, inference
   policy, and default failure semantics.
 
@@ -57,4 +61,5 @@ migration, or verification decisions.
 
 Do not approve if an implementation ticket would need to decide behavior,
 reconcile contradictions, interpret vague wording, align incompatible type
-systems, define async behavior, or invent migration/verification details.
+systems, define async behavior, or invent security, performance, recovery,
+logging, data-protection, migration, or verification details.

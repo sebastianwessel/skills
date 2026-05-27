@@ -23,6 +23,9 @@ inside scope, the ticket must fix them.
 - [ ] Dependencies are `done` or `merged` in `_status.yaml` or equivalent.
 - [ ] Acceptance criteria are mapped to public-interface tests.
 - [ ] Happy path, unhappy path, async/error/logging expectations are identified.
+- [ ] Security/privacy, data classification, redaction, performance,
+      data-integrity, rollback, recovery, and manual-intervention expectations
+      are identified.
 - [ ] Approved interfaces/contracts and consumer expectations are identified.
 - [ ] Mock/fake/stub/placeholder permissions are checked.
 - [ ] Verification commands are copied exactly.
@@ -34,6 +37,8 @@ from scoped specs.
 
 - [ ] Naming, file structure, code style, and test style are understood.
 - [ ] Error handling and logging/observability conventions are understood.
+- [ ] Log levels, redaction rules, audit/metric/trace conventions, and safe
+      error-message conventions are understood.
 - [ ] Public API docs, type-safety, constants, and unit-name conventions are
       understood.
 
@@ -44,6 +49,9 @@ Read only `read_scope` and `spec_refs`.
 - [ ] Contracts, schemas, ports, flows, and error taxonomy are read.
 - [ ] Nullability, optionality, async behavior, cancellation, retries,
       serialization, and cross-language/protocol type semantics are checked.
+- [ ] Data classification, trust boundaries, auth/policy, retention, redaction,
+      log levels, performance budgets, state transitions, rollback/recovery, and
+      data-loss prevention rules are checked.
 - [ ] Public API inventory and execution semantics are read for changed public
       surfaces.
 - [ ] Manifest version, digest, canonicalization, snapshot, replay,
@@ -52,4 +60,5 @@ Read only `read_scope` and `spec_refs`.
       surfaces change.
 
 Stop if a required contract, field, flow, policy, error, persistence rule,
-logging/audit behavior, or failure path is missing. Do not infer it.
+logging/audit behavior, performance budget, recovery path, or failure path is
+missing. Do not infer it.

@@ -3,56 +3,62 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Create specs for a self-hosted enterprise runtime with adapters, queues, policy, observability, and sandboxed tools.",
-      "expected_output": "Creates foundation, domains, capabilities, contracts, tech specs, NFRs, and definition-readiness coverage.",
+      "prompt": "Create implementation-ready specs for an enterprise runtime with adapters, queues, policy, observability, and sandboxed tools.",
+      "expected_output": "Creates layered specs, contracts, flows, NFRs, readiness report, and autonomous planning evidence.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "Review these specs for enterprise gaps and unhappy paths.",
-      "expected_output": "Finds missing timeout, retry, DLQ/manual intervention, cleanup, adapter health, test, and definition-readiness gaps.",
+      "prompt": "Review specs for enterprise gaps and unhappy paths.",
+      "expected_output": "Finds missing timeout, retry, DLQ/manual intervention, cleanup, health, test, and readiness gaps.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "Improve the specs so implementation planning can be fully autonomous.",
-      "expected_output": "Adds missing contracts, interfaces, data model, failure handling, test strategy, planning simulation evidence, and readiness gates instead of putting spec closure into the plan.",
+      "prompt": "Improve specs so implementation planning can be fully autonomous.",
+      "expected_output": "Adds contracts, data model, failure handling, tests, planning simulation, and readiness gates instead of spec closure in the plan.",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "Approve specs where the simulated implementation ticket would still need to decide API shape, error behavior, and test coverage.",
-      "expected_output": "Refuses approval, reports the missing decisions as spec gaps, and requires enough detail to produce a decision ledger, contract traceability, and acceptance test matrix.",
+      "prompt": "Approve specs where tickets must still decide API shape, errors, and tests.",
+      "expected_output": "Refuses approval and reports spec gaps needed for decision ledger, traceability, and acceptance matrix.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "Review specs for a backend service wave where the web client is planned later.",
-      "expected_output": "Allows service-wave readiness only if the service API, auth, schemas, errors, lifecycle, compatibility, tests, and future client-facing contracts are complete; otherwise blocks with spec gaps.",
+      "prompt": "Review backend-service wave readiness when the web client comes later.",
+      "expected_output": "Allows only if service API, auth, schemas, errors, lifecycle, compatibility, tests, and future client contracts are complete.",
       "files": []
     },
     {
       "id": 6,
-      "prompt": "Make these specs implementation-ready for parallel AI agents without drift.",
-      "expected_output": "Adds no-drift, ambiguity, interface, end-to-end, contradiction, wave-readiness, ownership, write-scope, contract-traceability, acceptance-matrix, and verification evidence instead of asking implementers to decide behavior.",
+      "prompt": "Make specs ready for parallel AI agents without drift.",
+      "expected_output": "Adds no-drift, interface, E2E, contradiction, wave, ownership, scope, traceability, acceptance, and verification evidence.",
       "files": []
     },
     {
       "id": 7,
-      "prompt": "Review specs for a Go GraphQL service consumed by a TypeScript frontend.",
-      "expected_output": "Requires explicit end-to-end semantic mapping for GraphQL nullability, omitted variables, TypeScript optional or undefined fields, Go pointer/value/null handling, generated types, resolver errors, and cross-layer fixtures.",
+      "prompt": "Review specs for a Go GraphQL service consumed by TypeScript.",
+      "expected_output": "Requires GraphQL nullability, omitted variables, TS optional/undefined fields, Go pointer/null handling, generated types, errors, and fixtures.",
       "files": []
     },
     {
       "id": 8,
-      "prompt": "Update approved specs that materially change an already implemented async Python worker flow.",
-      "expected_output": "Requires async runtime semantics plus a separate plans/migrations migration plan covering impact, rollout, compatibility, rollback, verification, and ownership.",
+      "prompt": "Update specs for a material change to an implemented async Python worker.",
+      "expected_output": "Requires async runtime semantics and a migration plan with impact, rollout, compatibility, rollback, verification, and owner.",
       "files": []
     },
     {
       "id": 9,
       "prompt": "Approve specs with weak assumptions and no self-audit evidence.",
-      "expected_output": "Refuses approval until self_audit_gate passes with honest uncertainty, weakest assumptions, evidence, and remaining blockers.",
+      "expected_output": "Refuses approval until self_audit_gate records uncertainty, assumptions, evidence, and blockers.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Approve happy-path specs that say recover gracefully, log appropriately, keep secure, and make performant.",
+      "expected_output": "Refuses approval until unhappy paths, security/privacy, redaction, budgets, integrity, recovery, and manual intervention are explicit.",
       "files": []
     }
   ]

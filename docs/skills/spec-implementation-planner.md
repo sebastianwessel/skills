@@ -25,6 +25,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Starts with shared contract/interface foundation work when parallel agents
   need stable boundaries, then isolates backend, frontend, adapter, docs, and
   test tickets against those contracts.
+- Maps unhappy paths, security/privacy, log redaction, performance budgets,
+  data-integrity, recovery, and manual-intervention requirements into owned
+  tickets with acceptance criteria and verification.
 - Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
 - Blocks tickets that would require agents to invent behavior, choose interfaces, or resolve missing specs.
 - Rejects placeholder, mock, fake, stub, or no-op implementation shortcuts unless the specs explicitly require test fixtures or fake providers.
@@ -35,7 +38,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, contract traceability, acceptance test matrices, and concrete verification commands.
+The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
 
 When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-architect`.
 
@@ -47,7 +50,7 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 4. Group work into waves with end-to-end outcomes and isolation notes.
 5. Write implementation-ready tickets with compact context digests.
 6. Record a plan-level self-audit.
-7. Verify registry, dependencies, unblocks links, scope, status, and ticket readiness.
+7. Verify registry, dependencies, unblocks links, scope, status, path coverage, NFR ownership, and ticket readiness.
 8. Run plan and wave checker scripts.
 
 ## Output Files
@@ -69,7 +72,6 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 | `skills/spec-implementation-planner/SKILL.md` | Executable agent instructions and trigger metadata. |
 | `skills/spec-implementation-planner/references/planning-gates.md` | Ticket shape, plan quality, public workflow, and verification gates. |
 | `skills/spec-implementation-planner/references/check_plan.mjs` | Deterministic plan consistency checker. |
-| `skills/spec-implementation-planner/references/check_wave_readiness.mjs` | Per-wave readiness checker. |
 | `skills/spec-implementation-planner/evals/evals.json` | Evaluation scenarios for the skill. |
 
 ## Validation And Safety
@@ -78,7 +80,6 @@ Run the checkers after creating or changing a plan:
 
 ```bash
 node skills/spec-implementation-planner/references/check_plan.mjs .
-node skills/spec-implementation-planner/references/check_wave_readiness.mjs . wave_01_foundation
 ```
 
 Passing checks mean the plan is mechanically coherent. They do not replace spec approval or semantic review.

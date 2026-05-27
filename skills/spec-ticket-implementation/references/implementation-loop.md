@@ -12,6 +12,8 @@ Use this loop for one approved ticket.
   unchanged.
 - Preserve null/undefined, optional fields, async timing, cancellation, retries,
   serialization, and error semantics exactly. Stop on mismatch.
+- Preserve specified state transitions, data integrity, redaction, performance
+  budgets, and recovery behavior exactly. Stop on mismatch.
 
 ## Test First
 
@@ -31,8 +33,14 @@ acceptance criterion to verification.
 
 - Handle errors with canonical types/codes; never swallow sync, async, stream,
   timeout, cancellation, retry, or background task failures.
-- Log only through project conventions, with useful context and no secrets or
-  sensitive payloads.
+- Log only through project conventions, with specified levels, event names,
+  useful context, and no PII, confidential, restricted, secret, or sensitive
+  payloads.
+- Keep failures safe: no undefined state, data loss, duplicate side effects, or
+  unbounded self-healing loops. Use specified rollback, compensation,
+  idempotency, recovery checkpoints, and manual escalation.
+- Respect specified latency, throughput, memory/CPU, pagination, batching,
+  timeout, retry, backpressure, and overload limits.
 - Use precise types. Avoid unapproved `any`, unchecked casts, dynamic maps,
   stringly typed unions, or broad exception types.
 - Keep files cohesive with speakable names.
@@ -56,6 +64,8 @@ Before done, honestly check:
 - Interfaces: types, nullability, async, errors, and serialization align.
 - Tests: every acceptance criterion has happy/unhappy verification.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
+- Integrity: state transitions, recovery, data-loss prevention, and performance
+  budgets match specs.
 - Honesty: assumptions, skipped checks, pre-existing failures, gaps, and risks
   are reported.
 

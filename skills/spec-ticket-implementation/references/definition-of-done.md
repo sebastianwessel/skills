@@ -21,6 +21,20 @@ A ticket is done only when all relevant checks pass.
       failures are handled when relevant.
 - [ ] Logs use project conventions, include useful context, and leak no secrets,
       credentials, tokens, personal data, or sensitive payloads.
+- [ ] Log levels, event names, redaction, audit/metric/trace behavior, and safe
+      error messages match specs.
+- [ ] Auth, authorization, tenancy/isolation, validation, output encoding,
+      retention, and dependency-safety expectations match specs when in scope.
+
+## Data Integrity, Recovery, And Performance
+
+- [ ] State transitions are defined and cannot leave undefined or partial state.
+- [ ] Rollback, compensation, idempotency, retry exhaustion, recovery
+      checkpoints, and manual intervention match specs.
+- [ ] No data loss, duplicate side effect, stale lock/session/cache, or leaked
+      data path remains in scope.
+- [ ] Latency, throughput, memory/CPU, pagination, batching, timeout, retry,
+      backpressure, and overload behavior match specified budgets when relevant.
 
 ## Testing
 
@@ -42,7 +56,8 @@ A ticket is done only when all relevant checks pass.
 - [ ] Only `write_scope` files changed.
 - [ ] Acceptance criteria are fully met; non-goals are respected.
 - [ ] No unapproved product behavior, contracts, API/event/job/stream schemas,
-      persistence, policy, failure, async, error, or logging behavior invented.
+      persistence, policy, failure, async, error, logging, security,
+      performance, or recovery behavior invented.
 - [ ] No production mock, fake, stub, placeholder, no-op, hidden flag, or demo
       path remains unless explicitly approved.
 - [ ] Public API inventory, execution semantics, docs, examples, and generated

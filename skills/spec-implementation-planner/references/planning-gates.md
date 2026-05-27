@@ -7,45 +7,45 @@
 - `plans/wave_NN_slug/plan.md`
 - `plans/wave_NN_slug/tickets/TICKET-NNN-name.md`
 
-Each wave ends in a working end-to-end increment for its scope. Use a
-foundation/interface ticket first when parallel agents need a shared boundary,
-then split backend, frontend, adapter, docs, and tests against that contract.
+Each wave ends in a working end-to-end increment. Use interface/foundation
+tickets first when parallel agents need shared contracts.
 
-## Ticket
+## Ticket Shape
 
-Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`,
-`depends_on`, `blocked_by`, `spec_refs`, `write_scope`, `read_scope`,
-`contract_readiness`, `ticket_readiness`.
+Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`, `depends_on`,
+`blocked_by`, `spec_refs`, `write_scope`, `read_scope`, `contract_readiness`,
+`ticket_readiness`.
 
 Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
 `Contract Traceability`, `Tasks`, `Acceptance`, `Acceptance Test Matrix`,
-`Verification`, `Non-goals`, `Handoff`.
+`Operational Path Coverage`, `Verification`, `Non-goals`, `Handoff`.
 
-Tickets are short human/AI instructions. They define boundaries, expectations,
-acceptance, and verification; they do not paste specs, over-explain rationale,
-or pre-write implementation.
+Tickets are crisp human/AI instructions: boundaries, expectations, acceptance,
+verification, no pasted specs, no implementation prose.
 
 ## Checks
 
 - specs approved; otherwise return gaps to `spec-architect`
 - no Wave 0/spec-closure implementation wave
-- ticket readiness: ready contracts, no missing contracts, no open decisions
+- ready contracts, no missing contracts, no open decisions
 - every spec/capability/flow/NFR maps to ticket or explicit deferral
+- happy, unhappy, recovery, security/privacy, observability/logging,
+  performance/resilience, and data-integrity requirements map to ticket
+  acceptance and verification
 - dependencies acyclic; same-wave write scopes disjoint
-- each wave has `Implementation Order`; `_dependencies.yaml` mirrors every
-  ticket's `depends_on` and `blocked_by`, and dependency tickets list matching
-  `unblocks`
-- no ticket asks agents to read all specs, ask users, or decide behavior
-- no placeholder, fake, mock, stub, or no-op implementation unless explicitly a
-  test fixture/fake provider from specs
-- `_status.yaml` supports pause/resume with planned, in_progress, partial,
-  blocked, done, skipped, and resume notes or current proof
-- `implementation-plan.md` has `Self-Audit`: weakest assumptions, evidence for
-  readiness, fake-work risk, parallel-boundary risk, and blockers or `none`
+- wave `Implementation Order`; `_dependencies.yaml` mirrors dependencies and
+  each dependency lists matching `unblocks`
+- no ticket asks agents to read all specs, ask users, decide behavior, choose
+  log levels/redaction/retry/performance/rollback/security policy, or use vague
+  phrasing
+- no placeholder/fake/mock/stub/no-op work unless specs explicitly require a
+  test fixture/fake provider
+- `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
+  resume notes, and current proof
+- `implementation-plan.md` has `Self-Audit`: assumptions, readiness evidence,
+  path coverage, NFR ownership, fake-work risk, parallel risk, blockers or none
 - public surfaces include inventory, execution semantics, tests, docs, examples,
-  helpers, defaults/overrides, and hermetic fixtures
-- raw refs only behind public builders/helpers
-- default verification is hermetic; external systems use opt-in commands
+  helpers, safe defaults, and hermetic fixtures; raw refs stay advanced only
+- default verification is hermetic; external systems are opt-in
 
-Run `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]` and
-`node references/check_wave_readiness.mjs <repo-root> <wave-id>`.
+Run `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.

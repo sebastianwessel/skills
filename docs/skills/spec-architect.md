@@ -24,6 +24,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Marks async/runtime behavior explicitly for queues, streams, workers, jobs,
   callbacks, coroutines, promises, goroutines, timeouts, retries, cancellation,
   idempotency, ordering, and backpressure.
+- Requires unhappy paths, recovery paths, data-integrity guarantees, security
+  and privacy controls, log levels and redaction, performance budgets, and
+  manual-intervention behavior before approval.
 - Requires migration plans under `plans/migrations/` when specs materially
   change behavior that already has an implementation.
 - Records rationale for decisions that affect contracts, security,
@@ -48,7 +51,7 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 3. Describe public workflows from the user's perspective.
 4. Specify developer experience, setup paths, safe defaults, and advanced escape hatches.
 5. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, and examples.
-6. Check no-drift, ambiguity, semantic-alignment, async, interface, end-to-end, contradiction, migration, wave-readiness, and self-audit gates.
+6. Check no-drift, ambiguity, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, contradiction, migration, wave-readiness, and self-audit gates.
 7. Run self-critique and deterministic checks when available.
 8. Simulate implementation planning across all waves.
 9. Ask focused human review questions only for unsafe assumptions.
@@ -68,7 +71,7 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 | Path | Purpose |
 | --- | --- |
 | `skills/spec-architect/SKILL.md` | Executable agent instructions and trigger metadata. |
-| `skills/spec-architect/references/readiness-gates.md` | No-drift, ambiguity, semantic-alignment, async, migration, wave, interface, and parallel readiness gates. |
+| `skills/spec-architect/references/readiness-gates.md` | No-drift, ambiguity, semantic-alignment, async, security, privacy, observability, performance, resilience, data-integrity, migration, wave, interface, and parallel readiness gates. |
 | `skills/spec-architect/references/artifact-shapes.md` | Expected spec tree, readiness report fields, inference policy, and standard failure defaults. |
 | `skills/spec-architect/scripts/check_specs.mjs` | Deterministic consistency checker. |
 | `skills/spec-architect/evals/evals.json` | Evaluation scenarios for the skill. |
@@ -81,4 +84,4 @@ Run the checker when a spec tree exists:
 node skills/spec-architect/scripts/check_specs.mjs specs
 ```
 
-A passing deterministic check means the spec set is mechanically coherent. It does not replace semantic review or human approval. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, and the readiness gates for no drift, ambiguity, semantic alignment, async semantics, interfaces, end-to-end paths, migrations, waves, contradictions, and self-audit have passed.
+A passing deterministic check means the spec set is mechanically coherent. It does not replace semantic review or human approval. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, and the readiness gates for no drift, ambiguity, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, migrations, waves, contradictions, and self-audit have passed.

@@ -24,7 +24,12 @@
       "prompt": "Review a wave but the plan does not identify which ticket owns a security issue.",
       "expected_output": "Blocks with a PLAN finding routed to the planner instead of giving vague chat feedback or asking the implementation agent to decide ownership.",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Review a wave where failure recovery retries forever, logs restricted payloads at info level, and can leave a partially written record.",
+      "expected_output": "Creates blocking security/privacy, robustness, and data-integrity findings with evidence, owner tickets, fix boundaries, and required verification.",
+      "files": []
     }
   ]
 }
-
