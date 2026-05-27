@@ -19,6 +19,10 @@ The CLI and public skill directory are introduced in Vercel's
 - Defines layered specs for foundations, domains, capabilities, contracts, ports, flows, and non-functional requirements.
 - Structures specs from business and user outcomes down to components, workflows, interfaces, frontend UX/design behavior, operational constraints, and verification.
 - Requires stable requirement IDs, source/rationale, verification method, ownership, priority/risk where relevant, and bidirectional traceability from business outcome to acceptance evidence.
+- Requires `language: en` for machine-checked spec prose because the bundled
+  deterministic smoke checks use English wording.
+- Treats regex checks as fast smoke tests, not semantic proof, and requires a
+  semantic judge gate before approval.
 - Centralizes shared facts such as vocabulary, policies, errors, type semantics, NFRs, and public contracts so specs link instead of repeating.
 - Uses Mermaid diagrams only when they improve human understanding, and requires diagrams to stay aligned with authoritative text.
 - Defaults to industry-standard protocols, formats, errors, structured logging, observability, architecture, and framework conventions; custom designs need rationale and approval.
@@ -63,8 +67,8 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 7. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, examples, and source-of-truth links.
 8. Define production readiness, release/rollback, operations, and supply-chain expectations.
 9. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
-10. Check no-drift, ambiguity, requirements quality, spec-structure, visualization, standards-first, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, production-readiness, supply-chain, contradiction, migration, wave-readiness, and self-audit gates.
-11. Run self-critique and deterministic checks when available.
+10. Check no-drift, ambiguity, requirements quality, spec-structure, visualization, standards-first, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, production-readiness, supply-chain, contradiction, semantic-judge, migration, wave-readiness, and self-audit gates.
+11. Run self-critique, semantic judge review, and deterministic checks when available.
 12. Simulate implementation planning across all waves.
 13. Ask focused human review questions only for unsafe assumptions.
 14. Write or update the readiness report.
@@ -96,4 +100,4 @@ Run the checker when a spec tree exists:
 node skills/spec-architect/scripts/check_specs.mjs specs
 ```
 
-A passing deterministic check means the spec set is mechanically coherent. It does not replace semantic review or human approval. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, and the readiness gates for no drift, ambiguity, requirements quality, spec structure, visualization, standards-first choices, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, production readiness, supply-chain integrity, migrations, waves, contradictions, and self-audit have passed.
+A passing deterministic check means the spec set is mechanically coherent. It does not prove semantic completeness. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, `language: en`, and the readiness gates for no drift, ambiguity, requirements quality, spec structure, visualization, standards-first choices, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, production readiness, supply-chain integrity, migrations, waves, contradictions, semantic judge review, and self-audit have passed.

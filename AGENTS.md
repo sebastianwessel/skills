@@ -59,6 +59,10 @@ self-contained capability packages, not as application code.
   integrity, recovery, performance budgets, production readiness,
   release/rollback, supply-chain integrity, and no-leak/no-data-loss behavior
   must be specified, planned, implemented, or reviewed explicitly.
+- Regex or keyword checks are smoke tests only. If a skill uses English
+  prose-matching checks, the checked specs/plans/tickets must declare or require
+  English, and semantic approval must come from structured gates, review, or a
+  judge pass with evidence.
 - Do not commit secrets, credentials, private data exports, local model caches,
   or generated archives.
 

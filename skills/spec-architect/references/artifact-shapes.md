@@ -19,6 +19,7 @@
 Approved specs require:
 
 - `status: approved`, `human_approval.status: approved`, `open_decisions: []`
+- `language: en`
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
   `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
   `requirements_quality_gate`, `standards_first_gate`,
@@ -27,9 +28,11 @@ Approved specs require:
   `observability_gate`, `performance_resilience_gate`,
   `data_integrity_recovery_gate`, `production_readiness_gate`,
   `supply_chain_gate`, `wave_readiness`, `migration_gate`,
-  `contradiction_check`, `self_audit_gate`, `gate_simulation`
+  `contradiction_check`, `semantic_judge_gate`, `self_audit_gate`,
+  `gate_simulation`
 - deterministic status, traceability, inferred defaults, risks, wave evidence,
-  production/release/supply-chain disposition, migration links, self-audit
+  production/release/supply-chain disposition, migration links, semantic judge
+  evidence, self-audit
 
 ## Inference Policy
 

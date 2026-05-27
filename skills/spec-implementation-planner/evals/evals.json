@@ -33,24 +33,18 @@
     },
     {
       "id": 6,
-      "prompt": "Review a plan with no self-audit.",
-      "expected_output": "Rejects until Self-Audit records assumptions, evidence, risks, and blockers or none.",
-      "files": []
-    },
-    {
-      "id": 7,
       "prompt": "Review depends_on entries without matching unblocks or implementation order.",
       "expected_output": "Rejects until waves define order and dependencies mirror unblocks.",
       "files": []
     },
     {
-      "id": 8,
+      "id": 7,
       "prompt": "Review happy-path-only tickets with no owner for security, redaction, budgets, rollback, or recovery.",
       "expected_output": "Rejects until path coverage, traceability, and NFR ownership map to tickets and verification.",
       "files": []
     },
     {
-      "id": 9,
+      "id": 8,
       "prompt": "Review a service plan with no deployment, rollback, runbook, dependency, SBOM/provenance, or vulnerability/license ownership.",
       "expected_output": "Rejects until production/release and supply-chain work is assigned or marked N/A from specs.",
       "files": []

@@ -57,6 +57,8 @@ const specReady = read(path.join(specs, ".readiness-report.yaml"));
 if (!plan) fail("plans/: missing implementation-plan.md");
 if (plan && !/^status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: status must be approved`);
 if (plan && !/human_approval:[\s\S]*?^\s+status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: human approval required`);
+if (plan && !/^language:\s*en\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: language: en required`);
+if (plan && !/semantic_judge_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: semantic_judge_gate.status must be passed`);
 ["_registry.yaml", "_status.yaml", "_dependencies.yaml", "_scope.yaml"].forEach((f) => plan && !exists(path.join(plans, f)) && fail(`plans/: missing ${f}`));
 if (/Wave 0|Spec and Contract Closure|build-blocking gaps/i.test(plan)) fail("implementation-plan.md: forbidden spec-closure wave");
 if (plan && !/\b(resume|resume_notes|last_verified|current_proof|partial)\b/i.test(statusText)) fail("_status.yaml: missing pause/resume tracking");

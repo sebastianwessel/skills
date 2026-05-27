@@ -16,6 +16,8 @@ The CLI and public skill directory are introduced in Vercel's
 ## What It Does
 
 - Reads `specs/.readiness-report.yaml` and stops unless specs are approved.
+- Requires approved specs to declare `language: en` and pass semantic judge
+  review when the deterministic English smoke checks are used.
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
 - Splits implementation work into dependency-ordered waves that each end in a
   working end-to-end increment for that wave's scope.

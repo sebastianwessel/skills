@@ -9,38 +9,32 @@ Create specs that let AI agents implement without inventing behavior.
 
 ## Non-Negotiable Standard
 
-A spec is ready only when an agent can implement its scope without making
+A spec is ready only when an agent can implement its scope without deciding
 product, architecture, interface, failure, security, data, async/type,
-migration, performance, recovery, release, supply-chain, observability, or
-verification decisions.
+migration, performance, recovery, release, supply-chain, observability, or tests.
 
 ## Invariants
 
-- Draft first; ask humans only for scope, compliance/security, irreversible
-  architecture, public semantics, contradictions, or unsafe inference.
-- Specs are precise, concise, non-contradictory, language agnostic unless a
-  runtime/protocol is contractual, and define behavior/contracts not code.
-- Prefer industry standards for protocols, formats, interfaces, architecture,
-  observability, errors, auth, and supply chain; custom designs need rationale
-  and approval.
-- Flow from business/user outcome to components, workflows, interfaces, UX, and
-  constraints. Centralize shared facts and link to them.
-- Give requirements/flows/contracts/NFRs stable IDs, source/rationale,
-  verification method, priority/risk where relevant, and traceability to
-  acceptance.
-- Include production readiness, release/deployment, config/secrets, operations,
-  dependency/supply-chain integrity, and support handoff.
-- Self-audit: challenge assumptions, judge weak decisions, record uncertainty,
-  and never mark gates passed without evidence.
-- Planning starts only when `.readiness-report.yaml` says `status: approved`
-  and `human_approval.status: approved`.
+- Ask humans only for scope, compliance/security, irreversible architecture,
+  public semantics, contradictions, or unsafe inference.
+- Specs are precise, concise, non-contradictory, language agnostic unless
+  contractual, and define behavior/contracts not code.
+- Prefer industry standards; custom protocols, formats, observability, errors,
+  auth, architecture, or supply-chain choices need rationale and approval.
+- Flow business/user outcome to components, workflows, interfaces, UX, NFRs,
+  production/release/supply-chain, and acceptance. Centralize shared facts.
+- Requirements/flows/contracts/NFRs need IDs, source/rationale, verification
+  method, priority/risk where relevant, and traceability to acceptance.
+- Machine-checked spec prose uses `language: en`. Regex/literal checks are
+  smoke tests only; semantic approval needs a judge pass.
+- Self-audit with evidence; do not approve on confidence.
+- Planning starts only after approved readiness and human approval.
 
 ## Workflow
 
 1. Select mode: `Create`, `Review/Approve`, `Update`, or `Fix Gap`.
 2. Apply `references/readiness-gates.md`.
-3. Normalize requirements into verifiable, traceable, implementation-ready
-   statements.
+3. Normalize requirements into verifiable, traceable statements.
 4. Update layered specs and active-wave end-to-end paths, including unhappy
    paths and recovery paths.
 5. Select standards-first protocols, formats, interfaces, and architecture.
@@ -48,14 +42,14 @@ verification decisions.
    interface, including type/nullability and protocol semantics.
 7. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
-8. Define production readiness, release/rollback, operational support, and
-   supply-chain expectations.
+8. Define production readiness, release/rollback, operations, supply chain.
 9. Mark async/concurrency/runtime semantics explicitly.
 10. Add migration plans under `plans/migrations/` when implemented behavior
    changes materially.
-11. Run references and `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
+11. Run semantic judge review and
+    `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
 12. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
-13. Record self-audit evidence in `.readiness-report.yaml`.
+13. Record deterministic, judge, and self-audit evidence in the report.
 
 ## Reference Map
 
@@ -71,8 +65,7 @@ verification decisions.
 
 ## Approval Rule
 
-Do not approve if an implementation ticket would need to decide behavior,
-reconcile contradictions, interpret vague wording, align incompatible type
-systems, define async behavior, or invent security, performance, recovery,
-logging, protocols, data-protection, release, supply-chain, migration, or
-verification details.
+Do not approve if a ticket must decide behavior, reconcile contradictions,
+interpret vague wording, align type systems, define async behavior, or invent
+security, performance, recovery, logging, protocols, data protection, release,
+supply-chain, migration, or tests. Regex success is not semantic approval.

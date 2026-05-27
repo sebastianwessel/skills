@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Create implementation-ready specs for an enterprise runtime with queues, policy, observability, tools, and workflows.",
-      "expected_output": "Creates traceable business-to-technical specs with standards-first contracts, flows, NFRs, readiness report, and planning evidence.",
+      "expected_output": "Creates English traceable specs with standards-first contracts, flows, NFRs, semantic judge evidence, readiness report, and planning evidence.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "Review specs for custom protocols, missing traceability, missing production readiness, repetition, and happy-path-only behavior.",
-      "expected_output": "Finds missing standards, traceability, rationale, links, unhappy/recovery paths, security/privacy, observability, release/supply-chain, tests, and readiness gaps.",
+      "expected_output": "Finds missing English language declaration, semantic judge evidence, standards, traceability, unhappy/recovery paths, security/privacy, observability, release/supply-chain, tests, and readiness gaps.",
       "files": []
     }
   ]

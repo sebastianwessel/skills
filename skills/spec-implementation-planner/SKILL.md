@@ -14,6 +14,8 @@ Read `specs/.readiness-report.yaml`. Stop unless:
 - `status: approved`
 - `human_approval.status: approved`
 - readiness/gate simulation passed or can be rerun successfully
+- `language: en` and `semantic_judge_gate.status: passed` when deterministic
+  English smoke checks are used
 
 If blocked, write a spec gap/readiness note. Do not create executable tickets.
 

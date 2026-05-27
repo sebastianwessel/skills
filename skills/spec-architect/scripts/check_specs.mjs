@@ -22,7 +22,8 @@ const gates = [
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
   "production_readiness_gate", "supply_chain_gate", "wave_readiness",
-  "migration_gate", "contradiction_check", "self_audit_gate", "gate_simulation",
+  "migration_gate", "contradiction_check", "semantic_judge_gate",
+  "self_audit_gate", "gate_simulation",
 ];
 
 if (!fs.existsSync(root)) {
@@ -39,6 +40,7 @@ if (!fs.existsSync(root)) {
   if (report && !/human_approval:\s*\n\s+status:\s*(pending|approved)\s*$/m.test(report)) fail("Missing or invalid human_approval.status");
   if (approved) {
     if (!/human_approval:\s*\n\s+status:\s*approved\s*$/m.test(report)) fail("status approved requires human approval");
+    if (!/^language:\s*en\s*$/m.test(report)) fail("Approved specs require language: en for English smoke checks");
     if (!/\bopen_decisions:\s*\[\]/.test(report)) fail("Approved specs require open_decisions: []");
     gates.forEach((g) => !new RegExp(`${g}:\\s*\\n\\s+status:\\s*passed\\b`, "m").test(report) && fail(`Approved specs require ${g}.status passed`));
   }

@@ -27,10 +27,12 @@ verification, no pasted specs, no implementation prose.
 ## Checks
 
 - specs approved; otherwise return gaps to `spec-architect`
+- approved specs declare `language: en` and passed semantic judge review when
+  English smoke checks are used
 - no Wave 0/spec-closure implementation wave
 - ready contracts, no missing contracts, no open decisions
-- every requirement/spec/capability/flow/NFR maps to ticket or explicit
-  deferral with source requirement IDs preserved
+- every requirement/spec/capability/flow/NFR maps to ticket or explicit deferral
+  with source requirement IDs preserved
 - happy, unhappy, recovery, security/privacy, observability/logging,
   performance/resilience, data-integrity, production/release, and supply-chain
   requirements map to ticket acceptance and verification
@@ -38,20 +40,18 @@ verification, no pasted specs, no implementation prose.
 - wave `Implementation Order`; `_dependencies.yaml` mirrors dependencies and
   each dependency lists matching `unblocks`
 - no ticket asks agents to read all specs, ask users, decide behavior, choose
-  log levels/redaction/retry/performance/rollback/security policy, or use vague
-  phrasing
+  logging/retry/performance/rollback/security, or use vague phrasing
 - no placeholder/fake/mock/stub/no-op work unless specs explicitly require a
   test fixture/fake provider
 - `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
   resume notes, and current proof
-- `implementation-plan.md` has `Self-Audit`: assumptions, readiness evidence,
-  requirement coverage, path coverage, NFR/operations/supply-chain ownership,
-  fake-work risk, parallel risk, blockers or none
+- `implementation-plan.md` has `Self-Audit`: assumptions, evidence,
+  requirement/path coverage, NFR/operations/supply-chain ownership, fake-work
+  risk, parallel risk, blockers or none
 - public surfaces include inventory, execution semantics, tests, docs, examples,
   helpers, safe defaults, and hermetic fixtures; raw refs stay advanced only
 - default verification is hermetic; external systems are opt-in
-- release, rollout, rollback, runbook, dependency, SBOM/provenance, and
-  vulnerability/license work is assigned when specs require it or explicitly
-  marked not applicable from specs
+- release, rollback, runbook, dependency, SBOM/provenance, vulnerability/license
+  work is assigned or marked N/A from specs
 
 Run `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.

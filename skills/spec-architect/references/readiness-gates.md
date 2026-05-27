@@ -8,6 +8,8 @@ with evidence.
 - No ticket may decide product behavior, interfaces, errors, security/privacy,
   data lifecycle, async behavior, migrations, performance, observability,
   recovery, tests, or acceptance.
+- Machine-checked spec prose is English (`language: en`) unless the checker is
+  replaced with language-aware structured validation.
 - Replace vague text such as `as appropriate`, `if needed`, `handle errors`,
   `support auth`, `recover gracefully`, `log appropriately`, `securely`,
   `performant`, `TBD`, and `TODO` with exact conditions and outcomes.
@@ -15,28 +17,33 @@ with evidence.
 - Self-audit must list weakest assumptions, inferred defaults, evidence, and
   blockers. Do not approve on confidence without evidence.
 
-## Requirements, Structure, Visualization
+## Validation Layers
+
+Deterministic checks validate files, links, gate statuses, markers, obvious
+ambiguity, and English smoke phrases. They do not prove semantic completeness.
+
+Semantic judge review is required before approval. Record verdict, evidence,
+gaps, uncertainty, and ambiguous implementation risk. Failed/missing judge
+blocks approval.
+
+## Requirements And Structure
 
 Requirements, flows, contracts, and NFRs are necessary, singular, feasible,
 implementation-independent, unambiguous, consistent, verifiable, traceable.
-Use stable IDs, source/rationale, owner, priority/risk when relevant,
-verification method (`test`, `inspection`, `analysis`, `demo`), and links from
-business outcome to acceptance evidence. Mark N/A with evidence.
+Use stable IDs, source/rationale, owner, priority/risk, verification method
+(`test`, `inspection`, `analysis`, `demo`), and links from business outcome to
+acceptance evidence. Mark N/A with evidence.
 
-Structure specs business-to-technical: outcome/rationale, scope,
-components/services/packages, workflows, interfaces/data, frontend UX,
-operations, verification. Shared facts live once and are linked. Use Mermaid
-only when it improves architecture, workflow, sequence, state, dependency,
-data-flow, or migration clarity; diagrams stay aligned with text.
+Structure specs business-to-technical: outcome/rationale, scope, components,
+workflows, interfaces/data, frontend UX, operations, verification. Shared facts
+live once. Mermaid is optional and must align with text.
 
 ## Standards First
 
-Default to standards for protocols, APIs, schemas, errors, logging,
-observability, auth, data formats, storage, frontend, runtime: OpenTelemetry,
-structured JSON logs, RFC 9457, OpenAPI/GraphQL/gRPC/protobuf, OAuth/OIDC/JWT,
-framework conventions. Custom protocols, log levels, envelopes, serialization,
-auth, architecture, or interface semantics need rationale, tooling impact,
-migration, and approval.
+Default to standards: OpenTelemetry, structured JSON logs, RFC 9457,
+OpenAPI/GraphQL/gRPC/protobuf, OAuth/OIDC/JWT, framework conventions.
+Custom protocols, log levels, envelopes, serialization, auth, architecture, or
+interface semantics need rationale, tooling impact, migration, and approval.
 
 ## Interfaces And Runtime Semantics
 
@@ -45,44 +52,39 @@ validation, errors, auth/policy, lifecycle, observability, tests, compatibility.
 
 Cross-language/protocol specs map source/wire/target types, required/optional,
 defaulted, `null`, `undefined`, omitted, zero/empty, enum unknowns, precision,
-time zones, IDs, encoding, ordering, pagination, partial data, errors,
-deprecation.
+time zones, IDs, encoding, ordering, pagination, partial data, errors.
 
 Async specs define runtime model, ordering, concurrency, cancellation, timeout,
-retry budget, idempotency, ack/commit, lease/heartbeat, backpressure, DLQ/manual
-escalation, transactions, locks, worker behavior.
+retry budget, idempotency, ack/commit, lease/heartbeat, backpressure, DLQ,
+transactions, locks, worker behavior.
 
 ## Paths, Integrity, And Recovery
 
-Each workflow defines success plus validation/auth failure, missing resource,
-dependency failure, timeout, cancellation, retry exhaustion, duplicate replay,
-partial write, rollback/compensation, cleanup, recovery, manual intervention,
-final state. No path may leave data, jobs, locks, caches, sessions, or side
-effects undefined.
+Each workflow defines success, failure, timeout, cancellation, retry exhaustion,
+duplicate replay, partial write, rollback/compensation, cleanup, recovery,
+manual intervention, final state. No data, jobs, locks, caches, sessions, or
+side effects may be undefined.
 
 ## Security, Privacy, Observability, Performance
 
-Define trust boundaries, data classification, authn/authz, tenancy/isolation,
-validation, output encoding, secrets, retention, redaction, audit events, safe
-defaults, log levels, event names/fields, correlation IDs, metrics, traces, and
-leak prevention.
+Define trust boundaries, data classification, authn/authz, isolation,
+validation, encoding, secrets, retention, redaction, audit/log fields,
+correlation IDs, metrics, traces, leak prevention.
 
-Define budgets/overload behavior for latency, throughput, memory/CPU,
-concurrency, pagination/batching, cache/index use, rate limits, timeouts,
-retries/backoff, backpressure, health checks, degraded mode, bounded healing,
-checkpoints, alerts, escalation.
+Define budgets/overload for latency, throughput, memory/CPU, concurrency,
+pagination/batching, cache/index use, rate limits, timeouts, retries/backoff,
+backpressure, health checks, degraded mode, bounded healing, alerts.
 
 ## Production, Release, And Supply Chain
 
-Define production: environments, deployment topology, config/secrets,
-readiness/liveness, SLO/SLA/error budgets, runbooks, owner, support handoff,
-incident response, backup/restore, disaster recovery, decommissioning.
+Define production: environments, topology, config/secrets, readiness/liveness,
+SLO/SLA/error budgets, runbooks, owner, support handoff, incident response,
+backup/restore, disaster recovery, decommissioning.
 
-Define release/supply chain: CI gates, build/test/package, feature flags,
-rollout/canary/blue-green, rollback, compatibility, migration ordering,
-versioning, artifact promotion, dependency policy, lockfiles,
-vulnerability/license handling, SBOM, provenance, signing/attestation,
-container/base-image policy, secret scanning. Prefer SPDX/CycloneDX and SLSA.
+Define release/supply chain: CI, build/package, feature flags, rollout,
+rollback, compatibility, migration ordering, versioning, artifacts, dependency
+policy, lockfiles, vulnerability/license handling, SBOM, provenance,
+signing/attestation, containers, secret scanning. Prefer SPDX/CycloneDX/SLSA.
 
 ## Wave, Migration, And Rationale
 
