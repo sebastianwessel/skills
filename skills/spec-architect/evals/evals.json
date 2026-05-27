@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Create implementation-ready specs for an enterprise runtime with adapters, queues, policy, observability, sandboxed tools, and user-facing workflows.",
-      "expected_output": "Creates business-to-technical layered specs with shared sources of truth, contracts, flows, UX/frontend behavior, NFRs, diagrams only where useful, readiness report, and planning evidence.",
+      "expected_output": "Creates business-to-technical specs with shared sources of truth, standards-first protocols/formats, contracts, flows, UX/frontend behavior, NFRs, useful diagrams, readiness report, and planning evidence.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "Review specs for enterprise gaps, repetition, unclear structure, and happy-path-only behavior.",
-      "expected_output": "Finds missing structure, source-of-truth links, unhappy paths, timeouts, retries, cleanup, recovery, security/privacy, observability, performance, tests, and readiness gaps.",
+      "prompt": "Review specs for enterprise gaps, custom protocols/log levels, repetition, unclear structure, and happy-path-only behavior.",
+      "expected_output": "Finds missing standards-first choices, custom-design rationale, source-of-truth links, unhappy paths, recovery, security/privacy, observability, performance, tests, and readiness gaps.",
       "files": []
     }
   ]

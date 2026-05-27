@@ -19,7 +19,7 @@ Approved specs require:
 - `status: approved`, `human_approval.status: approved`, `open_decisions: []`
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
   `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
-  `async_semantics_gate`, `interface_gate`, `e2e_gate`,
+  `standards_first_gate`, `async_semantics_gate`, `interface_gate`, `e2e_gate`,
   `unhappy_path_gate`, `security_privacy_gate`,
   `observability_gate`, `performance_resilience_gate`,
   `data_integrity_recovery_gate`, `wave_readiness`, `migration_gate`,
@@ -29,11 +29,13 @@ Approved specs require:
 
 ## Inference Policy
 
-Infer only safe language/toolchain conventions, local-first adapters, standard
-validation/test libraries, ports-and-adapters, OpenTelemetry, and RFC 9457 HTTP
-errors. Block for scope, compliance/privacy, security boundaries, data
-classification, retention, public semantics, irreversible architecture, trust
-boundaries, or contradictions.
+Infer safe defaults only from language/toolchain conventions and standards:
+framework-native patterns, ports-and-adapters, OpenTelemetry, structured JSON
+logging, RFC 9457 HTTP errors, suitable OpenAPI/GraphQL/gRPC/protobuf,
+standard validation/test libraries, and local-first adapters. Block for custom
+protocols/formats, scope, compliance/privacy, security boundaries, data
+classification, public semantics, irreversible architecture, trust boundaries,
+or contradictions.
 
 ## Standard Failures
 

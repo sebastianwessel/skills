@@ -19,6 +19,8 @@ migration, performance, recovery, observability, or verification decisions.
   architecture, public semantics, contradictions, or unsafe inference.
 - Specs are precise, concise, non-contradictory, and language agnostic unless a
   language/runtime/protocol choice is part of the contract.
+- Prefer industry-standard protocols, formats, interfaces, architecture, and
+  observability conventions. Custom designs need rationale and approval.
 - Specs define behavior, contracts, rationale, and migration needs, not code.
 - Specs flow from business/user outcome to components, workflows, interfaces,
   UX, and technical constraints. Centralize shared facts and link to them.
@@ -34,16 +36,17 @@ migration, performance, recovery, observability, or verification decisions.
    shared sources of truth, frontend/UX coverage, and visualization rules.
 3. Update layered specs and active-wave end-to-end paths, including unhappy
    paths and recovery paths.
-4. Freeze every service/client/storage/event/job/adapter/CLI/config/policy/tool
+4. Select standards-first protocols, formats, interfaces, and architecture.
+5. Freeze every service/client/storage/event/job/adapter/CLI/config/policy/tool
    interface, including type/nullability and protocol semantics.
-5. Define security/privacy, data classification, log levels/redaction,
+6. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
-6. Mark async/concurrency/runtime semantics explicitly.
-7. Add migration plans under `plans/migrations/` when implemented behavior
+7. Mark async/concurrency/runtime semantics explicitly.
+8. Add migration plans under `plans/migrations/` when implemented behavior
    changes materially.
-8. Run references and `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-9. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
-10. Record self-audit evidence in `.readiness-report.yaml`.
+9. Run references and `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
+10. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
+11. Record self-audit evidence in `.readiness-report.yaml`.
 
 ## Reference Map
 
@@ -65,4 +68,4 @@ migration, performance, recovery, observability, or verification decisions.
 Do not approve if an implementation ticket would need to decide behavior,
 reconcile contradictions, interpret vague wording, align incompatible type
 systems, define async behavior, or invent security, performance, recovery,
-logging, data-protection, migration, or verification details.
+logging, protocols, data-protection, migration, or verification details.

@@ -26,6 +26,19 @@ Use Mermaid only when useful for architecture, workflow, sequence, state,
 dependency, data-flow, or migration clarity. Diagrams must be kept aligned with
 authoritative text and never replace exact contracts or acceptance criteria.
 
+## Standards First
+
+Default to industry standards for protocols, APIs, schemas, errors, logging,
+observability, auth, data formats, storage, frontend, and runtime patterns.
+
+Examples include structured JSON logs with standard severity, OpenTelemetry,
+RFC 9457 HTTP problem details, OpenAPI/GraphQL/gRPC/protobuf where suitable,
+OAuth/OIDC/JWT where applicable, and framework-native component conventions.
+
+Custom protocols, log levels, error envelopes, serialization, auth,
+architecture, or interface semantics need rationale, tooling impact, migration,
+and human approval.
+
 ## Interfaces And Runtime Semantics
 
 Every boundary defines owner, audience, stability, version, inputs, outputs,
