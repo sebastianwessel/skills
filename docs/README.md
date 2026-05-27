@@ -6,6 +6,7 @@ Human-facing documentation for the skills in this repository.
 
 - [spec-implementation-planner](skills/spec-implementation-planner.md)
 - [spec-architect](skills/spec-architect.md)
+- [spec-ticket-implementation](skills/spec-ticket-implementation.md)
 
 ## Pattern
 

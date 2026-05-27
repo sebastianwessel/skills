@@ -1,0 +1,23 @@
+{
+  "skill_name": "spec-ticket-implementation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement an approved AFK ticket with scoped write_scope and acceptance tests.",
+      "expected_output": "Runs preflight, edits only write_scope, implements approved behavior, verifies acceptance, and records changed files.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Implement a ticket whose acceptance requires an undefined API field.",
+      "expected_output": "Stops and writes a blocker/spec gap instead of inventing the field.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Implement a ticket that needs a file outside write_scope.",
+      "expected_output": "Stops, reports the out-of-scope file requirement, and does not expand scope.",
+      "files": []
+    }
+  ]
+}
