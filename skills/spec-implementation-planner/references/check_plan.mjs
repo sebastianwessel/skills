@@ -56,6 +56,7 @@ const overlap = (a, b) => {
 
 const plan = read(path.join(plans, "implementation-plan.md"));
 const statusText = read(path.join(plans, "_status.yaml"));
+const depsText = read(path.join(plans, "_dependencies.yaml"));
 const specReady = read(path.join(specs, ".readiness-report.yaml"));
 if (!plan && !exists(path.join(plans, "definition-readiness-report.md"))) fail("plans/: missing implementation plan or readiness report");
 if (plan && !/^status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: requires status approved`);
@@ -68,6 +69,28 @@ if (plan && !/\b(weakest assumptions|assumptions|blockers|evidence)\b/i.test(pla
 
 const tickets = new Map();
 const groups = new Map();
+const depBlocks = new Map();
+
+if (depsText) {
+  let current;
+  let lines = [];
+  const flush = () => {
+    if (current) depBlocks.set(current, lines.join("\n"));
+  };
+  for (const line of depsText.split("\n")) {
+    const match = line.match(/^\s{2}(TICKET-\d+):\s*$/);
+    if (match) {
+      flush();
+      current = match[1];
+      lines = [];
+    } else if (current) {
+      lines.push(line.replace(/^ {4}/, ""));
+    }
+  }
+  flush();
+}
+
+const same = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
 for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${path.sep}tickets${path.sep}`))) {
   const rel = path.relative(plans, file);
   const text = read(file);
@@ -100,13 +123,19 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   const group = scalar(front, "parallel_group");
   const scopes = list(front, "write_scope");
   if (group) groups.set(group, [...(groups.get(group) || []), { rel, scopes }]);
-  if (id) tickets.set(id, { rel, deps: list(front, "depends_on"), wave: Number(scalar(front, "wave")) || 0 });
+  if (id) tickets.set(id, {
+    rel,
+    blocked: list(front, "blocked_by"),
+    deps: list(front, "depends_on"),
+    wave: Number(scalar(front, "wave")) || 0,
+  });
 }
 
 for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).filter((e) => e.isDirectory() && /^wave_\d+_/.test(e.name)) : []) {
   const wavePlan = read(path.join(plans, d.name, "plan.md"));
   if (!wavePlan) fail(`${d.name}: missing plan.md`);
   if (wavePlan && !/End-to-End Outcome/i.test(wavePlan)) fail(`${d.name}/plan.md: missing End-to-End Outcome`);
+  if (wavePlan && !/Implementation Order/i.test(wavePlan)) fail(`${d.name}/plan.md: missing Implementation Order`);
   if (wavePlan && !/Parallelization|Parallel Work|Isolation/i.test(wavePlan)) fail(`${d.name}/plan.md: missing parallelization/isolation notes`);
   if (wavePlan && !/Resume|Pause|Status/i.test(wavePlan)) fail(`${d.name}/plan.md: missing pause/resume status notes`);
   if (!exists(path.join(plans, d.name, "tickets"))) fail(`${d.name}: missing tickets/`);
@@ -114,6 +143,19 @@ for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).f
 for (const [id, t] of tickets) for (const dep of t.deps) {
   if (!tickets.has(dep)) fail(`${t.rel}: missing dependency ${dep}`);
   if (tickets.get(dep)?.wave > t.wave) fail(`${t.rel}: depends on later-wave ${dep}`);
+}
+for (const [id, t] of tickets) {
+  const depBlock = depBlocks.get(id);
+  if (!depBlock) fail(`_dependencies.yaml: missing ${id}`);
+  if (depBlock) {
+    if (!same(list(depBlock, "depends_on").sort(), t.deps.slice().sort())) fail(`_dependencies.yaml: ${id}.depends_on differs from ticket`);
+    if (!same(list(depBlock, "blocked_by").sort(), t.blocked.slice().sort())) fail(`_dependencies.yaml: ${id}.blocked_by differs from ticket`);
+  }
+  for (const dep of t.deps) {
+    const depBlockForDependency = depBlocks.get(dep) || "";
+    if (!list(depBlockForDependency, "unblocks").includes(id)) fail(`_dependencies.yaml: ${dep}.unblocks missing ${id}`);
+  }
+  for (const blockedBy of t.blocked) if (!tickets.has(blockedBy)) fail(`${t.rel}: references missing blocker ${blockedBy}`);
 }
 for (const [g, xs] of groups) for (let i = 0; i < xs.length; i++) for (const y of xs.slice(i + 1)) {
   if (xs[i].scopes.some((a) => y.scopes.some((b) => overlap(a, b)))) fail(`${g}: ${xs[i].rel} overlaps ${y.rel}`);

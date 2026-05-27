@@ -36,6 +36,12 @@
       "prompt": "Review an implementation plan with no self-audit.",
       "expected_output": "Rejects readiness until Self-Audit records weakest assumptions, evidence, fake-work risk, parallel-boundary risk, and blockers or none.",
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Review a plan whose tickets have depends_on entries but _dependencies.yaml has no matching unblocks links or implementation order.",
+      "expected_output": "Rejects the plan until each wave defines implementation order and dependency tickets list matching unblocks relationships.",
+      "files": []
     }
   ]
 }

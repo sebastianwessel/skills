@@ -19,6 +19,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
 - Splits implementation work into dependency-ordered waves that each end in a
   working end-to-end increment for that wave's scope.
+- Records implementation order plus `depends_on`, `blocked_by`, and `unblocks`
+  relationships so agents know which tickets can start, which are blocked, and
+  what becomes available when a ticket is done.
 - Starts with shared contract/interface foundation work when parallel agents
   need stable boundaries, then isolates backend, frontend, adapter, docs, and
   test tickets against those contracts.
@@ -44,7 +47,7 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 4. Group work into waves with end-to-end outcomes and isolation notes.
 5. Write implementation-ready tickets with compact context digests.
 6. Record a plan-level self-audit.
-7. Verify registry, dependencies, scope, status, and ticket readiness.
+7. Verify registry, dependencies, unblocks links, scope, status, and ticket readiness.
 8. Run plan and wave checker scripts.
 
 ## Output Files

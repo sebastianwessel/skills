@@ -19,7 +19,7 @@ own subdirectory under `skills/` and follows Anthropic's
 | Skill | Description | Human docs |
 | --- | --- | --- |
 | [spec-architect](skills/spec-architect/SKILL.md) | Use when specs need creation, review, repair, or approval before autonomous or parallel AI implementation without ambiguity, invention, interface mismatch, drift, or gaps. | [docs](docs/skills/spec-architect.md) |
-| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Use when approved specs need end-to-end waves, AFK tickets, parallel-agent plans, isolated work scopes, status tracking, or plan readiness checks. | [docs](docs/skills/spec-implementation-planner.md) |
+| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Use when approved specs need end-to-end waves, AFK tickets, parallel-agent plans, dependencies, status tracking, or readiness checks. | [docs](docs/skills/spec-implementation-planner.md) |
 <!-- skills-index:end -->
 
 ## Installation

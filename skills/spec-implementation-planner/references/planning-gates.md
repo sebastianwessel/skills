@@ -32,6 +32,9 @@ or pre-write implementation.
 - ticket readiness: ready contracts, no missing contracts, no open decisions
 - every spec/capability/flow/NFR maps to ticket or explicit deferral
 - dependencies acyclic; same-wave write scopes disjoint
+- each wave has `Implementation Order`; `_dependencies.yaml` mirrors every
+  ticket's `depends_on` and `blocked_by`, and dependency tickets list matching
+  `unblocks`
 - no ticket asks agents to read all specs, ask users, or decide behavior
 - no placeholder, fake, mock, stub, or no-op implementation unless explicitly a
   test fixture/fake provider from specs

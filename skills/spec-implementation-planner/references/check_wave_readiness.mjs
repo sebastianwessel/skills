@@ -20,6 +20,7 @@ if (!wave) out.push("missing wave id argument");
 const plan = wave ? read(path.join(plans, wave, "plan.md")) : "";
 if (wave && !plan) out.push(`${wave}: missing plan.md`);
 if (plan && !/End-to-End Outcome/i.test(plan)) out.push(`${wave}/plan.md: missing End-to-End Outcome`);
+if (plan && !/Implementation Order/i.test(plan)) out.push(`${wave}/plan.md: missing Implementation Order`);
 if (plan && !/Parallelization|Parallel Work|Isolation/i.test(plan)) out.push(`${wave}/plan.md: missing parallelization/isolation notes`);
 if (plan && !/Resume|Pause|Status/i.test(plan)) out.push(`${wave}/plan.md: missing pause/resume status notes`);
 
