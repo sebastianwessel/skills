@@ -56,7 +56,8 @@ self-contained capability packages, not as application code.
   available.
 - Spec-driven workflow skills must preserve enterprise reliability guarantees:
   unhappy paths, security/privacy, data classification, log redaction, data
-  integrity, recovery, performance budgets, and no-leak/no-data-loss behavior
+  integrity, recovery, performance budgets, production readiness,
+  release/rollback, supply-chain integrity, and no-leak/no-data-loss behavior
   must be specified, planned, implemented, or reviewed explicitly.
 - Do not commit secrets, credentials, private data exports, local model caches,
   or generated archives.

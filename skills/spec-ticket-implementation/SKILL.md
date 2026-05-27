@@ -20,6 +20,8 @@ Before editing, load `references/pre-implementation-checks.md` and confirm:
 - `spec_refs`, `read_scope`, `write_scope`, acceptance criteria, interfaces,
   error/logging/security/performance/recovery expectations, and happy/unhappy
   paths are mapped
+- source requirement IDs, production/release, and supply-chain expectations are
+  mapped or explicitly not applicable in the ticket/specs
 - only scoped specs/context are needed
 
 If dependencies are missing, stop. If baseline failures are outside scope,
@@ -38,6 +40,9 @@ Stop and write a blocker when:
   inconsistent
 - security/privacy, log-level/redaction, performance, data-integrity, rollback,
   recovery, or manual-intervention semantics are missing
+- requirement traceability, production readiness, release/rollback, dependency,
+  SBOM/provenance, or vulnerability/license expectations are missing when in
+  scope
 - a mock, fake, stub, placeholder, or test-only production path would be needed
   without explicit ticket/spec approval
 - ticket asks the implementer to decide, infer, fill gaps, use judgment, ask
@@ -51,6 +56,8 @@ Stop and write a blocker when:
 - Cover happy paths, unhappy paths, async/error paths, and required logging.
 - Preserve defined state transitions, rollback/compensation, recovery,
   idempotency, and no-data-loss/no-leak guarantees.
+- Preserve release, configuration, runbook, dependency, SBOM/provenance,
+  artifact, and vulnerability/license behavior when in scope.
 - Use precise types, documented public APIs/enums/constants, centralized
   constants, and unit-bearing names such as `timeout_in_ms`.
 - Keep default verification hermetic; external integrations stay opt-in.

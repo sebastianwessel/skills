@@ -36,6 +36,12 @@
       "prompt": "Implement a ticket whose specs do not define redaction, log levels, rollback, recovery, or performance budgets for failure paths.",
       "expected_output": "Stops with a spec gap instead of inventing logging, data-protection, recovery, or performance behavior.",
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Implement a release ticket that omits source requirement IDs, rollback behavior, dependency policy, and SBOM/provenance expectations.",
+      "expected_output": "Stops with a spec/plan gap instead of inventing traceability, release, or supply-chain behavior.",
+      "files": []
     }
   ]
 }

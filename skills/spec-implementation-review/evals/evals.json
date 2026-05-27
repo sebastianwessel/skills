@@ -30,6 +30,12 @@
       "prompt": "Review a wave where failure recovery retries forever, logs restricted payloads at info level, and can leave a partially written record.",
       "expected_output": "Creates blocking security/privacy, robustness, and data-integrity findings with evidence, owner tickets, fix boundaries, and required verification.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Review a wave that passes functional tests but lacks requirement traceability, rollback evidence, runbook handoff, dependency policy, and SBOM/provenance artifacts required by specs.",
+      "expected_output": "Creates blocking traceability, production/release, and supply-chain findings with owner tickets, evidence, fix boundaries, and required verification.",
+      "files": []
     }
   ]
 }

@@ -10,6 +10,8 @@
 - `04-frontend/` or equivalent UX/design specs when user-facing UI exists
 - `04-nfr/`: security/privacy, data integrity/recovery,
   performance/resilience, observability/logging, test strategy
+- `04-operations/` for production readiness when software is deployable
+- `04-delivery/` for release/supply-chain when artifacts are distributed
 - `plans/migrations/*.md` for material changes to implemented behavior
 
 ## Readiness Report
@@ -19,30 +21,31 @@ Approved specs require:
 - `status: approved`, `human_approval.status: approved`, `open_decisions: []`
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
   `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
-  `standards_first_gate`, `async_semantics_gate`, `interface_gate`, `e2e_gate`,
+  `requirements_quality_gate`, `standards_first_gate`,
+  `async_semantics_gate`, `interface_gate`, `e2e_gate`,
   `unhappy_path_gate`, `security_privacy_gate`,
   `observability_gate`, `performance_resilience_gate`,
-  `data_integrity_recovery_gate`, `wave_readiness`, `migration_gate`,
+  `data_integrity_recovery_gate`, `production_readiness_gate`,
+  `supply_chain_gate`, `wave_readiness`, `migration_gate`,
   `contradiction_check`, `self_audit_gate`, `gate_simulation`
-- deterministic command/status, inferred defaults, risks, wave evidence,
-  migration links when applicable, and self-audit findings
+- deterministic status, traceability, inferred defaults, risks, wave evidence,
+  production/release/supply-chain disposition, migration links, self-audit
 
 ## Inference Policy
 
-Infer safe defaults only from language/toolchain conventions and standards:
-framework-native patterns, ports-and-adapters, OpenTelemetry, structured JSON
-logging, RFC 9457 HTTP errors, suitable OpenAPI/GraphQL/gRPC/protobuf,
-standard validation/test libraries, and local-first adapters. Block for custom
+Infer only toolchain/standard defaults: framework-native, ports-and-adapters,
+OpenTelemetry, structured JSON logs, RFC 9457, suitable
+OpenAPI/GraphQL/gRPC/protobuf, standard validation/tests, SPDX/CycloneDX for
+SBOMs, SLSA for provenance, local-first adapters. Block for custom
 protocols/formats, scope, compliance/privacy, security boundaries, data
-classification, public semantics, irreversible architecture, trust boundaries,
-or contradictions.
+classification, public semantics, production/release, supply-chain policy,
+irreversible architecture, trust boundaries, contradictions.
 
 ## Standard Failures
 
-Validation/auth failures have no side effects. Timeouts retry within bounded
-budgets then escalate. Unknown errors are terminal unless explicitly retryable.
-Dependency unavailability retries with backoff. Cancellation cleans up and marks
-cancelled. Lease expiry requeues only if side effects are safe. Non-idempotent
-uncertainty requires manual intervention. Always define ack timing, state
-transition, rollback/compensation, recovery checkpoint, telemetry, log level,
-redaction, and manual-intervention record.
+Validation/auth failures have no side effects. Timeouts retry within budget then
+escalate. Unknown errors are terminal unless retryable. Dependency outages use
+backoff. Cancellation cleans up and marks cancelled. Lease expiry requeues only
+when side effects are safe. Non-idempotent uncertainty needs manual
+intervention. Define ack timing, state transition, rollback/compensation,
+checkpoint, telemetry, log level, redaction, and intervention record.

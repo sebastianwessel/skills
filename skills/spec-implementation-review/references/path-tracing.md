@@ -17,7 +17,7 @@ For each entry point or workflow, record:
 - Safety: data classification, redaction, state transition, rollback,
   recovery, performance budget, and final state.
 - Tests: unit, contract, integration, end-to-end, and failure-path evidence.
-- Specs: exact `spec_refs` that define the path.
+- Specs: exact `spec_refs` and source requirement IDs that define the path.
 
 ## Required Paths
 
@@ -35,6 +35,10 @@ Check these when relevant:
 - serialization/deserialization mismatch across languages or protocols
 - observability path: logs, metrics, audit, tracing, redaction
 - overload/performance budget breach and degraded/recovery behavior
+- production/release path: deploy, config/secrets, readiness, rollback,
+  migration ordering, runbook handoff, and artifact promotion
+- supply-chain path: dependency policy, lockfile, SBOM/provenance,
+  vulnerability/license handling, signing/attestation, and secret scanning
 
 ## Review Rule
 

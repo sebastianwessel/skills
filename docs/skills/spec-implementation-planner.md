@@ -28,6 +28,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.
+- Preserves source requirement IDs and maps production readiness,
+  release/rollback, operations, dependency, SBOM/provenance, vulnerability, and
+  license responsibilities into tickets or explicit not-applicable dispositions.
 - Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
 - Blocks tickets that would require agents to invent behavior, choose interfaces, or resolve missing specs.
 - Rejects placeholder, mock, fake, stub, or no-op implementation shortcuts unless the specs explicitly require test fixtures or fake providers.
@@ -38,7 +41,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
+The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, requirement and contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
 
 When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-architect`.
 

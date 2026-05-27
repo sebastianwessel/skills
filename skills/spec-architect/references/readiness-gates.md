@@ -15,68 +15,74 @@ with evidence.
 - Self-audit must list weakest assumptions, inferred defaults, evidence, and
   blockers. Do not approve on confidence without evidence.
 
-## Structure, Reuse, And Visualization
+## Requirements, Structure, Visualization
 
-Use a business-to-technical structure: outcome and rationale first, then scope,
+Requirements, flows, contracts, and NFRs are necessary, singular, feasible,
+implementation-independent, unambiguous, consistent, verifiable, traceable.
+Use stable IDs, source/rationale, owner, priority/risk when relevant,
+verification method (`test`, `inspection`, `analysis`, `demo`), and links from
+business outcome to acceptance evidence. Mark N/A with evidence.
+
+Structure specs business-to-technical: outcome/rationale, scope,
 components/services/packages, workflows, interfaces/data, frontend UX,
-operational constraints, and verification. Shared facts live once and are
-linked, not copied.
-
-Use Mermaid only when useful for architecture, workflow, sequence, state,
-dependency, data-flow, or migration clarity. Diagrams must be kept aligned with
-authoritative text and never replace exact contracts or acceptance criteria.
+operations, verification. Shared facts live once and are linked. Use Mermaid
+only when it improves architecture, workflow, sequence, state, dependency,
+data-flow, or migration clarity; diagrams stay aligned with text.
 
 ## Standards First
 
-Default to industry standards for protocols, APIs, schemas, errors, logging,
-observability, auth, data formats, storage, frontend, and runtime patterns.
-
-Examples include structured JSON logs with standard severity, OpenTelemetry,
-RFC 9457 HTTP problem details, OpenAPI/GraphQL/gRPC/protobuf where suitable,
-OAuth/OIDC/JWT where applicable, and framework-native component conventions.
-
-Custom protocols, log levels, error envelopes, serialization, auth,
-architecture, or interface semantics need rationale, tooling impact, migration,
-and human approval.
+Default to standards for protocols, APIs, schemas, errors, logging,
+observability, auth, data formats, storage, frontend, runtime: OpenTelemetry,
+structured JSON logs, RFC 9457, OpenAPI/GraphQL/gRPC/protobuf, OAuth/OIDC/JWT,
+framework conventions. Custom protocols, log levels, envelopes, serialization,
+auth, architecture, or interface semantics need rationale, tooling impact,
+migration, and approval.
 
 ## Interfaces And Runtime Semantics
 
-Every boundary defines owner, audience, stability, version, inputs, outputs,
+Each boundary defines owner, audience, stability, version, inputs, outputs,
 validation, errors, auth/policy, lifecycle, observability, tests, compatibility.
 
-Cross-language/protocol specs include semantic mapping for source/wire/target
-types, required/optional/defaulted fields, `null`, `undefined`, omitted,
-zero/empty values, enum unknowns, precision, time zones, IDs, encoding,
-ordering, pagination, partial data, errors, and deprecation.
+Cross-language/protocol specs map source/wire/target types, required/optional,
+defaulted, `null`, `undefined`, omitted, zero/empty, enum unknowns, precision,
+time zones, IDs, encoding, ordering, pagination, partial data, errors,
+deprecation.
 
 Async specs define runtime model, ordering, concurrency, cancellation, timeout,
-retry budget, idempotency key, ack/commit boundary, lease/heartbeat,
-backpressure, DLQ/manual escalation, transactions, locks, and worker behavior.
+retry budget, idempotency, ack/commit, lease/heartbeat, backpressure, DLQ/manual
+escalation, transactions, locks, worker behavior.
 
 ## Paths, Integrity, And Recovery
 
-Each workflow defines success plus relevant validation/auth failure, missing
-resource, dependency failure, timeout, cancellation, retry exhaustion,
-duplicate/idempotent replay, partial write, rollback/compensation, cleanup,
-recovery, manual intervention, and final state.
-
-No path may leave data, jobs, locks, caches, sessions, or external side effects
-undefined. Define terminal states, compensating actions, retry limits, owner,
-and verification.
+Each workflow defines success plus validation/auth failure, missing resource,
+dependency failure, timeout, cancellation, retry exhaustion, duplicate replay,
+partial write, rollback/compensation, cleanup, recovery, manual intervention,
+final state. No path may leave data, jobs, locks, caches, sessions, or side
+effects undefined.
 
 ## Security, Privacy, Observability, Performance
 
-Define trust boundaries and data classification for public, internal,
-confidential, restricted, PII, secrets, and credentials where applicable.
+Define trust boundaries, data classification, authn/authz, tenancy/isolation,
+validation, output encoding, secrets, retention, redaction, audit events, safe
+defaults, log levels, event names/fields, correlation IDs, metrics, traces, and
+leak prevention.
 
-Define authn/authz, tenancy/isolation, input validation, output encoding, secret
-handling, retention, redaction, audit events, safe defaults, log levels, event
-names, fields, correlation IDs, metrics, traces, and leak-prevention rules.
-
-Define budgets and overload behavior for latency, throughput, memory/CPU,
+Define budgets/overload behavior for latency, throughput, memory/CPU,
 concurrency, pagination/batching, cache/index use, rate limits, timeouts,
-retries/backoff, backpressure, health checks, degraded mode, bounded
-self-healing, checkpoints, alerts, and escalation.
+retries/backoff, backpressure, health checks, degraded mode, bounded healing,
+checkpoints, alerts, escalation.
+
+## Production, Release, And Supply Chain
+
+Define production: environments, deployment topology, config/secrets,
+readiness/liveness, SLO/SLA/error budgets, runbooks, owner, support handoff,
+incident response, backup/restore, disaster recovery, decommissioning.
+
+Define release/supply chain: CI gates, build/test/package, feature flags,
+rollout/canary/blue-green, rollback, compatibility, migration ordering,
+versioning, artifact promotion, dependency policy, lockfiles,
+vulnerability/license handling, SBOM, provenance, signing/attestation,
+container/base-image policy, secret scanning. Prefer SPDX/CycloneDX and SLSA.
 
 ## Wave, Migration, And Rationale
 

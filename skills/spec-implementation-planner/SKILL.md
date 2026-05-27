@@ -28,13 +28,15 @@ If blocked, write a spec gap/readiness note. Do not create executable tickets.
 5. Keep parallel tickets isolated: disjoint writes, frozen contracts, no shared
    generated outputs.
 6. Map happy/unhappy paths plus security, privacy, observability, performance,
-   data-integrity, and recovery specs into ticket acceptance and verification.
+   data-integrity, recovery, production/release, and supply-chain specs into
+   ticket acceptance and verification.
 7. Track status and resume state: planned, in_progress, partial, blocked, done,
    skipped.
 8. Maintain wave `Implementation Order` plus `depends_on`, `blocked_by`, and
    `unblocks`.
 9. Self-audit wave boundaries, path coverage, NFR ownership, parallel
-   assumptions, ticket clarity, fake-work risk, and blockers.
+   assumptions, ticket clarity, release/supply-chain ownership, fake-work risk,
+   and blockers.
 10. Run `references/planning-gates.md`, then
     `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
 
@@ -42,13 +44,15 @@ If blocked, write a spec gap/readiness note. Do not create executable tickets.
 
 Tickets require exact refs/scopes/dependencies/status, ready contracts,
 implementation-ready ticket state, empty decisions, decision ledger, contract
-traceability, acceptance matrix, and hermetic verification. Keep tickets crisp:
-enough context to prevent drift, no pasted specs, no implementation prose.
+and requirement traceability, acceptance matrix, and hermetic verification. Keep
+tickets crisp: enough context to prevent drift, no pasted specs, no
+implementation prose.
 
 Return to `spec-architect` when behavior, interface shape, persistence, errors,
 security/privacy, logging/redaction, performance budgets, data integrity,
-recovery/self-healing, unhappy paths, async semantics, migration, or test
-strategy is missing.
+recovery/self-healing, unhappy paths, async semantics, production readiness,
+release/rollback, supply-chain integrity, migration, or test strategy is
+missing.
 
 ## Plan Evolution
 

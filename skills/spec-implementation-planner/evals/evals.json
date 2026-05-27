@@ -4,49 +4,55 @@
     {
       "id": 1,
       "prompt": "Plan from specs missing schemas and flows.",
-      "expected_output": "Blocks with spec gaps; no executable tickets.",
+      "expected_output": "Blocks with spec gaps; no tickets.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "Create parallel tickets from approved specs.",
-      "expected_output": "Creates waves, indexes, scoped AFK tickets, acceptance, and verification.",
+      "expected_output": "Creates waves, indexes, scoped tickets, acceptance, verification.",
       "files": []
     },
     {
       "id": 3,
       "prompt": "Review a ticket asking agents to decide schema, retry, and tests.",
-      "expected_output": "Rejects it as not implementation-ready and returns gaps to specs.",
+      "expected_output": "Rejects it and returns gaps to specs.",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "Plan a TypeScript interface foundation followed by parallel backend and frontend tickets.",
-      "expected_output": "Creates a contract-first wave with frozen interfaces, isolated write scopes, parallel backend/frontend tickets, and one end-to-end wave outcome.",
+      "prompt": "Plan interface foundation, then parallel backend and frontend tickets.",
+      "expected_output": "Creates a contract-first wave with frozen interfaces, isolated scopes, parallel tickets, and one end-to-end outcome.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "Review a plan with placeholder backend responses and no partial/done tracking.",
-      "expected_output": "Rejects placeholder implementations and requires pause/resume status tracking for planned, in-progress, partial, blocked, done, and skipped work.",
+      "prompt": "Review a plan with placeholder responses and no partial/done tracking.",
+      "expected_output": "Rejects placeholders and requires pause/resume status tracking.",
       "files": []
     },
     {
       "id": 6,
-      "prompt": "Review an implementation plan with no self-audit.",
-      "expected_output": "Rejects readiness until Self-Audit records weakest assumptions, evidence, fake-work risk, parallel-boundary risk, and blockers or none.",
+      "prompt": "Review a plan with no self-audit.",
+      "expected_output": "Rejects until Self-Audit records assumptions, evidence, risks, and blockers or none.",
       "files": []
     },
     {
       "id": 7,
-      "prompt": "Review a plan whose tickets have depends_on entries but _dependencies.yaml has no matching unblocks links or implementation order.",
-      "expected_output": "Rejects the plan until each wave defines implementation order and dependency tickets list matching unblocks relationships.",
+      "prompt": "Review depends_on entries without matching unblocks or implementation order.",
+      "expected_output": "Rejects until waves define order and dependencies mirror unblocks.",
       "files": []
     },
     {
       "id": 8,
-      "prompt": "Review a plan that has happy-path tickets only and no owner for security, logging redaction, performance budgets, rollback, or recovery verification.",
-      "expected_output": "Rejects the plan until operational path coverage and NFR ownership are mapped into tickets, acceptance criteria, and verification commands.",
+      "prompt": "Review happy-path-only tickets with no owner for security, redaction, budgets, rollback, or recovery.",
+      "expected_output": "Rejects until path coverage, traceability, and NFR ownership map to tickets and verification.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Review a service plan with no deployment, rollback, runbook, dependency, SBOM/provenance, or vulnerability/license ownership.",
+      "expected_output": "Rejects until production/release and supply-chain work is assigned or marked N/A from specs.",
       "files": []
     }
   ]

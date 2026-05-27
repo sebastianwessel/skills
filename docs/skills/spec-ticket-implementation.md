@@ -24,12 +24,15 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
 - Preserves data-integrity, rollback/recovery, no-data-loss, no-leak,
   performance-budget, log-level, and redaction guarantees from the specs.
+- Preserves requirement traceability plus production/release, configuration,
+  dependency, SBOM/provenance, vulnerability, and license expectations when in
+  scope.
 - Runs a ticket-level implementation-review-judge loop before marking work done.
 - Keeps default verification hermetic and separates opt-in external integration checks.
 
 ## How It Works
 
-The skill starts with preflight checks, maps approved interfaces and acceptance criteria to tests, implements one behavior at a time, then reviews its own work against the ticket. If the ticket requires invention, extra scope, unclear behavior, a missing contract, a fake implementation, or undefined security/recovery/performance behavior, it writes a blocker instead of coding.
+The skill starts with preflight checks, maps approved requirement IDs, interfaces, and acceptance criteria to tests, implements one behavior at a time, then reviews its own work against the ticket. If the ticket requires invention, extra scope, unclear behavior, a missing contract, a fake implementation, or undefined security/recovery/performance/release/supply-chain behavior, it writes a blocker instead of coding.
 
 ## Workflow
 

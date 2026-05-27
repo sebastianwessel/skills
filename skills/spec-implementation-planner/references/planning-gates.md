@@ -17,8 +17,9 @@ Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`, `depends_on`,
 `ticket_readiness`.
 
 Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
-`Contract Traceability`, `Tasks`, `Acceptance`, `Acceptance Test Matrix`,
-`Operational Path Coverage`, `Verification`, `Non-goals`, `Handoff`.
+`Requirements Traceability`, `Contract Traceability`, `Tasks`, `Acceptance`,
+`Acceptance Test Matrix`, `Operational Path Coverage`, `Verification`,
+`Non-goals`, `Handoff`.
 
 Tickets are crisp human/AI instructions: boundaries, expectations, acceptance,
 verification, no pasted specs, no implementation prose.
@@ -28,10 +29,11 @@ verification, no pasted specs, no implementation prose.
 - specs approved; otherwise return gaps to `spec-architect`
 - no Wave 0/spec-closure implementation wave
 - ready contracts, no missing contracts, no open decisions
-- every spec/capability/flow/NFR maps to ticket or explicit deferral
+- every requirement/spec/capability/flow/NFR maps to ticket or explicit
+  deferral with source requirement IDs preserved
 - happy, unhappy, recovery, security/privacy, observability/logging,
-  performance/resilience, and data-integrity requirements map to ticket
-  acceptance and verification
+  performance/resilience, data-integrity, production/release, and supply-chain
+  requirements map to ticket acceptance and verification
 - dependencies acyclic; same-wave write scopes disjoint
 - wave `Implementation Order`; `_dependencies.yaml` mirrors dependencies and
   each dependency lists matching `unblocks`
@@ -43,9 +45,13 @@ verification, no pasted specs, no implementation prose.
 - `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
   resume notes, and current proof
 - `implementation-plan.md` has `Self-Audit`: assumptions, readiness evidence,
-  path coverage, NFR ownership, fake-work risk, parallel risk, blockers or none
+  requirement coverage, path coverage, NFR/operations/supply-chain ownership,
+  fake-work risk, parallel risk, blockers or none
 - public surfaces include inventory, execution semantics, tests, docs, examples,
   helpers, safe defaults, and hermetic fixtures; raw refs stay advanced only
 - default verification is hermetic; external systems are opt-in
+- release, rollout, rollback, runbook, dependency, SBOM/provenance, and
+  vulnerability/license work is assigned when specs require it or explicitly
+  marked not applicable from specs
 
 Run `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.

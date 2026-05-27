@@ -47,7 +47,7 @@ const bad = /\b(decide|choose|determine|TBD|TODO|infer|fill gaps|use judgment|as
 const fake = /\b(use|add|create|implement|wire|return)\s+(a\s+)?(placeholder|fake|mock|stub|no-op|temporary)\b/i;
 const happy = /\b(happy path|success path|valid request|successful|success)\b/i;
 const unhappy = /\b(unhappy path|failure path|invalid|validation failure|denied|unauthorized|forbidden|timeout|retry|rollback|recovery|cancel|error)\b/i;
-const nfr = /\b(security|privacy|performance|resilience|observability|logging|log level|redaction|data integrity|recovery|not applicable|N\/A|deferred by spec)\b/i;
+const nfr = /\b(security|privacy|performance|resilience|observability|logging|log level|redaction|data integrity|recovery|production|release|supply chain|SBOM|provenance|not applicable|N\/A|deferred by spec)\b/i;
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));
@@ -62,8 +62,9 @@ if (/Wave 0|Spec and Contract Closure|build-blocking gaps/i.test(plan)) fail("im
 if (plan && !/\b(resume|resume_notes|last_verified|current_proof|partial)\b/i.test(statusText)) fail("_status.yaml: missing pause/resume tracking");
 if (plan && !/Self-Audit/i.test(plan)) fail("implementation-plan.md: missing Self-Audit");
 if (plan && !/\b(assumptions|blockers|evidence)\b/i.test(plan)) fail("implementation-plan.md: Self-Audit lacks assumptions/blockers/evidence");
+if (plan && !/\b(requirement coverage|traceability|requirement IDs?|source requirements?)\b/i.test(plan)) fail("implementation-plan.md: missing requirement traceability coverage");
 if (plan && !/\b(path coverage|unhappy|failure path|operational path)\b/i.test(plan)) fail("implementation-plan.md: missing path coverage");
-if (plan && !/\b(security|privacy|performance|resilience|observability|logging|recovery|data integrity)\b/i.test(plan)) fail("implementation-plan.md: missing NFR ownership");
+if (plan && !nfr.test(plan)) fail("implementation-plan.md: missing NFR/operations/supply-chain ownership");
 
 const depBlock = (id) => {
   const m = depsText.match(new RegExp(`\\n\\s{2}${id}:\\s*\\n([\\s\\S]*?)(?=\\n\\s{2}TICKET-\\d+:|\\n\\S|$)`));
@@ -88,13 +89,14 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && child(front, "ticket_readiness", "status") !== "implementation_ready") fail(`${rel}: ticket_readiness.status must be implementation_ready`);
   if (active && childList(front, "ticket_readiness", "open_decisions").length) fail(`${rel}: open_decisions must be empty`);
   if (active && childList(front, "ticket_readiness", "ambiguous_phrases").length) fail(`${rel}: ambiguous_phrases must be empty`);
-  ["Decision Ledger", "Contract Traceability", "Acceptance Test Matrix"].forEach((s) => active && !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
+  ["Decision Ledger", "Requirements Traceability", "Contract Traceability", "Acceptance Test Matrix"].forEach((s) => active && !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
   if (active && bad.test(text)) fail(`${rel}: drift-prone decision language`);
   if (active && fake.test(text) && !/\b(test fixture|fake provider|mock provider|test double|contract test)\b/i.test(text)) fail(`${rel}: fake/mock implementation shortcut`);
   if (/ask (the )?human|ask user|read (all|the full|entire) specs/i.test(text)) fail(`${rel}: asks for clarification or too much context`);
   if (active && !happy.test(text)) fail(`${rel}: missing happy/success path coverage`);
   if (active && !unhappy.test(text)) fail(`${rel}: missing unhappy/failure path coverage`);
   if (active && !nfr.test(text)) fail(`${rel}: missing NFR disposition`);
+  if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
   for (const ref of list(front, "spec_refs")) {
     const target = ref.split("#")[0];
     if (target.startsWith(`${specsName}/`) && !exists(path.join(root, target))) fail(`${rel}: missing spec_ref ${ref}`);
@@ -111,7 +113,7 @@ for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).f
   if (wp && !/Parallelization|Parallel Work|Isolation/i.test(wp)) fail(`${d.name}/plan.md: missing isolation notes`);
   if (wp && !/Resume|Pause|Status/i.test(wp)) fail(`${d.name}/plan.md: missing status notes`);
   if (wp && !/Operational Path|Path Coverage|Unhappy|Failure/i.test(wp)) fail(`${d.name}/plan.md: missing path coverage`);
-  if (wp && !/Security|Privacy|Performance|Resilience|Observability|Recovery|Data Integrity/i.test(wp)) fail(`${d.name}/plan.md: missing NFR coverage`);
+  if (wp && !/Security|Privacy|Performance|Resilience|Observability|Recovery|Data Integrity|Production|Release|Supply Chain|SBOM|Provenance|N\/A|Not Applicable/i.test(wp)) fail(`${d.name}/plan.md: missing NFR/operations/supply-chain coverage`);
   if (!exists(path.join(plans, d.name, "tickets"))) fail(`${d.name}: missing tickets/`);
 }
 for (const [id, t] of tickets) {
