@@ -1,0 +1,30 @@
+{
+  "skill_name": "spec-implementation-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review a completed implementation wave before accepting it.",
+      "expected_output": "Runs spec/plan gates, builds a path matrix, reviews cross-ticket end-to-end behavior, persists review.md, findings.yaml, and per-ticket feedback, then returns pass or needs_fixes.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Review a wave where the happy path works but validation failure creates a side effect that specs forbid.",
+      "expected_output": "Creates a blocking PATH or SPEC_DRIFT finding with expected vs actual behavior, evidence, owner ticket, fix boundary, and required verification.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review a cross-service Go backend and TypeScript frontend implementation where GraphQL nullability differs from the spec.",
+      "expected_output": "Creates a blocking INTERFACE finding for cross-layer type/nullability drift and routes actionable feedback to the responsible ticket.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Review a wave but the plan does not identify which ticket owns a security issue.",
+      "expected_output": "Blocks with a PLAN finding routed to the planner instead of giving vague chat feedback or asking the implementation agent to decide ownership.",
+      "files": []
+    }
+  ]
+}
+

@@ -20,6 +20,7 @@ own subdirectory under `skills/` and follows Anthropic's
 | --- | --- | --- |
 | [spec-architect](skills/spec-architect/SKILL.md) | Use when specs need creation, review, repair, or approval before autonomous or parallel AI implementation without ambiguity, invention, interface mismatch, drift, or gaps. | [docs](docs/skills/spec-architect.md) |
 | [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Use when approved specs need end-to-end waves, AFK tickets, parallel-agent plans, dependencies, status tracking, or readiness checks. | [docs](docs/skills/spec-implementation-planner.md) |
+| [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Use when a completed or partial spec implementation wave, plan, or cross-ticket solution needs review before acceptance, merge, release, or handoff. | [docs](docs/skills/spec-implementation-review.md) |
 | [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Use when implementing one approved spec plan ticket with strict read/write scope, acceptance verification, dependency checks, and no implementation-time decisions. | [docs](docs/skills/spec-ticket-implementation.md) |
 <!-- skills-index:end -->
 
