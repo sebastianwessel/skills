@@ -45,6 +45,10 @@ verification, no pasted specs, no implementation prose.
   test fixture/fake provider
 - `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
   resume notes, and current proof
+- changed specs update indexes, wave impact notes, follow-up tickets; completed
+  tickets stay historical
+- obsolete planned tickets are `skipped`; partial work is `blocked` or `partial`
+  with `superseded_by`, affected specs, resume notes
 - `implementation-plan.md` has `Self-Audit`: assumptions, evidence,
   requirement/path coverage, NFR/operations/supply-chain ownership, fake-work
   risk, parallel risk, blockers or none

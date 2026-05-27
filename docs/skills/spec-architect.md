@@ -24,6 +24,8 @@ The CLI and public skill directory are introduced in Vercel's
 - Treats regex checks as fast smoke tests, not semantic proof, and requires a
   semantic judge gate before approval.
 - Centralizes shared facts such as vocabulary, policies, errors, type semantics, NFRs, and public contracts so specs link instead of repeating.
+- Keeps evolving specs concise by updating the source of truth first, relinking
+  dependents, pruning stale or duplicate text, and recording plan impact.
 - Uses Mermaid diagrams only when they improve human understanding, and requires diagrams to stay aligned with authoritative text.
 - Defaults to industry-standard protocols, formats, errors, structured logging, observability, architecture, and framework conventions; custom designs need rationale and approval.
 - Requires clear, concise, non-contradictory specs with no implementation gaps.
@@ -69,9 +71,10 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 9. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
 10. Check no-drift, ambiguity, requirements quality, spec-structure, visualization, standards-first, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, production-readiness, supply-chain, contradiction, semantic-judge, migration, wave-readiness, and self-audit gates.
 11. Run self-critique, semantic judge review, and deterministic checks when available.
-12. Simulate implementation planning across all waves.
-13. Ask focused human review questions only for unsafe assumptions.
-14. Write or update the readiness report.
+12. Synchronize registries, provenance, readiness, dependent specs, and affected plan notes.
+13. Simulate implementation planning across all waves.
+14. Ask focused human review questions only for unsafe assumptions.
+15. Write or update the readiness report.
 
 ## Modes
 

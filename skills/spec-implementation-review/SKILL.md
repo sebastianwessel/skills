@@ -55,6 +55,7 @@ Reject the wave/plan when any blocking issue exists:
   undefined-state, concurrency, release/rollback, supply-chain,
   maintainability, or public-contract risk
 - feedback cannot route to a ticket, planner remediation, or spec gap
+- stale, duplicate, or contradictory spec/plan text would mislead later agents
 
 ## Persisted Output
 

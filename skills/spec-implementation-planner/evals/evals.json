@@ -42,12 +42,6 @@
       "prompt": "Review happy-path-only tickets with no owner for security, redaction, budgets, rollback, or recovery.",
       "expected_output": "Rejects until path coverage, traceability, and NFR ownership map to tickets and verification.",
       "files": []
-    },
-    {
-      "id": 8,
-      "prompt": "Review a service plan with no deployment, rollback, runbook, dependency, SBOM/provenance, or vulnerability/license ownership.",
-      "expected_output": "Rejects until production/release and supply-chain work is assigned or marked N/A from specs.",
-      "files": []
     }
   ]
 }

@@ -28,19 +28,28 @@ blocks approval.
 
 Judge steps: read approved specs/registries/provenance/gaps only. Record
 `pass`, `fail`, or `n/a` with refs per gate. Trace happy, unhappy, recovery,
-interface, security/privacy, production/release, supply-chain paths. Fail if two
-agents could implement different valid behavior, or if decisions,
-contradictions, unsafe assumptions, inferred defaults, or judgment remain.
+interface, security/privacy, production/release, supply-chain paths. Fail on
+ambiguous valid behavior, decisions, contradictions, unsafe assumptions,
+inferred defaults, or judgment.
 
 ## Human Decision Requests
 
 Generate specs autonomously from business intent and standards. Ask humans only
 for missing business intent, compliance/security boundaries, public semantics,
-irreversible architecture, material side effects, contradictions, or hard guesses.
+irreversible architecture, side effects, contradictions, or hard guesses.
 
-Ask crisply: decision, business/technical context, recommendation, useful
-alternatives with pros/cons, impact, blocked refs. Do not ask about details
-derivable from standards or project conventions.
+Ask with decision, business/technical context, recommendation, alternatives,
+pros/cons, impact, blocked refs. Do not ask derivable details.
+
+## Maintenance, Sync, And Cleanup
+
+On `Update`/`Fix Gap`, change the canonical source first, then dependents,
+registries, provenance, readiness, diagrams, contracts, plan impact notes.
+
+Prune stale, duplicate, superseded, contradictory, broad text. Preserve IDs when
+meaning stays; create IDs for new behavior. Record superseded IDs, migrations,
+affected waves/tickets, planner follow-up. Do not leave old and new behavior
+active.
 
 ## Requirements And Structure
 
@@ -50,8 +59,8 @@ IDs, source/rationale, owner, priority/risk, verification method, links to
 acceptance. Mark N/A with evidence.
 
 Structure specs business-to-technical: outcome/rationale, scope, components,
-workflows, interfaces/data, UX, operations, verification. Shared facts live
-once. Mermaid is optional and aligned.
+workflows, interfaces/data, UX, operations, verification. Shared facts live once.
+Mermaid is optional and aligned.
 
 ## Standards First
 
@@ -97,9 +106,9 @@ SLO/SLA/error budgets, runbooks, owner, support handoff, incident response,
 backup/restore, disaster recovery, decommissioning.
 
 Define release/supply chain: CI, build/package, feature flags, rollout,
-rollback, compatibility, migration ordering, versioning, artifacts, dependency
-policy, lockfiles, vulnerability/license handling, SBOM, provenance,
-signing/attestation, containers, secret scanning. Prefer SPDX/CycloneDX/SLSA.
+rollback, compatibility, migration order, versioning, artifacts, dependencies,
+lockfiles, vulnerability/license, SBOM, provenance, signing, containers, secret
+scanning. Prefer SPDX/CycloneDX/SLSA.
 
 ## Wave, Migration, And Rationale
 

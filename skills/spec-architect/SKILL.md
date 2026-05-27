@@ -5,13 +5,11 @@ description: Use when specs need creation, review, repair, or approval before au
 
 # Spec Architect
 
-Create specs that let AI agents implement without inventing behavior.
-
 ## Non-Negotiable Standard
 
-A spec is ready only when an agent can implement its scope without deciding
-product, architecture, interface, failure, security, data, async/type,
-migration, performance, recovery, release, supply-chain, observability, or tests.
+A spec is ready only when an agent can implement without deciding product,
+architecture, interfaces, failures, security, data, async/type, migration,
+performance, recovery, release, supply chain, observability, or tests.
 
 ## Invariants
 
@@ -25,6 +23,8 @@ migration, performance, recovery, release, supply-chain, observability, or tests
   auth, architecture, or supply-chain choices need rationale and approval.
 - Flow business/user outcome to components, workflows, interfaces, UX, NFRs,
   production/release/supply-chain, and acceptance. Centralize shared facts.
+- On update/fix-gap, update source of truth first, relink dependents, prune
+  stale duplicates, and record impact.
 - Requirements/flows/contracts/NFRs need IDs, source/rationale, verification
   method, priority/risk where relevant, and traceability to acceptance.
 - Machine-checked spec prose uses `language: en`. Regex/literal checks are
@@ -36,34 +36,32 @@ migration, performance, recovery, release, supply-chain, observability, or tests
 
 1. Select mode: `Create`, `Review/Approve`, `Update`, or `Fix Gap`.
 2. Apply `references/readiness-gates.md`.
-3. Normalize requirements into verifiable, traceable statements.
-4. Update layered specs and active-wave end-to-end paths, including unhappy
-   paths and recovery paths.
+3. Normalize traceable requirements.
+4. Update layered specs and end-to-end success/failure/recovery paths.
 5. Select standards-first protocols, formats, interfaces, and architecture.
-6. Freeze service/client/storage/event/job/adapter/CLI/config/policy/tool
-   interface, including type/nullability and protocol semantics.
+6. Freeze interfaces, type/nullability, and protocol semantics.
 7. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
 8. Define production readiness, release/rollback, operations, supply chain.
 9. Mark async/concurrency/runtime semantics explicitly.
-10. Add migration plans under `plans/migrations/` when implemented behavior
-   changes materially.
-11. Run semantic judge review and
+10. Add `plans/migrations/` entries for material implemented-behavior changes.
+11. Sync registries/provenance/readiness; prune superseded duplicate text.
+12. Run semantic judge review and
     `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-12. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
-13. Record deterministic, judge, and self-audit evidence in the report.
+13. Simulate waves/tickets; unresolved decisions stay in specs.
+14. Record deterministic, judge, maintenance, and self-audit evidence.
 
 ## Reference Map
 
-- `references/readiness-gates.md`: approval gates and anti-drift rules.
-- `references/artifact-shapes.md`: artifacts, report fields, inference policy.
+- `references/readiness-gates.md`: approval gates.
+- `references/artifact-shapes.md`: artifacts and report fields.
 
 ## Modes
 
 - `Create`: build a new spec set from intent.
 - `Review/Approve`: approve only after gates pass and the human approves.
-- `Update`: change specs and dependent contracts.
-- `Fix Gap`: turn planner/implementer/reviewer gaps into spec changes.
+- `Update`: change source specs, dependent contracts, and plan impact notes.
+- `Fix Gap`: turn downstream gaps into spec changes and cleanup.
 
 ## Approval Rule
 

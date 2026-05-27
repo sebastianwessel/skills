@@ -35,8 +35,8 @@ Approved specs require:
   self-audit
 - judge evidence: reviewer/model, time, scope, verdicts, paths, ambiguity,
   gaps, uncertainty, verdict
-- HITL requests: decision, business/technical context, recommendation,
-  alternatives with pros/cons, blocked refs, impact
+- HITL: decision, context, recommendation, alternatives, pros/cons, impact, refs
+- maintenance: source refs, dependents, pruned refs, affected tickets, migrations
 
 ## Inference Policy
 
@@ -50,9 +50,7 @@ irreversible architecture, trust boundaries, contradictions.
 
 ## Standard Failures
 
-Validation/auth failures have no side effects. Timeouts retry within budget then
-escalate. Unknown errors are terminal unless retryable. Dependency outages use
-backoff. Cancellation cleans up and marks cancelled. Lease expiry requeues only
-when side effects are safe. Non-idempotent uncertainty needs manual
-intervention. Define ack timing, state transition, rollback/compensation,
-checkpoint, telemetry, log level, redaction, and intervention record.
+Validation/auth failures have no side effects. Timeouts retry then escalate.
+Unknown errors are terminal unless retryable. Outages back off. Cancellation
+cleans up. Non-idempotent uncertainty needs intervention. Define ack timing,
+state, rollback, checkpoint, telemetry, log level, redaction.

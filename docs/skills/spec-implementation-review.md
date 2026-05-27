@@ -23,6 +23,8 @@ The CLI and public skill directory are introduced in Vercel's
   runbook handoff, dependency policy, SBOM/provenance, vulnerability, license,
   and supply-chain evidence when in scope.
 - Rejects drift, missing tests, false completion, unapproved mocks/fakes/placeholders, and unresolved ownership.
+- Flags stale, duplicate, or contradictory spec/plan text that would mislead
+  later implementation agents.
 - Persists findings, plan status handoff, and per-ticket feedback so implementation agents can resume with complete context.
 
 ## How It Works

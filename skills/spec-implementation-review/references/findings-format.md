@@ -42,7 +42,7 @@ Each finding must be actionable without chat context:
 findings:
   - id: REVIEW-001
     severity: blocking # blocking | advisory
-    category: SPEC_DRIFT # SPEC_DRIFT | TRACEABILITY | PATH | TEST | SECURITY | PERF | ROBUSTNESS | OPERATIONS | SUPPLY_CHAIN | MAINTAINABILITY | INTERFACE | PLAN | SPEC_GAP
+    category: SPEC_DRIFT # SPEC_DRIFT | TRACEABILITY | PATH | TEST | SECURITY | PERF | ROBUSTNESS | OPERATIONS | SUPPLY_CHAIN | MAINTAINABILITY | INTERFACE | PLAN | SPEC_GAP | CLEANUP
     status: open # open | fixed | accepted | obsolete
     owner_ticket: TICKET-123
     route: implementation # implementation | planner | spec-architect
@@ -67,6 +67,8 @@ When `plans/_status.yaml` or an equivalent tracker exists:
   `review_id`, open finding ids, and resume note
 - spec gaps set affected tickets or wave to `blocked` and route to
   `spec-architect`
+- stale/duplicate spec or plan text routes to `spec-architect` or
+  `spec-implementation-planner` with cleanup refs and affected tickets
 - plan/scope/dependency gaps set affected tickets or wave to `blocked` and
   route to `spec-implementation-planner`
 - passing review records `review_id`, reviewed scope, command evidence, and
