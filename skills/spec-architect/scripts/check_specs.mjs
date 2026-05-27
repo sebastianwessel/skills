@@ -15,6 +15,7 @@ const gates = [
   "wave_readiness",
   "migration_gate",
   "contradiction_check",
+  "self_audit_gate",
   "gate_simulation",
 ];
 

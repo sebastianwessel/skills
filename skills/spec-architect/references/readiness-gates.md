@@ -14,6 +14,15 @@ applicable with rationale.
 - Keep one source of truth per fact. Summaries link to authoritative contracts.
   Contradictions block approval.
 
+## Self-Audit And Honesty
+
+Before approval, explicitly challenge the spec set:
+
+- list weakest assumptions, inferred defaults, and uncertainty
+- check whether each gate has evidence, not confidence language
+- reject self-approval when contradictions, gaps, or unverifiable claims remain
+- say what is blocked instead of presenting partial readiness as complete
+
 ## Interface Semantic Alignment
 
 Every boundary must define name, owner, audience, stability, version, inputs,
@@ -65,4 +74,3 @@ Record decision reason when it prevents future drift: public contracts,
 architecture, security, data lifecycle, compatibility, migration, async model,
 provider/adapter choices, or non-obvious tradeoffs. Do not justify trivial field
 names or obvious local details.
-

@@ -20,6 +20,8 @@ migration, or verification decisions.
 - Specs are precise, concise, non-contradictory, and language agnostic unless a
   language/runtime/protocol choice is part of the contract.
 - Specs define behavior, contracts, rationale, and migration needs, not code.
+- Self-audit before approval: challenge assumptions, judge weak decisions,
+  record uncertainty honestly, and never mark gates passed without evidence.
 - Planning starts only when `.readiness-report.yaml` says `status: approved`
   and `human_approval.status: approved`.
 
@@ -35,6 +37,7 @@ migration, or verification decisions.
 6. Run `references/readiness-gates.md`, `references/artifact-shapes.md`, and
    `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
 7. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
+8. Record self-audit evidence in `.readiness-report.yaml`.
 
 ## Reference Map
 

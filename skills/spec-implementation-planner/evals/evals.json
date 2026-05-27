@@ -1,0 +1,41 @@
+{
+  "skill_name": "spec-implementation-planner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Plan from specs missing schemas and flows.",
+      "expected_output": "Blocks with spec gaps; no executable tickets.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create parallel tickets from approved specs.",
+      "expected_output": "Creates waves, indexes, scoped AFK tickets, acceptance, and verification.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review a ticket asking agents to decide schema, retry, and tests.",
+      "expected_output": "Rejects it as not implementation-ready and returns gaps to specs.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Plan a TypeScript interface foundation followed by parallel backend and frontend tickets.",
+      "expected_output": "Creates a contract-first wave with frozen interfaces, isolated write scopes, parallel backend/frontend tickets, and one end-to-end wave outcome.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Review a plan with placeholder backend responses and no partial/done tracking.",
+      "expected_output": "Rejects placeholder implementations and requires pause/resume status tracking for planned, in-progress, partial, blocked, done, and skipped work.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Review an implementation plan with no self-audit.",
+      "expected_output": "Rejects readiness until Self-Audit records weakest assumptions, evidence, fake-work risk, parallel-boundary risk, and blockers or none.",
+      "files": []
+    }
+  ]
+}

@@ -27,9 +27,9 @@ Approved specs require:
 - each gate status `passed`: `no_drift_gate`, `ambiguity_gate`,
   `semantic_alignment_gate`, `async_semantics_gate`, `interface_gate`,
   `e2e_gate`, `wave_readiness`, `migration_gate`, `contradiction_check`,
-  `gate_simulation`
+  `self_audit_gate`, `gate_simulation`
 - deterministic check command/status, inferred defaults, risks, wave evidence,
-  migration plan links when applicable
+  migration plan links when applicable, self-audit findings
 
 ## Inference Policy
 
@@ -47,4 +47,3 @@ unavailability retries with backoff. Cancellation cleans up and marks cancelled.
 Lease expiry requeues only if side effects are safe. Non-idempotent uncertainty
 requires manual intervention. Always define ack timing, state transition,
 telemetry, and manual-intervention record.
-

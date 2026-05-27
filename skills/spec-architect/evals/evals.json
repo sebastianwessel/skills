@@ -48,6 +48,12 @@
       "prompt": "Update approved specs that materially change an already implemented async Python worker flow.",
       "expected_output": "Requires async runtime semantics plus a separate plans/migrations migration plan covering impact, rollout, compatibility, rollback, verification, and ownership.",
       "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Approve specs with weak assumptions and no self-audit evidence.",
+      "expected_output": "Refuses approval until self_audit_gate passes with honest uncertainty, weakest assumptions, evidence, and remaining blockers.",
+      "files": []
     }
   ]
 }
