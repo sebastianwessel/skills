@@ -17,6 +17,8 @@ migration, performance, recovery, release, supply-chain, observability, or tests
 
 - Ask humans only for scope, compliance/security, irreversible architecture,
   public semantics, contradictions, or unsafe inference.
+- For required human input, ask one focused decision with context,
+  recommendation, and 2-3 alternatives only if useful.
 - Specs are precise, concise, non-contradictory, language agnostic unless
   contractual, and define behavior/contracts not code.
 - Prefer industry standards; custom protocols, formats, observability, errors,

@@ -19,29 +19,39 @@ with evidence.
 
 ## Validation Layers
 
-Deterministic checks validate files, links, gate statuses, markers, obvious
-ambiguity, and English smoke phrases. They do not prove semantic completeness.
+Deterministic checks validate files, links, gates, markers, obvious ambiguity,
+and English smoke phrases. They do not prove semantic completeness.
 
 Semantic judge review is required before approval. Record verdict, evidence,
 gaps, uncertainty, and ambiguous implementation risk. Failed/missing judge
 blocks approval.
 
-Judge steps: read approved specs/registries/provenance/gaps only. For each gate,
-record `pass`, `fail`, or `n/a` with refs. Trace happy, unhappy, recovery,
-interface, security/privacy, production/release, and supply-chain paths. Fail if
-two agents could implement different valid behavior, or if decisions,
-contradictions, unsafe assumptions, inferred defaults, or judgment wording remain.
+Judge steps: read approved specs/registries/provenance/gaps only. Record
+`pass`, `fail`, or `n/a` with refs per gate. Trace happy, unhappy, recovery,
+interface, security/privacy, production/release, supply-chain paths. Fail if two
+agents could implement different valid behavior, or if decisions,
+contradictions, unsafe assumptions, inferred defaults, or judgment remain.
+
+## Human Decision Requests
+
+Generate specs autonomously from business intent and standards. Ask humans only
+for missing business intent, compliance/security boundaries, public semantics,
+irreversible architecture, material side effects, contradictions, or hard guesses.
+
+Ask crisply: decision, business/technical context, recommendation, useful
+alternatives with pros/cons, impact, blocked refs. Do not ask about details
+derivable from standards or project conventions.
 
 ## Requirements And Structure
 
-Requirements, flows, contracts, and NFRs are necessary, singular, feasible,
-implementation-independent, unambiguous, consistent, verifiable, traceable.
-Use stable IDs, source/rationale, owner, priority/risk, verification method, and
-links from business outcome to acceptance evidence. Mark N/A with evidence.
+Requirements, flows, contracts, NFRs are necessary, singular, feasible,
+implementation-independent, unambiguous, consistent, verifiable, traceable. Use
+IDs, source/rationale, owner, priority/risk, verification method, links to
+acceptance. Mark N/A with evidence.
 
 Structure specs business-to-technical: outcome/rationale, scope, components,
-workflows, interfaces/data, frontend UX, operations, verification. Shared facts
-live once. Mermaid is optional and must align with text.
+workflows, interfaces/data, UX, operations, verification. Shared facts live
+once. Mermaid is optional and aligned.
 
 ## Standards First
 
@@ -53,7 +63,7 @@ interface semantics need rationale, tooling impact, migration, and approval.
 ## Interfaces And Runtime Semantics
 
 Each boundary defines owner, audience, stability, version, inputs, outputs,
-validation, errors, auth/policy, lifecycle, observability, tests, compatibility.
+validation, errors, auth/policy, lifecycle, observability, tests.
 
 Cross-language/protocol specs map source/wire/target types, required/optional,
 defaulted, `null`, `undefined`, omitted, zero/empty, enum unknowns, precision,

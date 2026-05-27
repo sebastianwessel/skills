@@ -1,11 +1,4 @@
 {
   "skill_name": "spec-architect",
-  "evals": [
-    {
-      "id": 1,
-      "prompt": "Create implementation-ready enterprise specs.",
-      "expected_output": "Creates English traceable specs with contracts, flows, NFRs, judge evidence.",
-      "files": []
-    }
-  ]
+  "evals": []
 }

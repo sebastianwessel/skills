@@ -52,7 +52,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill drafts autonomously where defaults are safe, but asks focused human questions for product scope, compliance or security boundaries, irreversible architecture choices, public contract semantics, or contradictions with stated intent.
+The skill drafts autonomously where defaults are safe. It asks humans only for missing business intent, compliance or security boundaries, irreversible architecture choices, public contract semantics, material side effects, or contradictions. Those questions must include concise business and technical context, a recommended option, and 2-3 alternatives with pros/cons only when useful.
 
 It uses compact reference files for readiness gates and artifact shapes. It can also run a deterministic consistency checker against a spec tree.
 

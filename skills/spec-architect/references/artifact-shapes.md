@@ -33,8 +33,10 @@ Approved specs require:
 - deterministic status, traceability, inferred defaults, risks, wave evidence,
   production/release/supply-chain, migrations, semantic judge evidence,
   self-audit
-- judge evidence: reviewer/model, time, scope, gate verdicts, traced paths,
-  ambiguous refs, gaps, uncertainty, verdict
+- judge evidence: reviewer/model, time, scope, verdicts, paths, ambiguity,
+  gaps, uncertainty, verdict
+- HITL requests: decision, business/technical context, recommendation,
+  alternatives with pros/cons, blocked refs, impact
 
 ## Inference Policy
 
