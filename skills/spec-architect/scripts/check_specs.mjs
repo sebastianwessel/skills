@@ -4,14 +4,6 @@ import path from "node:path";
 
 const root = path.resolve(process.argv[2] || "specs");
 const errors = [], warnings = [];
-const gates = [
-  "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
-  "async_semantics_gate", "interface_gate", "e2e_gate",
-  "unhappy_path_gate", "security_privacy_gate", "observability_gate",
-  "performance_resilience_gate", "data_integrity_recovery_gate",
-  "wave_readiness", "migration_gate", "contradiction_check",
-  "self_audit_gate", "gate_simulation",
-];
 const fail = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 const at = (f) => path.join(root, f);
@@ -23,58 +15,39 @@ const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }
   return e.isDirectory() ? walk(f) : [f];
 }) : [];
 
-function yaml(text, file) {
-  const data = {};
-  const stack = [{ indent: -1, obj: data }];
-  for (const raw of text.split(/\r?\n/)) {
-    const line = raw.replace(/\s+#.*$/, "");
-    const m = line.match(/^(\s*)([A-Za-z0-9_.-]+):(?:\s*(.*))?$/);
-    if (!m || !line.trim() || line.trim().startsWith("#")) continue;
-    const indent = m[1].length;
-    while (stack.length > 1 && indent <= stack.at(-1).indent) stack.pop();
-    const parent = stack.at(-1).obj;
-    let value = (m[3] ?? "").replace(/^["']|["']$/g, "");
-    if (value === "") {
-      parent[m[2]] = {};
-      stack.push({ indent, obj: parent[m[2]] });
-    } else {
-      parent[m[2]] = value === "[]" ? [] : value;
-    }
-  }
-  if (!Object.keys(data).length) fail(`${file} has no parseable YAML keys`);
-  return data;
-}
+const gates = [
+  "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
+  "spec_structure_gate", "visualization_gate", "requirements_quality_gate",
+  "standards_first_gate", "async_semantics_gate", "interface_gate", "e2e_gate",
+  "unhappy_path_gate", "security_privacy_gate", "observability_gate",
+  "performance_resilience_gate", "data_integrity_recovery_gate",
+  "production_readiness_gate", "supply_chain_gate", "wave_readiness",
+  "migration_gate", "contradiction_check", "semantic_judge_gate",
+  "self_audit_gate", "gate_simulation",
+];
 
 if (!fs.existsSync(root)) {
-  fail(`Spec root does not exist: ${root}`);
+  fail(`Missing spec root: ${root}`);
 } else {
-  const all = walk(root);
-  const text = all.map((f) => fs.readFileSync(f, "utf8")).join("\n");
-  [
-    ".readiness-report.yaml", "_registry.yaml", "_provenance.yaml",
-    "00-vision.md", "00-stack.md", "00-conventions.md",
-    "00-architecture-overview.md", "glossary.md",
-  ].forEach((f) => !exists(f) && fail(`Missing required spec artifact: ${f}`));
+  const all = walk(root), text = all.map((f) => fs.readFileSync(f, "utf8")).join("\n");
+  [".readiness-report.yaml", "_registry.yaml", "_provenance.yaml", "00-vision.md",
+   "00-stack.md", "00-conventions.md", "00-architecture-overview.md", "glossary.md"]
+    .forEach((f) => !exists(f) && fail(`Missing artifact: ${f}`));
 
-  let approved = false;
-  if (exists(".readiness-report.yaml")) {
-    const reportText = read(".readiness-report.yaml");
-    const report = yaml(reportText, ".readiness-report.yaml");
-    approved = report.status === "approved";
-    if (!["draft", "needs_human_review", "approved", "blocked"].includes(report.status)) fail(`Invalid readiness status: ${String(report.status)}`);
-    if (!["pending", "approved"].includes(report.human_approval?.status)) fail("Missing or invalid human_approval.status");
-    if (approved && report.human_approval?.status !== "approved") fail("status approved requires human approval");
-    if (approved) {
-      gates.forEach((g) => report[g]?.status !== "passed" && fail(`Approved specs require ${g}.status passed`));
-      if (!/\bopen_decisions:\s*\[\]/.test(reportText)) fail("Approved specs require open_decisions: []");
-    }
+  const report = exists(".readiness-report.yaml") ? read(".readiness-report.yaml") : "";
+  const approved = /^status:\s*approved\s*$/m.test(report);
+  if (report && !/^status:\s*(draft|needs_human_review|approved|blocked)\s*$/m.test(report)) fail("Invalid readiness status");
+  if (report && !/human_approval:\s*\n\s+status:\s*(pending|approved)\s*$/m.test(report)) fail("Missing or invalid human_approval.status");
+  if (approved) {
+    if (!/human_approval:\s*\n\s+status:\s*approved\s*$/m.test(report)) fail("Human approval required");
+    if (!/^language:\s*en\s*$/m.test(report)) fail("language: en required");
+    if (!/\bopen_decisions:\s*\[\]/.test(report)) fail("open_decisions must be []");
+    gates.forEach((g) => !new RegExp(`${g}:\\s*\\n\\s+status:\\s*passed\\b`, "m").test(report) && fail(`${g}.status must pass`));
   }
 
   for (const file of all) {
-    const r = rel(file);
-    const body = fs.readFileSync(file, "utf8");
+    const r = rel(file), body = fs.readFileSync(file, "utf8");
     if (/\.(json|schema)$/.test(file)) try { JSON.parse(body); } catch (e) { fail(`${r} invalid JSON: ${e.message}`); }
-    if (/\.(ya?ml)$/.test(file)) yaml(body, r);
     if (/\b(TODO|TBD|FIXME|OPEN QUESTION|QUESTION:)\b/i.test(body)) fail(`${r} contains unresolved marker`);
     for (const m of body.matchAll(/\[[^\]]+\]\((?!https?:\/\/|#)([^)]+)\)/g)) {
       const target = m[1].split("#")[0];
@@ -85,29 +58,33 @@ if (!fs.existsSync(root)) {
   if (approved) {
     const must = [
       [/\b(as appropriate|if needed|where possible|to be determined|decide later|future work will decide|handle errors|support auth|validate input|make configurable|sync data|recover gracefully|log appropriately|securely|performant|best effort)\b/i, "ambiguous implementation language", true],
-      [/\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|gRPC|protobuf)\b/i, "Cross-language/protocol specs require type/nullability mapping", false, /\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i],
-      [/\b(async|queue|stream|event|job|worker|callback|goroutine|promise|coroutine)\b/i, "Async specs require runtime, ordering, timeout, retry, cancellation, idempotency, and backpressure semantics", false, /\b(timeout|retry|cancellation|idempotency|ordering|concurrency|ack|backpressure)\b/i],
-      [/\b(unhappy|failure path|validation failure|authorization|denial|timeout|retry|rollback|recovery|cancellation|manual intervention)\b/i, "Approved specs require unhappy-path and recovery behavior"],
-      [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Approved specs require security/privacy/data-classification behavior"],
-      [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Approved specs require observability/log-level/redaction behavior"],
-      [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Approved specs require performance/capacity/overload budgets"],
-      [/\b(data integrity|consistency|state transition|transaction|rollback|compensation|checkpoint|idempotency|recovery|self-healing|manual intervention|data loss)\b/i, "Approved specs require data integrity/recovery/data-loss prevention"],
+      [/\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|gRPC|protobuf)\b/i, "Missing type mapping", false, /\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i],
+      [/\b(async|queue|stream|event|job|worker|callback|goroutine|promise|coroutine)\b/i, "Missing async semantics", false, /\b(timeout|retry|cancellation|idempotency|ordering|concurrency|ack|backpressure)\b/i],
+      [/\b(unhappy|failure path|validation failure|authorization|denial|timeout|retry|rollback|recovery|cancellation|manual intervention)\b/i, "Missing unhappy/recovery paths"],
+      [/\b(business|user|customer|outcome|goal|why|rationale)\b/i, "Missing business context"],
+      [/\b(requirement|flow|contract|NFR|acceptance).{0,80}\b(id|trace|source|owner|priority|risk|verification method|test|inspection|analysis|demo)\b/i, "Missing requirement traceability"],
+      [/\b(component|module|service|package|workflow|process|interface|contract|frontend|UX|design|accessibility|reusable)\b/i, "Missing component/workflow structure"],
+      [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Missing source links"],
+      [/\b(standard|industry|convention|OpenTelemetry|structured JSON|RFC 9457|OpenAPI|GraphQL|gRPC|protobuf|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
+      [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Missing security/privacy"],
+      [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Missing observability"],
+      [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Missing performance budgets"],
+      [/\b(data integrity|consistency|state transition|transaction|rollback|compensation|checkpoint|idempotency|recovery|self-healing|manual intervention|data loss)\b/i, "Missing integrity/recovery"],
+      [/\b(production readiness|deployment|environment|configuration|config|secret|SLO|SLA|error budget|runbook|incident|backup|restore|rollback|rollout|release|readiness|liveness|operational owner|support handoff|not applicable|N\/A)\b/i, "Missing production/release"],
+      [/\b(supply chain|dependency policy|lockfile|vulnerability|license|SBOM|SPDX|CycloneDX|SLSA|provenance|attestation|signing|artifact|container|base image|secret scan|not applicable|N\/A)\b/i, "Missing supply chain"],
     ];
-    all.forEach((f) => {
-      const body = fs.readFileSync(f, "utf8");
-      if (must[0][0].test(body)) fail(`${rel(f)} contains ${must[0][1]}`);
-    });
+    all.forEach((f) => must[0][0].test(fs.readFileSync(f, "utf8")) && fail(`${rel(f)} contains ${must[0][1]}`));
     for (const [trigger, msg, badOnly, required] of must.slice(1)) {
       if (required ? trigger.test(text) && !required.test(text) : !trigger.test(text)) fail(msg);
     }
   }
 
   if (/\b(public\s+(api|sdk|cli|schema|protocol|workflow|config)|developer-facing|sdk|cli|plugin|tool manifest|builder)\b/i.test(text)) {
-    if (!/(^|\n)#+\s+Public API Inventory\b|public_api_inventory:/i.test(text)) fail("Public surface detected without Public API Inventory");
-    if (!/execution_semantics:/i.test(text)) fail("Public API inventory must classify execution_semantics");
+    if (!/(^|\n)#+\s+Public API Inventory\b|public_api_inventory:/i.test(text)) fail("Missing Public API Inventory");
+    if (!/execution_semantics:/i.test(text)) fail("Missing execution_semantics");
   }
-  if (!exists("03-contracts")) warn("No specs/03-contracts directory found");
-  if (!exists("03-flows")) warn("No specs/03-flows directory found");
+  if (!exists("03-contracts")) warn("Missing specs/03-contracts");
+  if (!exists("03-flows")) warn("Missing specs/03-flows");
 }
 
 warnings.forEach((w) => console.warn(`warn: ${w}`));

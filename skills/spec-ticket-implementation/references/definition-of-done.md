@@ -54,6 +54,8 @@ A ticket is done only when all relevant checks pass.
 ## Scope And Spec Compliance
 
 - [ ] Only `write_scope` files changed.
+- [ ] Source requirement IDs trace to implemented code paths, tests, and
+      acceptance evidence.
 - [ ] Acceptance criteria are fully met; non-goals are respected.
 - [ ] No unapproved product behavior, contracts, API/event/job/stream schemas,
       persistence, policy, failure, async, error, logging, security,
@@ -64,6 +66,9 @@ A ticket is done only when all relevant checks pass.
       artifacts are synced when public surfaces change.
 - [ ] Manifest identity/version/digest/canonicalization/snapshot/replay rules
       are preserved when manifests are in scope.
+- [ ] Release, config/secrets, rollout/rollback, runbook, dependency, SBOM,
+      provenance, artifact, vulnerability, and license expectations are met
+      when in scope.
 
 ## Documentation And Completion
 

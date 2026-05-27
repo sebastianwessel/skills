@@ -5,61 +5,67 @@ description: Use when specs need creation, review, repair, or approval before au
 
 # Spec Architect
 
-Create specs that let AI agents implement independently without inventing behavior.
-
 ## Non-Negotiable Standard
 
-A spec is ready only when an agent can implement its assigned scope without
-making product, architecture, interface, failure, security, data, async, type,
-migration, performance, recovery, observability, or verification decisions.
+A spec is ready only when an agent can implement without deciding product,
+architecture, interfaces, failures, security, data, async/type, migration,
+performance, recovery, release, supply chain, observability, or tests.
 
 ## Invariants
 
-- Draft first; ask humans only for scope, compliance/security, irreversible
-  architecture, public semantics, contradictions, or unsafe inference.
-- Specs are precise, concise, non-contradictory, and language agnostic unless a
-  language/runtime/protocol choice is part of the contract.
-- Specs define behavior, contracts, rationale, and migration needs, not code.
-- Self-audit before approval: challenge assumptions, judge weak decisions,
-  record uncertainty honestly, and never mark gates passed without evidence.
-- Planning starts only when `.readiness-report.yaml` says `status: approved`
-  and `human_approval.status: approved`.
+- Ask humans only for scope, compliance/security, irreversible architecture,
+  public semantics, contradictions, or unsafe inference.
+- For required human input, ask one focused decision with context,
+  recommendation, and 2-3 alternatives only if useful.
+- Specs are precise, concise, non-contradictory, language agnostic unless
+  contractual, and define behavior/contracts not code.
+- Prefer industry standards; custom protocols, formats, observability, errors,
+  auth, architecture, or supply-chain choices need rationale and approval.
+- Flow business/user outcome to components, workflows, interfaces, UX, NFRs,
+  production/release/supply-chain, and acceptance. Centralize shared facts.
+- On update/fix-gap, update source of truth first, relink dependents, prune
+  stale duplicates, and record impact.
+- Requirements/flows/contracts/NFRs need IDs, source/rationale, verification
+  method, priority/risk where relevant, and traceability to acceptance.
+- Machine-checked spec prose uses `language: en`. Regex/literal checks are
+  smoke tests only; semantic approval needs a judge pass.
+- Self-audit with evidence; do not approve on confidence.
+- Planning starts only after approved readiness and human approval.
 
 ## Workflow
 
 1. Select mode: `Create`, `Review/Approve`, `Update`, or `Fix Gap`.
-2. Update layered specs and active-wave end-to-end paths, including unhappy
-   paths and recovery paths.
-3. Freeze every service/client/storage/event/job/adapter/CLI/config/policy/tool
-   interface, including type/nullability and protocol semantics.
-4. Define security/privacy, data classification, log levels/redaction,
+2. Apply `references/readiness-gates.md`.
+3. Normalize traceable requirements.
+4. Update layered specs and end-to-end success/failure/recovery paths.
+5. Select standards-first protocols, formats, interfaces, and architecture.
+6. Freeze interfaces, type/nullability, and protocol semantics.
+7. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
-5. Mark async/concurrency/runtime semantics explicitly.
-6. Add migration plans under `plans/migrations/` when implemented behavior
-   changes materially.
-7. Run `references/readiness-gates.md`, `references/artifact-shapes.md`, and
-   `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-8. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
-9. Record self-audit evidence in `.readiness-report.yaml`.
+8. Define production readiness, release/rollback, operations, supply chain.
+9. Mark async/concurrency/runtime semantics explicitly.
+10. Add `plans/migrations/` entries for material implemented-behavior changes.
+11. Sync registries/provenance/readiness; prune superseded duplicate text.
+12. Run semantic judge review and
+    `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
+13. Simulate waves/tickets; unresolved decisions stay in specs.
+14. Record deterministic, judge, maintenance, and self-audit evidence.
 
 ## Reference Map
 
-- `references/readiness-gates.md`: approval gates, semantic alignment, async,
-  security, privacy, resilience, observability, data integrity, migration, wave,
-  parallel, rationale, and anti-drift rules.
-- `references/artifact-shapes.md`: required artifacts, report fields, inference
-  policy, and default failure semantics.
+- `references/readiness-gates.md`: approval gates.
+- `references/artifact-shapes.md`: artifacts and report fields.
 
 ## Modes
 
 - `Create`: build a new spec set from intent.
 - `Review/Approve`: approve only after gates pass and the human approves.
-- `Update`: change specs and dependent contracts.
-- `Fix Gap`: turn planner/implementer/reviewer gaps into spec changes.
+- `Update`: change source specs, dependent contracts, and plan impact notes.
+- `Fix Gap`: turn downstream gaps into spec changes and cleanup.
 
 ## Approval Rule
 
-Do not approve if an implementation ticket would need to decide behavior,
-reconcile contradictions, interpret vague wording, align incompatible type
-systems, define async behavior, or invent security, performance, recovery,
-logging, data-protection, migration, or verification details.
+Do not approve if a ticket must decide behavior, reconcile contradictions,
+interpret vague wording, align type systems, define async behavior, or invent
+security, performance, recovery, logging, protocols, data protection, release,
+supply-chain, migration, or tests. Regex success is not semantic approval.

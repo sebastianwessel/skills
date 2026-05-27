@@ -16,6 +16,8 @@ The CLI and public skill directory are introduced in Vercel's
 ## What It Does
 
 - Reads `specs/.readiness-report.yaml` and stops unless specs are approved.
+- Requires approved specs to declare `language: en` and pass semantic judge
+  review when the deterministic English smoke checks are used.
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
 - Splits implementation work into dependency-ordered waves that each end in a
   working end-to-end increment for that wave's scope.
@@ -28,17 +30,22 @@ The CLI and public skill directory are introduced in Vercel's
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.
+- Preserves source requirement IDs and maps production readiness,
+  release/rollback, operations, dependency, SBOM/provenance, vulnerability, and
+  license responsibilities into tickets or explicit not-applicable dispositions.
 - Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
 - Blocks tickets that would require agents to invent behavior, choose interfaces, or resolve missing specs.
 - Rejects placeholder, mock, fake, stub, or no-op implementation shortcuts unless the specs explicitly require test fixtures or fake providers.
 - Tracks planned, in-progress, partial, blocked, done, and skipped work so plans can pause and resume.
+- Syncs changed specs into indexes, impact notes, dependencies, status, and
+  follow-up tickets while preserving completed ticket history.
 - Requires a plan-level self-audit that names weak assumptions, readiness
   evidence, fake-work risk, parallel-boundary risk, and blockers or `none`.
 - Preserves completed tickets as historical records and creates remediation or migration tickets for later quality gates.
 
 ## How It Works
 
-The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
+The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, requirement and contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
 
 When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-architect`.
 
@@ -50,8 +57,9 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 4. Group work into waves with end-to-end outcomes and isolation notes.
 5. Write implementation-ready tickets with compact context digests.
 6. Record a plan-level self-audit.
-7. Verify registry, dependencies, unblocks links, scope, status, path coverage, NFR ownership, and ticket readiness.
-8. Run plan and wave checker scripts.
+7. Update plan impact notes when specs changed.
+8. Verify registry, dependencies, unblocks links, scope, status, path coverage, NFR ownership, and ticket readiness.
+9. Run plan and wave checker scripts.
 
 ## Output Files
 

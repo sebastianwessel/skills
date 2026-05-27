@@ -5,6 +5,8 @@ Use these gates after building the path matrix.
 ## Spec And Interface Conformance
 
 - Approved specs, plan, and tickets align with implementation.
+- Requirement IDs trace from specs to plan tickets, changed code, tests,
+  verification evidence, and acceptance status.
 - Interfaces preserve fields, generated types, nullability, optionality,
   defaults, serialization, async timing, cancellation, retries, errors, and
   compatibility across languages, protocols, clients, services, jobs, and DBs.
@@ -36,6 +38,17 @@ Use these gates after building the path matrix.
   introduced.
 - Self-healing/recovery is bounded, idempotent, observable, and escalates when
   retry/recovery budgets are exhausted.
+
+## Production, Release, And Supply Chain
+
+- Deployment, configuration/secrets, readiness/liveness, SLO/error-budget,
+  runbook, support handoff, incident response, backup/restore, and operational
+  ownership match specs when in scope.
+- Release, rollout, rollback, versioning, migration ordering, feature flag
+  lifecycle, and artifact promotion match specs.
+- Dependency policy, lockfiles, vulnerability/license handling, SBOM,
+  provenance/attestation/signing, container/base-image policy, and secret
+  scanning match specs when in scope.
 
 ## Maintainability And Public Surfaces
 

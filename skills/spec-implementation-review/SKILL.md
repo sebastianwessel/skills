@@ -32,7 +32,8 @@ review scope cannot be identified.
    routing, interface boundaries, domain logic, persistence, async work,
    external boundaries, observability, response/output, cleanup, recovery.
 4. Apply `references/review-gates.md` for spec drift, interfaces, tests,
-   security, performance, robustness, maintainability, docs, and false work.
+   requirements traceability, security, performance, operations, supply chain,
+   robustness, maintainability, docs, and false work.
 5. Persist findings with `references/findings-format.md`.
 6. Self-audit honestly: unchecked paths, skipped commands, assumptions, weak
    evidence, and residual risk.
@@ -42,14 +43,19 @@ review scope cannot be identified.
 Reject the wave/plan when any blocking issue exists:
 
 - spec drift in behavior, interfaces, types/nullability, async, errors, logging,
-  persistence, security, performance, recovery, or public contracts
+  persistence, security, performance, recovery, release, supply chain, or
+  public contracts
+- missing source requirement traceability from specs to tickets, code, tests,
+  and acceptance evidence
 - missing, untested, or incorrect success/failure/retry/timeout/cancel/rollback/
   idempotency/recovery paths
 - missing acceptance, cross-layer contract, unhappy-path, or end-to-end tests
 - unapproved mocks, fakes, stubs, placeholders, no-ops, demo paths, or hidden flags
 - material security, privacy, data-loss, isolation, performance, resource-leak,
-  undefined-state, concurrency, maintainability, or public-contract risk
+  undefined-state, concurrency, release/rollback, supply-chain,
+  maintainability, or public-contract risk
 - feedback cannot route to a ticket, planner remediation, or spec gap
+- stale, duplicate, or contradictory spec/plan text would mislead later agents
 
 ## Persisted Output
 

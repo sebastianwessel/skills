@@ -14,6 +14,8 @@ Use this loop for one approved ticket.
   serialization, and error semantics exactly. Stop on mismatch.
 - Preserve specified state transitions, data integrity, redaction, performance
   budgets, and recovery behavior exactly. Stop on mismatch.
+- Preserve requirement IDs, release/rollback, configuration/secrets,
+  operations, and supply-chain semantics exactly when in scope. Stop on mismatch.
 
 ## Test First
 
@@ -41,6 +43,8 @@ acceptance criterion to verification.
   idempotency, recovery checkpoints, and manual escalation.
 - Respect specified latency, throughput, memory/CPU, pagination, batching,
   timeout, retry, backpressure, and overload limits.
+- Respect specified deployment, rollback, runbook, dependency, SBOM/provenance,
+  vulnerability, license, artifact, and secret-scan requirements when in scope.
 - Use precise types. Avoid unapproved `any`, unchecked casts, dynamic maps,
   stringly typed unions, or broad exception types.
 - Keep files cohesive with speakable names.
@@ -61,11 +65,14 @@ Before done, honestly check:
 
 - Scope: changed files are inside `write_scope`.
 - Spec: every behavior maps to scoped specs, ticket text, or approved convention.
+- Traceability: source requirement IDs map to code, tests, and evidence.
 - Interfaces: types, nullability, async, errors, and serialization align.
 - Tests: every acceptance criterion has happy/unhappy verification.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
 - Integrity: state transitions, recovery, data-loss prevention, and performance
   budgets match specs.
+- Operations: release, production readiness, and supply-chain behavior match
+  specs when in scope.
 - Honesty: assumptions, skipped checks, pre-existing failures, gaps, and risks
   are reported.
 

@@ -14,6 +14,8 @@ Read `specs/.readiness-report.yaml`. Stop unless:
 - `status: approved`
 - `human_approval.status: approved`
 - readiness/gate simulation passed or can be rerun successfully
+- `language: en` and `semantic_judge_gate.status: passed` when deterministic
+  English smoke checks are used
 
 If blocked, write a spec gap/readiness note. Do not create executable tickets.
 
@@ -28,33 +30,40 @@ If blocked, write a spec gap/readiness note. Do not create executable tickets.
 5. Keep parallel tickets isolated: disjoint writes, frozen contracts, no shared
    generated outputs.
 6. Map happy/unhappy paths plus security, privacy, observability, performance,
-   data-integrity, and recovery specs into ticket acceptance and verification.
+   data-integrity, recovery, production/release, and supply-chain specs into
+   ticket acceptance and verification.
 7. Track status and resume state: planned, in_progress, partial, blocked, done,
    skipped.
 8. Maintain wave `Implementation Order` plus `depends_on`, `blocked_by`, and
    `unblocks`.
 9. Self-audit wave boundaries, path coverage, NFR ownership, parallel
-   assumptions, ticket clarity, fake-work risk, and blockers.
-10. Run `references/planning-gates.md`, then
+   assumptions, ticket clarity, release/supply-chain ownership, fake-work risk,
+   and blockers.
+10. When specs change, update indexes/impact/follow-ups without rewriting done
+    tickets.
+11. Run `references/planning-gates.md`, then
     `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
 
 ## Required Ticket Evidence
 
 Tickets require exact refs/scopes/dependencies/status, ready contracts,
 implementation-ready ticket state, empty decisions, decision ledger, contract
-traceability, acceptance matrix, and hermetic verification. Keep tickets crisp:
-enough context to prevent drift, no pasted specs, no implementation prose.
+and requirement traceability, acceptance matrix, and hermetic verification. Keep
+tickets crisp: enough context to prevent drift, no pasted specs, no
+implementation prose.
 
 Return to `spec-architect` when behavior, interface shape, persistence, errors,
 security/privacy, logging/redaction, performance budgets, data integrity,
-recovery/self-healing, unhappy paths, async semantics, migration, or test
-strategy is missing.
+recovery/self-healing, unhappy paths, async semantics, production readiness,
+release/rollback, supply-chain integrity, migration, or test strategy is
+missing.
 
 ## Plan Evolution
 
-After a wave or ticket is `done`, keep it historical. New quality gates,
-changed specs, or discovered gaps create follow-up remediation or migration
-tickets in a later wave instead of rewriting completed ticket bodies.
+After a wave or ticket is `done`, keep it historical. New gates, spec changes,
+or gaps create later remediation/migration tickets. Mark obsolete planned work
+`skipped`, partial work `blocked` or `partial`, and record `superseded_by`,
+affected specs, and resume notes.
 
 ## Approval Rule
 

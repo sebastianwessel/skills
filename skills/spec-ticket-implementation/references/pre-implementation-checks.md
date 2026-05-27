@@ -22,10 +22,14 @@ inside scope, the ticket must fix them.
 - [ ] Ticket is executable/AFK, not blocked/HITL.
 - [ ] Dependencies are `done` or `merged` in `_status.yaml` or equivalent.
 - [ ] Acceptance criteria are mapped to public-interface tests.
+- [ ] Source requirement IDs and verification methods are mapped to acceptance.
 - [ ] Happy path, unhappy path, async/error/logging expectations are identified.
 - [ ] Security/privacy, data classification, redaction, performance,
       data-integrity, rollback, recovery, and manual-intervention expectations
       are identified.
+- [ ] Production readiness, release/rollback, configuration/secrets,
+      dependency, SBOM/provenance, vulnerability, and license expectations are
+      identified or explicitly not applicable.
 - [ ] Approved interfaces/contracts and consumer expectations are identified.
 - [ ] Mock/fake/stub/placeholder permissions are checked.
 - [ ] Verification commands are copied exactly.
@@ -52,6 +56,9 @@ Read only `read_scope` and `spec_refs`.
 - [ ] Data classification, trust boundaries, auth/policy, retention, redaction,
       log levels, performance budgets, state transitions, rollback/recovery, and
       data-loss prevention rules are checked.
+- [ ] Deployment, config/secrets, rollout/rollback, runbook, dependency policy,
+      SBOM/provenance, vulnerability, license, artifact, and release rules are
+      checked when in scope.
 - [ ] Public API inventory and execution semantics are read for changed public
       surfaces.
 - [ ] Manifest version, digest, canonicalization, snapshot, replay,
@@ -61,4 +68,5 @@ Read only `read_scope` and `spec_refs`.
 
 Stop if a required contract, field, flow, policy, error, persistence rule,
 logging/audit behavior, performance budget, recovery path, or failure path is
-missing. Do not infer it.
+missing. Also stop if requirement traceability, release/operations, or
+supply-chain expectations are missing for in-scope work. Do not infer it.
