@@ -17,6 +17,9 @@ The CLI and public skill directory are introduced in Vercel's
 
 - Creates, repairs, reviews, and approves project spec sets.
 - Defines layered specs for foundations, domains, capabilities, contracts, ports, flows, and non-functional requirements.
+- Structures specs from business and user outcomes down to components, workflows, interfaces, frontend UX/design behavior, operational constraints, and verification.
+- Centralizes shared facts such as vocabulary, policies, errors, type semantics, NFRs, and public contracts so specs link instead of repeating.
+- Uses Mermaid diagrams only when they improve human understanding, and requires diagrams to stay aligned with authoritative text.
 - Requires clear, concise, non-contradictory specs with no implementation gaps.
 - Defines robust interfaces and end-to-end paths before work is marked ready,
   including cross-language and protocol semantics such as `null`, `undefined`,
@@ -46,16 +49,17 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 
 ## Workflow
 
-1. Generate or update layered specs.
-2. Define repository topology and ownership boundaries.
-3. Describe public workflows from the user's perspective.
+1. Generate or update layered specs from business/user intent to technical detail.
+2. Define repository topology, ownership boundaries, reusable packages/libs, components, modules, and services.
+3. Describe public workflows, frontend UX states, accessibility, design-system usage, reusable components, and end-user behavior.
 4. Specify developer experience, setup paths, safe defaults, and advanced escape hatches.
-5. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, and examples.
-6. Check no-drift, ambiguity, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, contradiction, migration, wave-readiness, and self-audit gates.
-7. Run self-critique and deterministic checks when available.
-8. Simulate implementation planning across all waves.
-9. Ask focused human review questions only for unsafe assumptions.
-10. Write or update the readiness report.
+5. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, examples, and source-of-truth links.
+6. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
+7. Check no-drift, ambiguity, spec-structure, visualization, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, contradiction, migration, wave-readiness, and self-audit gates.
+8. Run self-critique and deterministic checks when available.
+9. Simulate implementation planning across all waves.
+10. Ask focused human review questions only for unsafe assumptions.
+11. Write or update the readiness report.
 
 ## Modes
 
@@ -84,4 +88,4 @@ Run the checker when a spec tree exists:
 node skills/spec-architect/scripts/check_specs.mjs specs
 ```
 
-A passing deterministic check means the spec set is mechanically coherent. It does not replace semantic review or human approval. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, and the readiness gates for no drift, ambiguity, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, migrations, waves, contradictions, and self-audit have passed.
+A passing deterministic check means the spec set is mechanically coherent. It does not replace semantic review or human approval. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, and the readiness gates for no drift, ambiguity, spec structure, visualization, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, migrations, waves, contradictions, and self-audit have passed.

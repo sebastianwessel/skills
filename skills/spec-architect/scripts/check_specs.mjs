@@ -6,7 +6,8 @@ const root = path.resolve(process.argv[2] || "specs");
 const errors = [], warnings = [];
 const gates = [
   "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
-  "async_semantics_gate", "interface_gate", "e2e_gate",
+  "spec_structure_gate", "visualization_gate", "async_semantics_gate",
+  "interface_gate", "e2e_gate",
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
   "wave_readiness", "migration_gate", "contradiction_check",
@@ -88,6 +89,9 @@ if (!fs.existsSync(root)) {
       [/\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|gRPC|protobuf)\b/i, "Cross-language/protocol specs require type/nullability mapping", false, /\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i],
       [/\b(async|queue|stream|event|job|worker|callback|goroutine|promise|coroutine)\b/i, "Async specs require runtime, ordering, timeout, retry, cancellation, idempotency, and backpressure semantics", false, /\b(timeout|retry|cancellation|idempotency|ordering|concurrency|ack|backpressure)\b/i],
       [/\b(unhappy|failure path|validation failure|authorization|denial|timeout|retry|rollback|recovery|cancellation|manual intervention)\b/i, "Approved specs require unhappy-path and recovery behavior"],
+      [/\b(business|user|customer|outcome|goal|why|rationale)\b/i, "Approved specs require business/user context and rationale"],
+      [/\b(component|module|service|package|workflow|process|interface|contract|frontend|UX|design|accessibility|reusable)\b/i, "Approved specs require component/workflow/interface/frontend structure where applicable"],
+      [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Approved specs require centralized shared facts and links instead of repetition"],
       [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Approved specs require security/privacy/data-classification behavior"],
       [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Approved specs require observability/log-level/redaction behavior"],
       [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Approved specs require performance/capacity/overload budgets"],

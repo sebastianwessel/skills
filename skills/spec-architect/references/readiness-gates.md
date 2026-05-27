@@ -15,6 +15,17 @@ with evidence.
 - Self-audit must list weakest assumptions, inferred defaults, evidence, and
   blockers. Do not approve on confidence without evidence.
 
+## Structure, Reuse, And Visualization
+
+Use a business-to-technical structure: outcome and rationale first, then scope,
+components/services/packages, workflows, interfaces/data, frontend UX,
+operational constraints, and verification. Shared facts live once and are
+linked, not copied.
+
+Use Mermaid only when useful for architecture, workflow, sequence, state,
+dependency, data-flow, or migration clarity. Diagrams must be kept aligned with
+authoritative text and never replace exact contracts or acceptance criteria.
+
 ## Interfaces And Runtime Semantics
 
 Every boundary defines owner, audience, stability, version, inputs, outputs,

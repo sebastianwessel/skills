@@ -20,6 +20,8 @@ migration, performance, recovery, observability, or verification decisions.
 - Specs are precise, concise, non-contradictory, and language agnostic unless a
   language/runtime/protocol choice is part of the contract.
 - Specs define behavior, contracts, rationale, and migration needs, not code.
+- Specs flow from business/user outcome to components, workflows, interfaces,
+  UX, and technical constraints. Centralize shared facts and link to them.
 - Self-audit before approval: challenge assumptions, judge weak decisions,
   record uncertainty honestly, and never mark gates passed without evidence.
 - Planning starts only when `.readiness-report.yaml` says `status: approved`
@@ -28,19 +30,20 @@ migration, performance, recovery, observability, or verification decisions.
 ## Workflow
 
 1. Select mode: `Create`, `Review/Approve`, `Update`, or `Fix Gap`.
-2. Update layered specs and active-wave end-to-end paths, including unhappy
+2. Apply `references/readiness-gates.md` for business-to-technical structure,
+   shared sources of truth, frontend/UX coverage, and visualization rules.
+3. Update layered specs and active-wave end-to-end paths, including unhappy
    paths and recovery paths.
-3. Freeze every service/client/storage/event/job/adapter/CLI/config/policy/tool
+4. Freeze every service/client/storage/event/job/adapter/CLI/config/policy/tool
    interface, including type/nullability and protocol semantics.
-4. Define security/privacy, data classification, log levels/redaction,
+5. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
-5. Mark async/concurrency/runtime semantics explicitly.
-6. Add migration plans under `plans/migrations/` when implemented behavior
+6. Mark async/concurrency/runtime semantics explicitly.
+7. Add migration plans under `plans/migrations/` when implemented behavior
    changes materially.
-7. Run `references/readiness-gates.md`, `references/artifact-shapes.md`, and
-   `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-8. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
-9. Record self-audit evidence in `.readiness-report.yaml`.
+8. Run references and `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
+9. Simulate every wave/ticket; unresolved decisions stay in specs, not plans.
+10. Record self-audit evidence in `.readiness-report.yaml`.
 
 ## Reference Map
 

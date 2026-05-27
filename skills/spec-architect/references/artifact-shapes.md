@@ -7,6 +7,7 @@
   `00-architecture-overview.md`, `glossary.md`
 - `01-domains/`, `02-capabilities/`, `03-contracts/`, `03-flows/`
 - `04-backend/` or equivalent technical specs
+- `04-frontend/` or equivalent UX/design specs when user-facing UI exists
 - `04-nfr/`: security/privacy, data integrity/recovery,
   performance/resilience, observability/logging, test strategy
 - `plans/migrations/*.md` for material changes to implemented behavior
@@ -17,8 +18,9 @@ Approved specs require:
 
 - `status: approved`, `human_approval.status: approved`, `open_decisions: []`
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
-  `semantic_alignment_gate`, `async_semantics_gate`, `interface_gate`,
-  `e2e_gate`, `unhappy_path_gate`, `security_privacy_gate`,
+  `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
+  `async_semantics_gate`, `interface_gate`, `e2e_gate`,
+  `unhappy_path_gate`, `security_privacy_gate`,
   `observability_gate`, `performance_resilience_gate`,
   `data_integrity_recovery_gate`, `wave_readiness`, `migration_gate`,
   `contradiction_check`, `self_audit_gate`, `gate_simulation`
