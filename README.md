@@ -1,12 +1,17 @@
 # AI Skills
 
-Reusable AI agent skills maintained in this repository. Each skill lives in its
-own subdirectory under `skills/` and follows Anthropic's
+Reusable AI agent skills maintained in this repository. The work is shaped by
+Sebastian Wessel's article
+[Spec-Driven Development](https://sebastianwessel.de/articles/spec-driven-development/),
+which explains this repository's spec-first approach for keeping autonomous AI
+agents aligned from business intent through implementation and review. Each
+skill lives in its own subdirectory under `skills/` and follows Anthropic's
 [Agent Skills best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices).
 
 ## Contents
 
 - [Skill Index](#skill-index)
+- [Spec-Driven Development](#spec-driven-development)
 - [Installation](#installation)
 - [Repository Layout](#repository-layout)
 - [Documentation Pattern](#documentation-pattern)
@@ -23,6 +28,15 @@ own subdirectory under `skills/` and follows Anthropic's
 | [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Use when a completed or partial spec implementation wave, plan, or cross-ticket solution needs review before acceptance, merge, release, or handoff. | [docs](docs/skills/spec-implementation-review.md) |
 | [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Use when implementing one approved spec plan ticket with strict read/write scope, acceptance verification, dependency checks, and no implementation-time decisions. | [docs](docs/skills/spec-ticket-implementation.md) |
 <!-- skills-index:end -->
+
+## Spec-Driven Development
+
+Read
+[Spec-Driven Development](https://sebastianwessel.de/articles/spec-driven-development/)
+for the rationale behind this repository. The article describes how clear specs,
+implementation plans, ticket execution, and review gates work together so AI
+agents can build production-ready systems without drifting from the intended
+business outcome.
 
 ## Installation
 
