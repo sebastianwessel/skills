@@ -19,6 +19,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Traces request, command, event, job, UI, and async paths from entry point to final output.
 - Checks success, validation failure, authorization failure, downstream failure, timeout, retry, cancellation, rollback, idempotency, cleanup, and observability paths when relevant.
 - Enforces spec conformance, interface correctness, test coverage, security, privacy, log redaction, data integrity, recovery, performance, robustness, maintainability, and public API/documentation quality.
+- Verifies generated types, validators, clients, stubs, fixtures, docs, and
+  contract tests derive from approved machine-readable contracts where tooling
+  exists, and rejects stale or hand-edited generated shapes.
 - Enforces requirement traceability plus production readiness, release/rollback,
   runbook handoff, dependency policy, SBOM/provenance, vulnerability, license,
   and supply-chain evidence when in scope.
@@ -35,7 +38,7 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
 
 1. Confirm approved specs, valid plan, wave scope, ticket status, and verification evidence.
 2. Build an end-to-end path matrix for every relevant entry point and failure mode.
-3. Review spec conformance, requirement traceability, interfaces, tests, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
+3. Review spec conformance, requirement traceability, generated artifacts, interfaces, tests, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
 4. Persist `review.md`, `findings.yaml`, and `agent-feedback/<ticket-id>.md`.
 5. Update plan status metadata for partial tickets, blocked spec gaps, or blocked plan gaps when a tracker exists.
 6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-architect`.
@@ -47,7 +50,7 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
 | --- | --- |
 | `skills/spec-implementation-review/SKILL.md` | Executable agent instructions and trigger metadata. |
 | `skills/spec-implementation-review/references/path-tracing.md` | End-to-end solution path review checklist. |
-| `skills/spec-implementation-review/references/review-gates.md` | Spec, interface, test, security, performance, robustness, and maintainability gates. |
+| `skills/spec-implementation-review/references/review-gates.md` | Spec, generated-contract, interface, test, security, performance, robustness, and maintainability gates. |
 | `skills/spec-implementation-review/references/findings-format.md` | Required persisted review artifact and feedback formats. |
 | `skills/spec-implementation-review/evals/evals.json` | Evaluation scenarios for the skill. |
 

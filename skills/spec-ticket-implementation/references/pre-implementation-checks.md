@@ -31,6 +31,12 @@ inside scope, the ticket must fix them.
       dependency, SBOM/provenance, vulnerability, and license expectations are
       identified or explicitly not applicable.
 - [ ] Approved interfaces/contracts and consumer expectations are identified.
+- [ ] Machine-readable contract sources are identified: OpenAPI, GraphQL
+      SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf, CloudEvents, Avro, or
+      approved equivalent.
+- [ ] `generated_contracts` lists source artifacts, generation commands,
+      generated output paths, generated/contract tests, drift checks, or N/A
+      evidence.
 - [ ] Mock/fake/stub/placeholder permissions are checked.
 - [ ] Verification commands are copied exactly.
 
@@ -51,6 +57,8 @@ from scoped specs.
 Read only `read_scope` and `spec_refs`.
 
 - [ ] Contracts, schemas, ports, flows, and error taxonomy are read.
+- [ ] Existing codegen tools, generated-file headers, regeneration commands,
+      generated test patterns, and drift/contract-check commands are read.
 - [ ] Nullability, optionality, async behavior, cancellation, retries,
       serialization, and cross-language/protocol type semantics are checked.
 - [ ] Data classification, trust boundaries, auth/policy, retention, redaction,
@@ -69,4 +77,6 @@ Read only `read_scope` and `spec_refs`.
 Stop if a required contract, field, flow, policy, error, persistence rule,
 logging/audit behavior, performance budget, recovery path, or failure path is
 missing. Also stop if requirement traceability, release/operations, or
-supply-chain expectations are missing for in-scope work. Do not infer it.
+supply-chain expectations are missing for in-scope work. Stop if the ticket
+requires hand-writing shapes that approved tooling can generate, or if
+generation commands/outputs are undefined. Do not infer it.

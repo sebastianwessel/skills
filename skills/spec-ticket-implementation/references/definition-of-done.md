@@ -8,6 +8,10 @@ A ticket is done only when all relevant checks pass.
 - [ ] Naming, file/folder structure, and file sizes follow conventions.
 - [ ] Types are precise; no unapproved `any`, unchecked casts, dynamic maps, or
       stringly typed contracts.
+- [ ] Generated contract types, clients, validators, stubs, fixtures, docs, and
+      tests are generated from approved sources where tooling exists.
+- [ ] Generated files were not hand-edited unless specs/ticket explicitly allow
+      it and explain why generation is unavailable.
 - [ ] Repeated or semantic hardcoded values are centralized into inline-
       documented constants.
 - [ ] Duration, size, count, rate, and limit constants include units in names.
@@ -43,6 +47,7 @@ A ticket is done only when all relevant checks pass.
 - [ ] Failure paths have dedicated tests.
 - [ ] Test-first evidence exists, or a concrete exception is recorded.
 - [ ] Contract tests pass when applicable.
+- [ ] Contract/codegen drift checks pass when applicable.
 - [ ] Default tests are hermetic and require no external providers, credentials,
       network listeners, daemons, cloud services, browsers, GPUs, or hardware.
 - [ ] Opt-in integration tests are skipped by default and require caller-supplied

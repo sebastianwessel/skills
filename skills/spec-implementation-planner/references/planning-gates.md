@@ -8,13 +8,14 @@
 - `plans/wave_NN_slug/tickets/TICKET-NNN-name.md`
 
 Each wave ends in a working end-to-end increment. Use interface/foundation
-tickets first when parallel agents need shared contracts.
+tickets first when parallel agents need shared contracts, generated types,
+validators, clients, server stubs, fixtures, or contract-test scaffolds.
 
 ## Ticket Shape
 
 Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`, `depends_on`,
 `blocked_by`, `spec_refs`, `write_scope`, `read_scope`, `contract_readiness`,
-`ticket_readiness`.
+`generated_contracts`, `ticket_readiness`.
 
 Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
 `Requirements Traceability`, `Contract Traceability`, `Tasks`, `Acceptance`,
@@ -31,6 +32,8 @@ verification, no pasted specs, no implementation prose.
   English smoke checks are used
 - no Wave 0/spec-closure implementation wave
 - ready contracts, no missing contracts, no open decisions
+- contract-backed tickets identify generation commands, generated outputs,
+  generated tests, owning source artifacts, and regeneration/drift checks
 - every requirement/spec/capability/flow/NFR maps to ticket or explicit deferral
   with source requirement IDs preserved
 - happy, unhappy, recovery, security/privacy, observability/logging,
@@ -40,7 +43,8 @@ verification, no pasted specs, no implementation prose.
 - wave `Implementation Order`; `_dependencies.yaml` mirrors dependencies and
   each dependency lists matching `unblocks`
 - no ticket asks agents to read all specs, ask users, decide behavior, choose
-  logging/retry/performance/rollback/security, or use vague phrasing
+  logging/retry/performance/rollback/security, hand-write generated contract
+  shapes, or use vague phrasing
 - no placeholder/fake/mock/stub/no-op work unless specs explicitly require a
   test fixture/fake provider
 - `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
@@ -55,6 +59,9 @@ verification, no pasted specs, no implementation prose.
 - public surfaces include inventory, execution semantics, tests, docs, examples,
   helpers, safe defaults, and hermetic fixtures; raw refs stay advanced only
 - default verification is hermetic; external systems are opt-in
+- generated code/tests/docs are preferred when approved contract sources and
+  project tooling support them; manual implementation must cite why generation
+  is unavailable or out of scope
 - release, rollback, runbook, dependency, SBOM/provenance, vulnerability/license
   work is assigned or marked N/A from specs
 

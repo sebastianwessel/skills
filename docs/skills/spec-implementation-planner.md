@@ -25,8 +25,12 @@ The CLI and public skill directory are introduced in Vercel's
   relationships so agents know which tickets can start, which are blocked, and
   what becomes available when a ticket is done.
 - Starts with shared contract/interface foundation work when parallel agents
-  need stable boundaries, then isolates backend, frontend, adapter, docs, and
-  test tickets against those contracts.
+  need stable boundaries, generated types, validators, clients, stubs,
+  fixtures, or contract-test scaffolds, then isolates backend, frontend,
+  adapter, docs, and test tickets against those outputs.
+- Requires tickets to name approved contract sources, generation commands,
+  generated outputs, generated/contract tests, drift checks, or explicit
+  not-applicable evidence.
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.
@@ -45,7 +49,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, ticket readiness, decision ledgers, requirement and contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
+The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, generated-contract ownership, ticket readiness, decision ledgers, requirement and contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
 
 When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-architect`.
 
@@ -55,11 +59,12 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 2. Simulate the planned ticket areas from specs.
 3. Create the plan root and indexes.
 4. Group work into waves with end-to-end outcomes and isolation notes.
-5. Write implementation-ready tickets with compact context digests.
-6. Record a plan-level self-audit.
-7. Update plan impact notes when specs changed.
-8. Verify registry, dependencies, unblocks links, scope, status, path coverage, NFR ownership, and ticket readiness.
-9. Run plan and wave checker scripts.
+5. Plan contract/codegen foundation work before dependent parallel tickets.
+6. Write implementation-ready tickets with compact context digests.
+7. Record a plan-level self-audit.
+8. Update plan impact notes when specs changed.
+9. Verify registry, dependencies, unblocks links, scope, status, path coverage, generated-contract ownership, NFR ownership, and ticket readiness.
+10. Run plan and wave checker scripts.
 
 ## Output Files
 
