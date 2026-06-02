@@ -6,6 +6,9 @@
 - `00-vision.md`, `00-stack.md`, `00-conventions.md`,
   `00-architecture-overview.md`, `glossary.md`
 - `01-domains/`, `02-capabilities/`, `03-contracts/`, `03-flows/`
+- `03-contracts/`: standard machine-readable sources when interfaces exist
+  (`openapi.yaml`, `*.graphql`, `asyncapi.yaml`, `*.schema.json`, `*.proto`,
+  `*.avsc`, CloudEvents, or equivalent).
 - `04-backend/` or equivalent technical specs
 - `04-frontend/` or equivalent UX/design specs when user-facing UI exists
 - `04-nfr/`: security/privacy, data integrity/recovery,
@@ -23,7 +26,8 @@ Approved specs require:
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
   `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
   `requirements_quality_gate`, `standards_first_gate`,
-  `async_semantics_gate`, `interface_gate`, `e2e_gate`,
+  `machine_readable_contract_gate`, `async_semantics_gate`,
+  `interface_gate`, `e2e_gate`,
   `unhappy_path_gate`, `security_privacy_gate`,
   `observability_gate`, `performance_resilience_gate`,
   `data_integrity_recovery_gate`, `production_readiness_gate`,
@@ -41,9 +45,9 @@ Approved specs require:
 ## Inference Policy
 
 Infer only toolchain/standard defaults: framework-native, ports-and-adapters,
-OpenTelemetry, structured JSON logs, RFC 9457, suitable
-OpenAPI/GraphQL/gRPC/protobuf, standard validation/tests, SPDX/CycloneDX for
-SBOMs, SLSA for provenance, local-first adapters. Block for custom
+OpenTelemetry, structured JSON logs, RFC 9457, suitable OpenAPI, GraphQL SDL,
+AsyncAPI, JSON Schema, gRPC/protobuf, CloudEvents, Avro, standard
+validation/tests, SPDX/CycloneDX, SLSA, local-first adapters. Block for custom
 protocols/formats, scope, compliance/privacy, security boundaries, data
 classification, public semantics, production/release, supply-chain policy,
 irreversible architecture, trust boundaries, contradictions.

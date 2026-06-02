@@ -19,8 +19,9 @@ performance, recovery, release, supply chain, observability, or tests.
   recommendation, and 2-3 alternatives only if useful.
 - Specs are precise, concise, non-contradictory, language agnostic unless
   contractual, and define behavior/contracts not code.
-- Prefer industry standards; custom protocols, formats, observability, errors,
-  auth, architecture, or supply-chain choices need rationale and approval.
+- Prefer industry standards and machine-readable interface contracts; custom
+  protocols, formats, observability, errors, auth, architecture, or
+  supply-chain choices need rationale and approval.
 - Flow business/user outcome to components, workflows, interfaces, UX, NFRs,
   production/release/supply-chain, and acceptance. Centralize shared facts.
 - On update/fix-gap, update source of truth first, relink dependents, prune
@@ -39,17 +40,20 @@ performance, recovery, release, supply chain, observability, or tests.
 3. Normalize traceable requirements.
 4. Update layered specs and end-to-end success/failure/recovery paths.
 5. Select standards-first protocols, formats, interfaces, and architecture.
-6. Freeze interfaces, type/nullability, and protocol semantics.
-7. Define security/privacy, data classification, log levels/redaction,
+6. Define machine-readable contracts as source of truth where possible:
+   OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
+   CloudEvents, Avro, or equivalent standard artifacts.
+7. Freeze interfaces, type/nullability, and protocol semantics.
+8. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
-8. Define production readiness, release/rollback, operations, supply chain.
-9. Mark async/concurrency/runtime semantics explicitly.
-10. Add `plans/migrations/` entries for material implemented-behavior changes.
-11. Sync registries/provenance/readiness; prune superseded duplicate text.
-12. Run semantic judge review and
+9. Define production readiness, release/rollback, operations, supply chain.
+10. Mark async/concurrency/runtime semantics explicitly.
+11. Add `plans/migrations/` entries for material implemented-behavior changes.
+12. Sync registries/provenance/readiness; prune superseded duplicate text.
+13. Run semantic judge review and
     `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-13. Simulate waves/tickets; unresolved decisions stay in specs.
-14. Record deterministic, judge, maintenance, and self-audit evidence.
+14. Simulate waves/tickets; unresolved decisions stay in specs.
+15. Record deterministic, judge, maintenance, and self-audit evidence.
 
 ## Reference Map
 
@@ -67,5 +71,6 @@ performance, recovery, release, supply chain, observability, or tests.
 
 Do not approve if a ticket must decide behavior, reconcile contradictions,
 interpret vague wording, align type systems, define async behavior, or invent
-security, performance, recovery, logging, protocols, data protection, release,
-supply-chain, migration, or tests. Regex success is not semantic approval.
+security, performance, recovery, logging, protocols, machine-readable
+contracts, data protection, release, supply-chain, migration, or tests. Regex
+success is not semantic approval.

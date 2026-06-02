@@ -65,9 +65,26 @@ Mermaid is optional and aligned.
 ## Standards First
 
 Default to standards: OpenTelemetry, structured JSON logs, RFC 9457,
-OpenAPI/GraphQL/gRPC/protobuf, OAuth/OIDC/JWT, framework conventions.
-Custom protocols, log levels, envelopes, serialization, auth, architecture, or
-interface semantics need rationale, tooling impact, migration, and approval.
+OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
+CloudEvents, Avro, OAuth/OIDC/JWT, framework conventions. Custom protocols, log
+levels, envelopes, serialization, auth, architecture, or interface semantics
+need rationale, tooling impact, migration, and approval.
+
+## Machine-Readable Contract Sources
+
+Interfaces, APIs, events, queues, webhooks, plugins, configs, SDK/CLI surfaces,
+and durable data shapes must use a standard machine-readable source of truth
+when one fits: OpenAPI/JSON Schema for HTTP, GraphQL SDL/schema for GraphQL,
+AsyncAPI/CloudEvents/protobuf/Avro for events, gRPC/protobuf for RPC, and JSON
+Schema/Avro/protobuf/framework-native schemas for documents/configs.
+
+Human specs explain intent, rationale, flows, UX, security, failures, and
+operations, then link to contract artifacts instead of duplicating field lists.
+Those artifacts drive generated types, validation, docs, UI/schema rendering,
+compatibility checks, and drift gates. If no standard fits, state why, define
+the smallest custom shape, record lost tooling benefits, require approval, and
+add migration guidance. N/A needs evidence that no interface, transport,
+message, config, extension, or durable data contract is in scope.
 
 ## Interfaces And Runtime Semantics
 
@@ -77,6 +94,12 @@ validation, errors, auth/policy, lifecycle, observability, tests.
 Cross-language/protocol specs map source/wire/target types, required/optional,
 defaulted, `null`, `undefined`, omitted, zero/empty, enum unknowns, precision,
 time zones, IDs, encoding, ordering, pagination, partial data, errors.
+
+Machine-readable contracts must define or link the exact wire names,
+serialization, type/nullability semantics, versioning and deprecation policy,
+compatibility rules, generation targets, validation entry points, and owning
+source file. Human diagrams or UI documentation must derive from or link back
+to those contract artifacts and must be updated in the same change.
 
 Async specs define runtime model, ordering, concurrency, cancellation, timeout,
 retry budget, idempotency, ack/commit, lease/heartbeat, backpressure, DLQ,

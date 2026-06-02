@@ -28,6 +28,10 @@ The CLI and public skill directory are introduced in Vercel's
   dependents, pruning stale or duplicate text, and recording plan impact.
 - Uses Mermaid diagrams only when they improve human understanding, and requires diagrams to stay aligned with authoritative text.
 - Defaults to industry-standard protocols, formats, errors, structured logging, observability, architecture, and framework conventions; custom designs need rationale and approval.
+- Requires standard machine-readable contract artifacts whenever possible, such
+  as OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
+  CloudEvents, or Avro. Human-facing specs link to those artifacts instead of
+  duplicating field lists.
 - Requires clear, concise, non-contradictory specs with no implementation gaps.
 - Defines robust interfaces and end-to-end paths before work is marked ready,
   including cross-language and protocol semantics such as `null`, `undefined`,
@@ -65,16 +69,17 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 3. Describe public workflows, frontend UX states, accessibility, design-system usage, reusable components, and end-user behavior.
 4. Normalize requirements into traceable, verifiable, implementation-ready statements.
 5. Prefer industry-standard protocols, formats, interfaces, architectural patterns, observability, and framework conventions.
-6. Specify developer experience, setup paths, safe defaults, and advanced escape hatches.
-7. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, examples, and source-of-truth links.
-8. Define production readiness, release/rollback, operations, and supply-chain expectations.
-9. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
-10. Check no-drift, ambiguity, requirements quality, spec-structure, visualization, standards-first, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, production-readiness, supply-chain, contradiction, semantic-judge, migration, wave-readiness, and self-audit gates.
-11. Run self-critique, semantic judge review, and deterministic checks when available.
-12. Synchronize registries, provenance, readiness, dependent specs, and affected plan notes.
-13. Simulate implementation planning across all waves.
-14. Ask focused human review questions only for unsafe assumptions.
-15. Write or update the readiness report.
+6. Define machine-readable interface and transport contracts as source-of-truth artifacts when possible, and mark not-applicable cases with evidence.
+7. Specify developer experience, setup paths, safe defaults, and advanced escape hatches.
+8. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, examples, and source-of-truth links.
+9. Define production readiness, release/rollback, operations, and supply-chain expectations.
+10. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
+11. Check no-drift, ambiguity, requirements quality, spec-structure, visualization, standards-first, machine-readable-contract, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, production-readiness, supply-chain, contradiction, semantic-judge, migration, wave-readiness, and self-audit gates.
+12. Run self-critique, semantic judge review, and deterministic checks when available.
+13. Synchronize registries, provenance, readiness, dependent specs, and affected plan notes.
+14. Simulate implementation planning across all waves.
+15. Ask focused human review questions only for unsafe assumptions.
+16. Write or update the readiness report.
 
 ## Modes
 
@@ -90,7 +95,7 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 | Path | Purpose |
 | --- | --- |
 | `skills/spec-architect/SKILL.md` | Executable agent instructions and trigger metadata. |
-| `skills/spec-architect/references/readiness-gates.md` | No-drift, ambiguity, requirements quality, semantic-alignment, async, security, privacy, observability, performance, resilience, production, supply-chain, data-integrity, migration, wave, interface, and parallel readiness gates. |
+| `skills/spec-architect/references/readiness-gates.md` | No-drift, ambiguity, requirements quality, standards-first, machine-readable contracts, semantic-alignment, async, security, privacy, observability, performance, resilience, production, supply-chain, data-integrity, migration, wave, interface, and parallel readiness gates. |
 | `skills/spec-architect/references/artifact-shapes.md` | Expected spec tree, readiness report fields, inference policy, and standard failure defaults. |
 | `skills/spec-architect/scripts/check_specs.mjs` | Deterministic consistency checker. |
 | `skills/spec-architect/evals/evals.json` | Evaluation scenarios for the skill. |
@@ -103,4 +108,4 @@ Run the checker when a spec tree exists:
 node skills/spec-architect/scripts/check_specs.mjs specs
 ```
 
-A passing deterministic check means the spec set is mechanically coherent. It does not prove semantic completeness. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, `language: en`, and the readiness gates for no drift, ambiguity, requirements quality, spec structure, visualization, standards-first choices, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, production readiness, supply-chain integrity, migrations, waves, contradictions, semantic judge review, and self-audit have passed.
+A passing deterministic check means the spec set is mechanically coherent. It does not prove semantic completeness. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, `language: en`, and the readiness gates for no drift, ambiguity, requirements quality, spec structure, visualization, standards-first choices, machine-readable contracts, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, production readiness, supply-chain integrity, migrations, waves, contradictions, semantic judge review, and self-audit have passed.
