@@ -6,6 +6,9 @@
 - `00-vision.md`, `00-stack.md`, `00-conventions.md`,
   `00-architecture-overview.md`, `glossary.md`
 - `01-domains/`, `02-capabilities/`, `03-contracts/`, `03-flows/`
+- `03-flows/e2e-coverage.md`: matrix proving each business outcome reaches a
+  complete working solution across clients/consumers, services, contracts,
+  state, unhappy paths, recovery, and verification.
 - `03-contracts/`: best-fit standard or ecosystem-native contract/IDL/schema
   sources when interfaces exist. Examples are non-exhaustive: OpenAPI,
   GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC, CloudEvents, Avro, Thrift,
@@ -26,7 +29,8 @@ Approved specs require:
 - `language: en`
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
   `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
-  `requirements_quality_gate`, `standards_first_gate`,
+  `requirements_quality_gate`, `concise_spec_gate`,
+  `client_consumer_coverage_gate`, `standards_first_gate`,
   `machine_readable_contract_gate`, `async_semantics_gate`,
   `interface_gate`, `e2e_gate`,
   `unhappy_path_gate`, `security_privacy_gate`,

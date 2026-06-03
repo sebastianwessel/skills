@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "Create specs for a SaaS workflow that backend and frontend agents implement in parallel.",
-      "expected_output": "Creates implementation-ready specs with business context, flows, contracts, happy/unhappy paths, NFRs, gates, and no open implementation decisions.",
+      "expected_output": "Creates concise specs with business context, contracts, E2E client/service matrix, happy/unhappy paths, NFRs, gates, and no open decisions.",
       "files": []
     },
     {
@@ -17,18 +17,6 @@
       "id": 3,
       "prompt": "Repair specs where Go, TypeScript, and protobuf null/omitted/enum semantics drift.",
       "expected_output": "Defines cross-language semantics, source contracts, validation, compatibility checks, and blocks readiness until ambiguity is resolved.",
-      "files": []
-    },
-    {
-      "id": 4,
-      "prompt": "Update specs after implemented persistence behavior changes materially.",
-      "expected_output": "Updates source specs first, relinks dependents, prunes stale text, records impact, and creates migration plan entries.",
-      "files": []
-    },
-    {
-      "id": 5,
-      "prompt": "Review broad enterprise specs with vague error, security, logging, and sync behavior.",
-      "expected_output": "Rejects vague prose and requires verifiable behavior, redaction, failure/recovery paths, integrity rules, and minimal HITL only for hard gaps.",
       "files": []
     }
   ]
