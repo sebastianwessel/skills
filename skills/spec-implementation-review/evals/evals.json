@@ -42,6 +42,12 @@
       "prompt": "Review a wave where the API works but the feature is unreachable in the frontend, lacks error/loading states, and uses custom styles instead of the approved design system.",
       "expected_output": "Creates blocking FRONTEND_UX or SPEC_DRIFT findings with spec refs, evidence, owner tickets, fix boundaries, and required verification.",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Review a wave where tests were added after implementation and do not trace to contracts, acceptance criteria, or unhappy-path definitions.",
+      "expected_output": "Creates blocking TEST or TRACEABILITY findings requiring spec/contract-derived test-first evidence and missing unhappy-path tests before acceptance.",
+      "files": []
     }
   ]
 }

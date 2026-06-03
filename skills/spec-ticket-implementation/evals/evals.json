@@ -48,6 +48,12 @@
       "prompt": "Implement a frontend ticket whose specs omit access path, loading/error states, design source, and reusable component expectations.",
       "expected_output": "Stops with a spec/plan gap instead of inventing UX, look and feel, styles, or custom components.",
       "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Implement a ticket by coding the service logic first and adding acceptance tests afterwards.",
+      "expected_output": "Stops or reorders work to generate/write spec- and contract-derived failing tests first, including unhappy paths, before implementing business logic.",
+      "files": []
     }
   ]
 }

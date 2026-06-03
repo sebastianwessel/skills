@@ -38,6 +38,11 @@ Use these gates after building the path matrix.
 
 - Ticket and wave verification commands pass.
 - Every acceptance criterion and path has behavior evidence.
+- Test evidence derives from approved specs, contracts/schemas, acceptance
+  criteria, and unhappy-path definitions before business logic is accepted.
+- Unit, contract/generated, integration, and E2E tests were written or generated
+  before the business logic they prove, or the ticket records a concrete
+  mechanical exception.
 - Contract and end-to-end tests cover cross-ticket integration.
 - Contract/codegen drift checks pass, or N/A evidence matches the approved plan.
 - Tests include happy, unhappy, async/error, retry/timeout, and security paths.

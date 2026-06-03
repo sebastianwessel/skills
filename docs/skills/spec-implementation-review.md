@@ -28,6 +28,9 @@ The CLI and public skill directory are introduced in Vercel's
   artifacts through deterministic generators/tools when approved tooling or
   project configuration supports generation, and rejects stale or hand-edited
   generated shapes.
+- Verifies tests were derived from approved specs, contracts/schemas,
+  acceptance criteria, and unhappy-path definitions before the business logic
+  they prove was accepted.
 - Enforces requirement traceability plus production readiness, release/rollback,
   runbook handoff, dependency policy, SBOM/provenance, vulnerability, license,
   and supply-chain evidence when in scope.
@@ -44,7 +47,7 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
 
 1. Confirm approved specs, valid plan, wave scope, ticket status, and verification evidence.
 2. Build an end-to-end path matrix for every relevant entry point and failure mode.
-3. Review spec conformance, requirement traceability, generated artifacts, interfaces, frontend/client UX and reuse, tests, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
+3. Review spec conformance, requirement traceability, generated artifacts, interfaces, frontend/client UX and reuse, test-first evidence, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
 4. Persist `review.md`, `findings.yaml`, and `agent-feedback/<ticket-id>.md`.
 5. Update plan status metadata for partial tickets, blocked spec gaps, or blocked plan gaps when a tracker exists.
 6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-architect`.

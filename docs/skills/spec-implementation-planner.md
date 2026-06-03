@@ -50,6 +50,9 @@ The CLI and public skill directory are introduced in Vercel's
   horizontal exception.
 - Requires unit tests, end-to-end tests, and a default 80% code coverage target
   unless approved specs or project standards define another threshold.
+- Requires test-driven implementation order: tests are derived from approved
+  specs, contracts/schemas, acceptance criteria, and unhappy-path definitions
+  before business logic is planned or implemented.
 - Blocks tickets that would require agents to invent behavior, choose
   interfaces, invent frontend look and feel, duplicate styles/components, or
   resolve missing specs.
@@ -81,12 +84,15 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 6. Plan contract/codegen foundation work before dependent parallel tickets.
 7. Assign frontend/client access, UX states, design reuse, and component reuse
    ownership when relevant.
-8. Assign unit, end-to-end, and coverage verification ownership.
-9. Write implementation-ready tickets with compact context digests.
-10. Record a plan-level self-audit.
-11. Update plan impact notes when specs changed.
-12. Verify registry, dependencies, unblocks links, scope, status, slice strategy, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, test coverage, and ticket readiness.
-13. Run plan and wave checker scripts.
+8. Assign unit, contract/generated, integration, end-to-end, and coverage
+   verification ownership.
+9. Put test-definition and generated-test tasks before business-logic tasks for
+   the behavior they prove.
+10. Write implementation-ready tickets with compact context digests.
+11. Record a plan-level self-audit.
+12. Update plan impact notes when specs changed.
+13. Verify registry, dependencies, unblocks links, scope, status, slice strategy, test-first order, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, test coverage, and ticket readiness.
+14. Run plan and wave checker scripts.
 
 ## Output Files
 

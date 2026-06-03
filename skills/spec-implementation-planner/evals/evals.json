@@ -54,6 +54,12 @@
       "prompt": "Plan a large feature where several agents can build backend, frontend, and tests in parallel, but the draft plan leaves each wave as horizontal parts with no end-to-end result.",
       "expected_output": "Reworks the plan into vertical-slice waves with isolated tickets that converge into a working E2E increment, or documents a foundation/refactor exception with rationale, unblocks, next vertical slice, unit/E2E tests, and 80% coverage ownership.",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Plan an approved spec where the draft tasks implement business logic first and add tests after the feature is done.",
+      "expected_output": "Rejects or rewrites the plan so tests are derived from specs/contracts/acceptance and unhappy paths before business logic tasks, with dependencies and verification showing test-first order.",
+      "files": []
     }
   ]
 }

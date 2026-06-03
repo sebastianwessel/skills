@@ -25,6 +25,9 @@ The CLI and public skill directory are introduced in Vercel's
   fixtures, docs, and contract tests from approved machine-readable
   contract/IDL/schema sources when approved tooling or project configuration
   supports generation.
+- Requires tests to be defined or generated from specs, contracts/schemas,
+  acceptance criteria, and unhappy-path definitions before business logic is
+  implemented.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
 - Preserves data-integrity, rollback/recovery, no-data-loss, no-leak,
   performance-budget, log-level, and redaction guarantees from the specs.
@@ -52,8 +55,11 @@ The skill starts with preflight checks, maps approved requirement IDs, generated
 6. Confirm frontend/client UX, design-source reuse, and component reuse
    expectations or explicit N/A evidence when relevant.
 7. Regenerate approved contract artifacts first when tooling exists.
-8. Implement approved interfaces/contracts first when the ticket owns them.
-9. Add failing public-interface and contract tests for happy paths, unhappy paths, recovery, security, frontend/client states, and performance behavior when relevant.
+8. Add or generate failing unit, contract, integration, and E2E tests from
+   specs/contracts/acceptance for happy paths, unhappy paths, recovery,
+   security, frontend/client states, and performance behavior when relevant.
+9. Implement approved interfaces/contracts and business logic after the tests
+   exist and fail for the expected missing behavior.
 10. Modify only `write_scope`.
 11. Run ticket, project, contract, and drift verification.
 12. Run the implementation-review-judge loop.

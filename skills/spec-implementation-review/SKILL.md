@@ -50,6 +50,8 @@ Reject the wave/plan when any blocking issue exists:
   approved contract/IDL/schema sources and deterministic tooling exist
 - missing source requirement traceability from specs to tickets, code, tests,
   and acceptance evidence
+- missing evidence that tests were derived from specs/contracts/acceptance and
+  created or generated before the business logic they prove
 - missing, untested, or incorrect success/failure/retry/timeout/cancel/rollback/
   idempotency/recovery paths
 - missing acceptance, cross-layer contract, unhappy-path, or end-to-end tests

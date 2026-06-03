@@ -38,19 +38,29 @@ Use this loop for one approved ticket.
 
 ## Test First
 
+Tests are the executable form of the spec for one ticket. Define or generate
+them before writing the business logic they validate.
+
 For each acceptance criterion:
 
-1. Write or update a public-interface test.
-2. Include happy and relevant unhappy paths.
-3. Generate contract/schema tests from approved artifacts where project tooling
+1. Map the criterion to source spec refs, approved contracts/schemas, expected
+   outputs, and happy/unhappy paths.
+2. Generate contract/schema tests from approved artifacts where project tooling
    supports it; otherwise write equivalent public-interface contract tests.
-4. Include async, timeout, cancellation, retry, logging, or error propagation
-   when specified or required by convention.
-5. Confirm the test fails for the expected missing behavior.
-6. Implement the minimum code to pass, then re-run focused and ticket checks.
+3. Write or update public-interface unit/integration/E2E tests before business
+   logic changes.
+4. Include happy, unhappy, validation, auth, async, timeout, cancellation, retry,
+   logging, recovery, and error propagation tests when specified or required by
+   convention.
+5. Confirm the new or changed tests fail for the expected missing behavior or
+   missing generated artifact.
+6. Implement the minimum business logic to pass, then re-run focused, contract,
+   drift, and ticket checks.
 
 If strict test-first is mechanically impossible, record why and still map every
-acceptance criterion to verification.
+acceptance criterion to verification. "Already passing" is acceptable only when
+the test already exists, traces to the source requirement, and proves the scoped
+behavior before new business logic is added.
 
 ## Quality Rules
 
@@ -102,6 +112,9 @@ Before done, honestly check:
   accessibility/responsiveness, design/style reuse, and component/module reuse
   match specs and project conventions.
 - Tests: every acceptance criterion has happy/unhappy verification.
+- Test order: spec/contract/acceptance tests existed or were generated before
+  business logic for the behavior, or a concrete mechanical exception is
+  recorded.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
 - Integrity: state transitions, recovery, data-loss prevention, and performance
   budgets match specs.

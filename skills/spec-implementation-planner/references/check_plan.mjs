@@ -52,6 +52,7 @@ const generated = /\b(generated_contracts|deterministic generator|generator|code
 const frontend = /\b(frontend|client|UI|UX|screen|surface|user flow|access path|navigation|loading|empty|error state|success state|permission state|accessibility|responsive|design system|design\.md|style reuse|shared style|component library|framework component|reusable component|not applicable|N\/A|out of scope)\b/i;
 const slice = /\b(vertical slice|slice strategy|end-to-end increment|end-to-end outcome|horizontal exception|foundation exception|refactor exception|unblocks|next vertical slice)\b/i;
 const coverage = /\b(unit tests?|end-to-end tests?|E2E tests?|code coverage|coverage threshold|80%|eighty percent|not applicable|N\/A|approved threshold)\b/i;
+const testFirst = /\b(test-first|test driven|TDD|tests? before (business )?logic|failing tests?|contract tests?|acceptance tests?|unhappy-path tests?|public-interface tests?|generated tests?)\b/i;
 const finalComplete = /\b(full(y)? implemented|all spec requirements|no gaps|no unresolved implementation work|no unapproved (fake|mock|stub|placeholder)|full end-to-end alignment|end-to-end working solution)\b/i;
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
 
@@ -76,6 +77,7 @@ if (plan && !generated.test(plan)) fail("implementation-plan.md: missing generat
 if (plan && !frontend.test(plan)) fail("implementation-plan.md: missing frontend/client UX ownership or N/A evidence");
 if (plan && !slice.test(plan)) fail("implementation-plan.md: missing vertical slice strategy or horizontal exception");
 if (plan && !coverage.test(plan)) fail("implementation-plan.md: missing unit/E2E test and coverage ownership");
+if (plan && !testFirst.test(plan)) fail("implementation-plan.md: missing test-first implementation order");
 if (plan && !finalComplete.test(plan)) fail("implementation-plan.md: missing final completion/no-gap expectation");
 
 const depBlock = (id) => {
@@ -94,7 +96,7 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   ["id", "wave", "status", "parallel_group", "depends_on", "blocked_by"].forEach((k) => !front.includes(`${k}:`) && fail(`${rel}: missing ${k}`));
   if (status && !statuses.includes(status)) fail(`${rel}: invalid status ${status}`);
   ["spec_refs", "write_scope", "read_scope"].forEach((k) => !hasList(front, k) && fail(`${rel}: missing ${k}`));
-  ["Goal", "Context Digest", "Implementation Approach", "Slice Strategy", "Tasks", "Acceptance", "Operational Path Coverage", "Verification", "Non-goals", "Handoff"].forEach((s) => !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
+  ["Goal", "Context Digest", "Implementation Approach", "Slice Strategy", "Test-First Order", "Tasks", "Acceptance", "Operational Path Coverage", "Verification", "Non-goals", "Handoff"].forEach((s) => !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
   if (status !== "blocked" && child(front, "contract_readiness", "status") !== "ready") fail(`${rel}: contract_readiness.status must be ready`);
   if (status !== "blocked" && !childList(front, "contract_readiness", "required_contracts").length) fail(`${rel}: missing required_contracts`);
   if (childList(front, "contract_readiness", "missing_contracts").length) fail(`${rel}: missing_contracts must be empty`);
@@ -114,6 +116,7 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && !frontend.test(text)) fail(`${rel}: missing frontend/client UX or N/A disposition`);
   if (active && !slice.test(text)) fail(`${rel}: missing vertical slice strategy or horizontal exception`);
   if (active && !coverage.test(text)) fail(`${rel}: missing unit/E2E test or coverage disposition`);
+  if (active && !testFirst.test(text)) fail(`${rel}: missing test-first order`);
   if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
   for (const ref of list(front, "spec_refs")) {
     const target = ref.split("#")[0];
@@ -136,6 +139,7 @@ for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).f
   if (wp && !frontend.test(wp)) fail(`${d.name}/plan.md: missing frontend/client UX coverage or N/A evidence`);
   if (wp && !slice.test(wp)) fail(`${d.name}/plan.md: missing vertical slice strategy or horizontal exception`);
   if (wp && !coverage.test(wp)) fail(`${d.name}/plan.md: missing unit/E2E test or coverage ownership`);
+  if (wp && !testFirst.test(wp)) fail(`${d.name}/plan.md: missing test-first implementation order`);
   if (!exists(path.join(plans, d.name, "tickets"))) fail(`${d.name}: missing tickets/`);
 }
 for (const [id, t] of tickets) {

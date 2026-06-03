@@ -65,6 +65,11 @@ A ticket is done only when all relevant checks pass.
 ## Testing
 
 - [ ] Every acceptance criterion has passing public-interface tests.
+- [ ] Tests trace to spec refs, approved contracts/schemas, and acceptance
+      criteria before business logic is accepted.
+- [ ] Unit, contract/generated, integration, and E2E tests were written or
+      generated before the business logic they prove, or a concrete mechanical
+      exception is recorded.
 - [ ] Happy and relevant unhappy paths are covered.
 - [ ] Failure paths have dedicated tests.
 - [ ] Test-first evidence exists, or a concrete exception is recorded.
