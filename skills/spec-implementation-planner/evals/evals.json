@@ -48,6 +48,12 @@
       "prompt": "Plan a user-facing feature where backend tickets exist but no ticket owns access path, screens, UI states, design reuse, or component reuse.",
       "expected_output": "Rejects or adds scoped frontend/client tickets with UX states, design/component reuse, acceptance tests, verification, and N/A evidence where applicable.",
       "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Plan a large feature where several agents can build backend, frontend, and tests in parallel, but the draft plan leaves each wave as horizontal parts with no end-to-end result.",
+      "expected_output": "Reworks the plan into vertical-slice waves with isolated tickets that converge into a working E2E increment, or documents a foundation/refactor exception with rationale, unblocks, next vertical slice, unit/E2E tests, and 80% coverage ownership.",
+      "files": []
     }
   ]
 }

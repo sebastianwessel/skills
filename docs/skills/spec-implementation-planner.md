@@ -19,8 +19,11 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires approved specs to declare `language: en` and pass semantic judge
   review when the deterministic English smoke checks are used.
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
-- Splits implementation work into dependency-ordered waves that each end in a
-  working end-to-end increment for that wave's scope.
+- Prefers vertical-slice waves that each end in a working, reachable, testable
+  end-to-end increment for that wave's scope.
+- Allows horizontal foundation or refactor waves only when they unlock safer
+  parallel implementation or reliability, and requires a rationale, unblocked
+  tickets, next vertical slice, and test evidence.
 - Records implementation order plus `depends_on`, `blocked_by`, and `unblocks`
   relationships so agents know which tickets can start, which are blocked, and
   what becomes available when a ticket is done.
@@ -42,6 +45,11 @@ The CLI and public skill directory are introduced in Vercel's
   release/rollback, operations, dependency, SBOM/provenance, vulnerability, and
   license responsibilities into tickets or explicit not-applicable dispositions.
 - Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
+- Requires each ticket and wave to state its slice strategy so agents know
+  whether they are delivering a vertical end-to-end increment or an approved
+  horizontal exception.
+- Requires unit tests, end-to-end tests, and a default 80% code coverage target
+  unless approved specs or project standards define another threshold.
 - Blocks tickets that would require agents to invent behavior, choose
   interfaces, invent frontend look and feel, duplicate styles/components, or
   resolve missing specs.
@@ -52,6 +60,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires a plan-level self-audit that names weak assumptions, readiness
   evidence, fake-work risk, parallel-boundary risk, and blockers or `none`.
 - Preserves completed tickets as historical records and creates remediation or migration tickets for later quality gates.
+- Treats final plan completion as full spec implementation: no gaps, no
+  unresolved implementation work, no unapproved mocks/fakes/placeholders, full
+  end-to-end alignment with specs, and complete verification evidence.
 
 ## How It Works
 
@@ -64,15 +75,18 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 1. Read the approved spec readiness report.
 2. Simulate the planned ticket areas from specs.
 3. Create the plan root and indexes.
-4. Group work into waves with end-to-end outcomes and isolation notes.
-5. Plan contract/codegen foundation work before dependent parallel tickets.
-6. Assign frontend/client access, UX states, design reuse, and component reuse
+4. Group work into vertical-slice waves with end-to-end outcomes and isolation notes.
+5. Document horizontal foundation/refactor exceptions only when they unlock
+   parallel work or reliability.
+6. Plan contract/codegen foundation work before dependent parallel tickets.
+7. Assign frontend/client access, UX states, design reuse, and component reuse
    ownership when relevant.
-7. Write implementation-ready tickets with compact context digests.
-8. Record a plan-level self-audit.
-9. Update plan impact notes when specs changed.
-10. Verify registry, dependencies, unblocks links, scope, status, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, and ticket readiness.
-11. Run plan and wave checker scripts.
+8. Assign unit, end-to-end, and coverage verification ownership.
+9. Write implementation-ready tickets with compact context digests.
+10. Record a plan-level self-audit.
+11. Update plan impact notes when specs changed.
+12. Verify registry, dependencies, unblocks links, scope, status, slice strategy, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, test coverage, and ticket readiness.
+13. Run plan and wave checker scripts.
 
 ## Output Files
 

@@ -5,7 +5,8 @@ description: Turns approved specs into waves, dependency indexes, AFK tickets, a
 
 # Spec Implementation Planner
 
-Turn approved specs into end-to-end waves and concise AFK tickets agents can execute in isolation.
+Turn approved specs into vertical-slice waves and concise AFK tickets agents can
+execute in isolation.
 
 ## Hard Gate
 
@@ -19,61 +20,56 @@ Read `specs/.readiness-report.yaml`. Stop unless:
 
 If blocked, write a spec gap/readiness note. Do not create executable tickets.
 
-Plan only from approved specs, ticket rules, contracts, and scoped
-verification. Otherwise create a spec/plan gap.
+Plan only from approved specs, ticket rules, contracts, and verification.
+Otherwise create a spec/plan gap.
 
 ## Workflow
 
-1. Verify ticket fields are fillable from approved specs.
-2. Create `plans/implementation-plan.md` and `_registry`, `_status`,
-   `_dependencies`, `_scope` indexes.
-3. Split work into end-to-end waves and AFK tickets.
-4. Start with interface/foundation tickets for approved contract/IDL/schema
-   sources, deterministic generators/tools, and generated artifacts; then
-   parallelize backend/client/adapter work against those outputs.
-5. Keep parallel tickets isolated: disjoint writes, frozen contracts, no shared
-   generated outputs.
-6. Map happy/unhappy, NFR, operations, supply-chain, frontend/client UX, design
-   reuse, and component reuse specs into ticket acceptance and verification.
-7. Track status and resume state: planned, in_progress, partial, blocked, done,
-   skipped.
-8. Maintain wave `Implementation Order` plus `depends_on`, `blocked_by`, and
-   `unblocks`.
-9. Self-audit boundaries, path/NFR/frontend/release/supply-chain ownership,
-   parallel risk, ticket clarity, fake-work risk, and blockers.
-10. When specs change, update indexes/impact/follow-ups without rewriting done
-    tickets.
-11. Run `references/planning-gates.md`, then
-    `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
+1. Verify all ticket fields are fillable from approved specs.
+2. Create `plans/implementation-plan.md` plus `_registry`, `_status`,
+   `_dependencies`, and `_scope`.
+3. Prefer vertical slices. Each wave ends with a working, testable end-to-end
+   increment. If too large for one agent, split isolated tickets that converge
+   into the same wave result.
+4. Use horizontal waves only for approved foundation/interface work or
+   reliability refactors; document rationale, unblocks, tests, and next vertical
+   slice.
+5. Plan contract/codegen foundations before parallel backend/client/adapter
+   work; keep parallel writes isolated.
+6. Map happy/unhappy paths, NFRs, operations, supply chain, frontend/client UX,
+   design/component reuse, unit/E2E tests, and coverage into tickets.
+7. Track planned, in_progress, partial, blocked, done, skipped; maintain
+   `depends_on`, `blocked_by`, and `unblocks`.
+8. Self-audit vertical-slice completeness, path/NFR/frontend/release ownership,
+   parallel risk, fake-work risk, and blockers.
+9. Run `references/planning-gates.md`, then
+   `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
 
 ## Required Ticket Evidence
 
-Tickets require exact refs/scopes/dependencies/status, ready contracts,
-generated-contract evidence, implementation-ready state, empty decisions,
-decision ledger, contract/requirement traceability, acceptance matrix,
-frontend/client UX and design/component reuse evidence or N/A evidence, and
-hermetic verification. Keep tickets crisp: enough context to prevent drift, no
-pasted specs, no implementation prose.
+Tickets require refs/scopes/dependencies/status, ready contracts/codegen,
+empty decisions, traceability, acceptance matrix, frontend/client UX and
+design/component reuse evidence or N/A, unit/E2E test ownership, coverage
+evidence, and hermetic verification. Keep tickets crisp.
 
 Return to `spec-architect` when any behavior, interface, persistence, error,
-security/privacy, logging/redaction, budget, integrity, recovery, unhappy path,
-async, production/release, supply-chain, migration, frontend/client UX,
-design/component reuse, custom UI rationale, or test strategy is missing.
+security/privacy, budget, recovery, unhappy path, async, release, supply-chain,
+migration, frontend/client UX, design/component reuse, custom UI rationale, or
+test strategy is missing.
 
 ## Plan Evolution
 
-After a wave or ticket is `done`, keep it historical. New gates, spec changes,
-or gaps create later remediation/migration tickets. Mark obsolete planned work
-`skipped`, partial work `blocked` or `partial`, and record `superseded_by`,
-affected specs, and resume notes.
+After `done`, keep work historical. New gates, spec changes, or gaps create
+later remediation/migration tickets. Mark obsolete planned work `skipped`,
+partial work `blocked` or `partial`, with `superseded_by` and resume notes.
 
 ## Approval Rule
 
 Do not emit tickets that ask implementers to decide, infer, ask humans, read all
-specs, hand-write generated shapes, invent frontend UX/look and feel, or use
-vague phrasing. No placeholder/fake/mock/stub/no-op work unless specs require a
-fixture/fake provider. Plans need `Self-Audit` with assumptions, path/NFR/
-frontend evidence, and blockers or `none`.
+specs, hand-write generated shapes, invent frontend UX, or use vague phrasing.
+No placeholder/fake/mock/stub/no-op work unless specs require it. Avoid many
+horizontal parts with no working E2E result. Plans need `Self-Audit` with
+assumptions, vertical-slice/path/NFR/frontend evidence, and blockers or `none`.
 
 Use `references/planning-gates.md` for ticket shape, quality checks, public
 developer workflow rules, and anti-patterns.

@@ -7,9 +7,16 @@
 - `plans/wave_NN_slug/plan.md`
 - `plans/wave_NN_slug/tickets/TICKET-NNN-name.md`
 
-Each wave ends in a working end-to-end increment. Use interface/foundation
-tickets first when parallel agents need shared contracts, generated types,
-validators, clients, server stubs, fixtures, or contract-test scaffolds.
+Prefer vertical slices. Each wave should end in a working, testable end-to-end
+increment across the layers required for that scope. A vertical slice may be too
+large for one agent; split it into isolated tickets that converge into the same
+wave result instead of leaving disconnected implementation parts.
+
+Horizontal waves are exceptions. Use them only for foundation/interface work
+needed to safely split parallel agents, or refactors that improve reliability.
+Every horizontal exception must state why it is necessary, what it unblocks, the
+next vertical slice, and how the completed work will be tested before it is
+consumed by later tickets.
 
 ## Ticket Shape
 
@@ -18,9 +25,9 @@ Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`, `depends_on`,
 `generated_contracts`, `ticket_readiness`.
 
 Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
-`Requirements Traceability`, `Contract Traceability`, `Tasks`, `Acceptance`,
-`Acceptance Test Matrix`, `Operational Path Coverage`, `Verification`,
-`Non-goals`, `Handoff`.
+`Requirements Traceability`, `Contract Traceability`, `Slice Strategy`,
+`Tasks`, `Acceptance`, `Acceptance Test Matrix`, `Operational Path Coverage`,
+`Verification`, `Non-goals`, `Handoff`.
 
 Tickets are crisp human/AI instructions: boundaries, expectations, acceptance,
 verification, no pasted specs, no implementation prose.
@@ -31,6 +38,13 @@ verification, no pasted specs, no implementation prose.
 - approved specs declare `language: en` and passed semantic judge review when
   English smoke checks are used
 - no Wave 0/spec-closure implementation wave
+- every wave declares `Slice Strategy`: vertical slice, or horizontal foundation/
+  refactor exception with rationale, unblocked tickets, next vertical slice, and
+  test evidence
+- every non-exception wave declares a working end-to-end outcome that is
+  reachable and testable at wave completion
+- avoid plans that complete many horizontal/backend/frontend parts while no
+  user-facing or client-consumed path is finished end to end
 - ready contracts, no missing contracts, no open decisions
 - contract-backed tickets identify generation commands, generated outputs,
   generated tests, owning source artifacts, deterministic generators/tools, and
@@ -69,6 +83,13 @@ verification, no pasted specs, no implementation prose.
   accessibility/responsiveness, design-source reuse, and shared style/component
   reuse; non-UI waves cite N/A evidence from specs
 - default verification is hermetic; external systems are opt-in
+- completed waves include unit tests and end-to-end tests for the wave scope;
+  final plan completion requires all spec requirements implemented, no gaps, no
+  unresolved implementation work, no unapproved fake/mock/stub/placeholder
+  production paths, and full end-to-end alignment with approved specs
+- coverage defaults to 80% code coverage unless approved specs or project
+  standards define a different threshold; lower coverage needs explicit spec
+  approval
 - deterministic generators/tools are preferred when approved contract sources
   support them; manual code/types/tests/docs must cite why generation is
   unavailable, unsafe, or out of scope
