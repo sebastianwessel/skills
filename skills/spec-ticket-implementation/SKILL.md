@@ -40,7 +40,8 @@ Stop and write a blocker when:
 
 - Modify only `write_scope`.
 - Follow `references/implementation-loop.md`: generated artifacts and
-  interfaces first, public-interface failing test first, minimal code, review.
+  interfaces first via deterministic tooling where available, public-interface
+  failing test first, minimal code, review.
 - Cover happy, unhappy, async/error, security, recovery, and logging paths.
 - Preserve state, recovery, idempotency, no-data-loss/no-leak, release,
   operations, dependency, SBOM/provenance, artifact, and license behavior.

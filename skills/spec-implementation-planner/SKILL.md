@@ -26,8 +26,8 @@ If blocked, write a spec gap/readiness note. Do not create executable tickets.
    `_dependencies`, `_scope` indexes.
 3. Split work into end-to-end waves and AFK tickets.
 4. Start with interface/foundation tickets that wire approved machine-readable
-   contracts and generated artifacts; then parallelize backend/client/adapter
-   work against those outputs.
+   contracts, deterministic generators/tools, and generated artifacts; then
+   parallelize backend/client/adapter work against those outputs.
 5. Keep parallel tickets isolated: disjoint writes, frozen contracts, no shared
    generated outputs.
 6. Map happy/unhappy paths plus security, privacy, observability, performance,

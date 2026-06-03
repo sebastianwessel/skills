@@ -32,6 +32,8 @@ The CLI and public skill directory are introduced in Vercel's
   as OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
   CloudEvents, or Avro. Human-facing specs link to those artifacts instead of
   duplicating field lists.
+- Requires specs to name deterministic generators/tools, regeneration commands,
+  generated outputs/tests, and drift checks when contract tooling exists.
 - Requires clear, concise, non-contradictory specs with no implementation gaps.
 - Defines robust interfaces and end-to-end paths before work is marked ready,
   including cross-language and protocol semantics such as `null`, `undefined`,

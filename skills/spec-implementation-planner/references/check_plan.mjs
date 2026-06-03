@@ -48,7 +48,7 @@ const fake = /\b(use|add|create|implement|wire|return)\s+(a\s+)?(placeholder|fak
 const happy = /\b(happy path|success path|valid request|successful|success)\b/i;
 const unhappy = /\b(unhappy path|failure path|invalid|validation failure|denied|unauthorized|forbidden|timeout|retry|rollback|recovery|cancel|error)\b/i;
 const nfr = /\b(security|privacy|performance|resilience|observability|logging|log level|redaction|data integrity|recovery|production|release|supply chain|SBOM|provenance|not applicable|N\/A|deferred by spec)\b/i;
-const generated = /\b(generated_contracts|codegen|generate|generated types?|generated clients?|generated server|generated stubs?|generated validators?|generated tests?|contract tests?|regeneration|drift check|not applicable|N\/A)\b/i;
+const generated = /\b(generated_contracts|deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated server|generated stubs?|generated validators?|generated tests?|contract tests?|drift check|not applicable|N\/A|unavailable|unsafe|out of scope)\b/i;
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));

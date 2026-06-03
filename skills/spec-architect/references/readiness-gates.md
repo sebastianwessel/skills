@@ -81,10 +81,14 @@ Schema/Avro/protobuf/framework-native schemas for documents/configs.
 Human specs explain intent, rationale, flows, UX, security, failures, and
 operations, then link to contract artifacts instead of duplicating field lists.
 Those artifacts drive generated types, validation, docs, UI/schema rendering,
-compatibility checks, and drift gates. If no standard fits, state why, define
-the smallest custom shape, record lost tooling benefits, require approval, and
-add migration guidance. N/A needs evidence that no interface, transport,
-message, config, extension, or durable data contract is in scope.
+compatibility checks, and drift gates. Specs must name deterministic generators
+or tooling, regeneration commands, generated outputs, generated tests, and drift
+checks when tooling exists. Manual or custom contract implementation needs
+rationale, approval, and evidence that generation is unavailable or unsafe. If
+no standard fits, state why, define the smallest custom shape, record lost
+tooling benefits, require approval, and add migration guidance. N/A needs
+evidence that no interface, transport, message, config, extension, or durable
+data contract is in scope.
 
 ## Interfaces And Runtime Semantics
 

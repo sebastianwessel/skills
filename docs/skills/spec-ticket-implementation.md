@@ -21,9 +21,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Writes only files listed by `write_scope`.
 - Stops on missing behavior, missing contracts, unresolved decisions, blocked dependencies, or insufficient scope.
 - Implements approved interfaces/contracts first when they are in scope, using
-  generated types, validators, clients, stubs, fixtures, docs, and contract
-  tests from approved machine-readable sources where project tooling supports
-  it.
+  deterministic project tools to generate types, validators, clients, stubs,
+  fixtures, docs, and contract tests from approved machine-readable sources
+  where tooling supports it.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
 - Preserves data-integrity, rollback/recovery, no-data-loss, no-leak,
   performance-budget, log-level, and redaction guarantees from the specs.
@@ -35,7 +35,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill starts with preflight checks, maps approved requirement IDs, generated-contract outputs, interfaces, and acceptance criteria to tests, implements one behavior at a time, then reviews its own work against the ticket. If the ticket requires invention, extra scope, unclear behavior, a missing contract, undefined generation commands, a fake implementation, or undefined security/recovery/performance/release/supply-chain behavior, it writes a blocker instead of coding.
+The skill starts with preflight checks, maps approved requirement IDs, generated-contract outputs, interfaces, and acceptance criteria to tests, implements one behavior at a time, then reviews its own work against the ticket. If the ticket requires invention, extra scope, unclear behavior, a missing contract, undefined deterministic generation commands, a fake implementation, or undefined security/recovery/performance/release/supply-chain behavior, it writes a blocker instead of coding.
 
 ## Workflow
 

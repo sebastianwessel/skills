@@ -6,15 +6,16 @@ Use this loop for one approved ticket.
 
 - Identify approved interfaces, contracts, schemas, commands, events, jobs,
   config, persistence, and public APIs named by the ticket.
-- Prefer approved machine-readable sources and project generators for code,
-  types, clients, validators, server stubs, docs, fixtures, and contract tests.
-  Run regeneration before manual edits when tooling exists.
+- Prefer approved machine-readable sources and deterministic project generators
+  for code, types, clients, validators, server stubs, docs, fixtures, and
+  contract tests. Run regeneration before manual edits when tooling exists.
 - If the ticket owns an interface/foundation, implement it before dependents and
   run type/schema/contract checks.
 - If the ticket consumes an interface, code against the approved interface
   unchanged.
 - Do not hand-write or fork generated shapes unless the ticket/spec explicitly
-  approves manual implementation and states why generation is unavailable.
+  approves manual implementation and states why deterministic generation is
+  unavailable, unsafe, or out of scope.
 - Preserve null/undefined, optional fields, async timing, cancellation, retries,
   serialization, and error semantics exactly. Stop on mismatch.
 - Preserve specified state transitions, data integrity, redaction, performance

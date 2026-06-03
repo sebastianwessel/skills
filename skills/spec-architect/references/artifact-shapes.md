@@ -37,6 +37,8 @@ Approved specs require:
 - deterministic status, traceability, inferred defaults, risks, wave evidence,
   production/release/supply-chain, migrations, semantic judge evidence,
   self-audit
+- machine-readable contracts: source artifacts, deterministic generators/tools,
+  regeneration commands, generated outputs/tests, drift checks, or N/A evidence
 - judge evidence: reviewer/model, time, scope, verdicts, paths, ambiguity,
   gaps, uncertainty, verdict
 - HITL: decision, context, recommendation, alternatives, pros/cons, impact, refs

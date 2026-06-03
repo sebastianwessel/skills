@@ -72,6 +72,7 @@ if (!fs.existsSync(root)) {
       [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Missing source links"],
       [/\b(standard|industry|convention|OpenTelemetry|structured JSON|RFC 9457|OpenAPI|GraphQL|GraphQL SDL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
       [/\b(machine-readable|source of truth|OpenAPI|GraphQL SDL|GraphQL schema|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|schema artifact|IDL)\b/i, "Missing machine-readable contract source"],
+      [/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check|not applicable|N\/A)\b/i, "Missing contract generation/tooling evidence"],
       [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Missing security/privacy"],
       [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Missing observability"],
       [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Missing performance budgets"],
@@ -87,6 +88,11 @@ if (!fs.existsSync(root)) {
     const machineReadableNotApplicable = /\b(machine-readable contract|contract artifact|03-contracts).{0,120}\b(not applicable|n\/a|no interface|no transport|no message|no durable data contract)\b/i.test(text);
     if (hasInterfaceScope && !machineReadableNotApplicable && contractFiles.length === 0) {
       fail("Missing machine-readable contract artifact in specs/03-contracts");
+    }
+    const hasMachineReadableContract = /\b(OpenAPI|GraphQL SDL|GraphQL schema|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|schema artifact|IDL)\b/i.test(text);
+    const generationNotApplicable = /\b(generator|codegen|generated|regeneration|drift check).{0,120}\b(not applicable|n\/a|unavailable|unsafe|out of scope)\b/i.test(text);
+    if (hasMachineReadableContract && !generationNotApplicable && !/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check)\b/i.test(text)) {
+      fail("Missing deterministic generator/tooling, generated output, or drift-check evidence");
     }
   }
 

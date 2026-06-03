@@ -20,8 +20,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Checks success, validation failure, authorization failure, downstream failure, timeout, retry, cancellation, rollback, idempotency, cleanup, and observability paths when relevant.
 - Enforces spec conformance, interface correctness, test coverage, security, privacy, log redaction, data integrity, recovery, performance, robustness, maintainability, and public API/documentation quality.
 - Verifies generated types, validators, clients, stubs, fixtures, docs, and
-  contract tests derive from approved machine-readable contracts where tooling
-  exists, and rejects stale or hand-edited generated shapes.
+  contract tests derive from approved machine-readable contracts through
+  deterministic generators/tools where tooling exists, and rejects stale or
+  hand-edited generated shapes.
 - Enforces requirement traceability plus production readiness, release/rollback,
   runbook handoff, dependency policy, SBOM/provenance, vulnerability, license,
   and supply-chain evidence when in scope.

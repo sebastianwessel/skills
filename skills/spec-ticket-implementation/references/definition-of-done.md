@@ -9,7 +9,8 @@ A ticket is done only when all relevant checks pass.
 - [ ] Types are precise; no unapproved `any`, unchecked casts, dynamic maps, or
       stringly typed contracts.
 - [ ] Generated contract types, clients, validators, stubs, fixtures, docs, and
-      tests are generated from approved sources where tooling exists.
+      tests are generated from approved sources with deterministic tooling where
+      tooling exists.
 - [ ] Generated files were not hand-edited unless specs/ticket explicitly allow
       it and explain why generation is unavailable.
 - [ ] Repeated or semantic hardcoded values are centralized into inline-

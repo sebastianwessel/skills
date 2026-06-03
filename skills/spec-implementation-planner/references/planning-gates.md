@@ -33,7 +33,8 @@ verification, no pasted specs, no implementation prose.
 - no Wave 0/spec-closure implementation wave
 - ready contracts, no missing contracts, no open decisions
 - contract-backed tickets identify generation commands, generated outputs,
-  generated tests, owning source artifacts, and regeneration/drift checks
+  generated tests, owning source artifacts, deterministic generators/tools, and
+  regeneration/drift checks
 - every requirement/spec/capability/flow/NFR maps to ticket or explicit deferral
   with source requirement IDs preserved
 - happy, unhappy, recovery, security/privacy, observability/logging,
@@ -59,9 +60,9 @@ verification, no pasted specs, no implementation prose.
 - public surfaces include inventory, execution semantics, tests, docs, examples,
   helpers, safe defaults, and hermetic fixtures; raw refs stay advanced only
 - default verification is hermetic; external systems are opt-in
-- generated code/tests/docs are preferred when approved contract sources and
-  project tooling support them; manual implementation must cite why generation
-  is unavailable or out of scope
+- deterministic generators/tools are preferred when approved contract sources
+  support them; manual code/types/tests/docs must cite why generation is
+  unavailable, unsafe, or out of scope
 - release, rollback, runbook, dependency, SBOM/provenance, vulnerability/license
   work is assigned or marked N/A from specs
 
