@@ -48,6 +48,11 @@ work backward to the owning skill instead of letting agents decide or invent.
    - Missing, contradictory, or ambiguous requirements return to
      `spec-architect`.
 
+7. **Self-Audit**
+   - Verify the selected stage, gate evidence, routed owner, blocked items, and
+     skipped checks.
+   - Report uncertainty honestly; do not move forward on assumed readiness.
+
 ## Stop Conditions
 
 Stop and route backward when specs are unapproved, tickets are not ready,

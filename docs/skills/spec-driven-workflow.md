@@ -42,6 +42,8 @@ the current stage and applies the corresponding gate from
    release acceptance.
 6. Route feedback to the owning skill and repeat until no blocking findings
    remain.
+7. Self-audit stage choice, gate evidence, owner routing, skipped checks, and
+   residual uncertainty.
 
 ## Included Files
 
@@ -56,4 +58,5 @@ the current stage and applies the corresponding gate from
 Use this skill when a task spans multiple spec-driven stages or when the next
 step is unclear. It prevents agents from jumping directly to coding, skipping
 planning, backfilling tests after business logic, or leaving ownerless review
-feedback.
+feedback. Near-miss single-stage work should route to the specialized skill
+instead of forcing orchestration.
