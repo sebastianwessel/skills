@@ -16,14 +16,15 @@ The CLI and public skill directory are introduced in Vercel's
 ## What It Does
 
 - Confirms specs are approved before editing.
-- Runs spec and plan checkers when available.
+- Runs configured spec and plan checkers.
 - Reads only ticket `spec_refs` and `read_scope`.
 - Writes only files listed by `write_scope`.
 - Stops on missing behavior, missing contracts, unresolved decisions, blocked dependencies, or insufficient scope.
 - Implements approved interfaces/contracts first when they are in scope, using
   deterministic project tools to generate types, validators, clients, stubs,
   fixtures, docs, and contract tests from approved machine-readable
-  contract/IDL/schema sources where tooling supports it.
+  contract/IDL/schema sources when approved tooling or project configuration
+  supports generation.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
 - Preserves data-integrity, rollback/recovery, no-data-loss, no-leak,
   performance-budget, log-level, and redaction guarantees from the specs.

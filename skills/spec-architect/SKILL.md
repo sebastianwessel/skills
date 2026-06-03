@@ -1,6 +1,6 @@
 ---
 name: spec-architect
-description: Use when specs need creation, review, repair, or approval before autonomous or parallel AI implementation without ambiguity, invention, interface mismatch, drift, or gaps.
+description: Creates, reviews, repairs, and approves implementation-ready specs. Use when specs need creation, evolution, gap repair, contracts, drift prevention, readiness gates, or approval.
 ---
 
 # Spec Architect
@@ -14,14 +14,13 @@ performance, recovery, release, supply chain, observability, or tests.
 ## Invariants
 
 - Ask humans only for scope, compliance/security, irreversible architecture,
-  public semantics, contradictions, or unsafe inference.
-- For required human input, ask one focused decision with context,
-  recommendation, and 2-3 alternatives only if useful.
-- Specs are precise, concise, non-contradictory, language agnostic unless
-  contractual, and define behavior/contracts not code.
-- Prefer industry standards and machine-readable interface contracts; custom
-  protocols, formats, observability, errors, auth, architecture, or
-  supply-chain choices need rationale and approval.
+  public semantics, contradictions, or unsafe inference; ask one focused
+  decision with context, recommendation, and material alternatives.
+- Specs define behavior/contracts, not code: precise, concise,
+  non-contradictory, language agnostic unless contractual.
+- Prefer industry standards and machine-readable contracts. Custom protocols,
+  formats, observability, errors, auth, architecture, or supply-chain choices
+  need rationale and approval.
 - Flow business/user outcome to components, workflows, interfaces, UX, NFRs,
   production/release/supply-chain, and acceptance. Centralize shared facts.
 - On update/fix-gap, update source of truth first, relink dependents, prune
@@ -32,6 +31,8 @@ performance, recovery, release, supply chain, observability, or tests.
   smoke tests only; semantic approval needs a judge pass.
 - Self-audit with evidence; do not approve on confidence.
 - Planning starts only after approved readiness and human approval.
+- If applicability, standard/tool choice, or N/A status lacks approved evidence,
+  block or ask one minimum decision.
 
 ## Workflow
 
@@ -41,7 +42,8 @@ performance, recovery, release, supply chain, observability, or tests.
 4. Update layered specs and end-to-end success/failure/recovery paths.
 5. Select standards-first protocols, formats, interfaces, and architecture.
 6. Define best-fit standard or ecosystem-native contract/IDL/schema artifacts
-   as source of truth where possible; examples are non-exhaustive.
+   as source of truth for every in-scope interface; otherwise record N/A
+   evidence. Examples are non-exhaustive.
 7. Freeze interfaces, type/nullability, and protocol semantics.
 8. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.
@@ -68,8 +70,7 @@ performance, recovery, release, supply chain, observability, or tests.
 
 ## Approval Rule
 
-Do not approve if a ticket must decide behavior, reconcile contradictions,
-interpret vague wording, align type systems, define async behavior, or invent
-security, performance, recovery, logging, protocols, machine-readable
-contracts, data protection, release, supply-chain, migration, or tests. Regex
-success is not semantic approval.
+Do not approve if a ticket must decide, reconcile, interpret vague wording, or
+invent behavior, interfaces, async/type/error/logging semantics, security,
+performance, recovery, contracts, data protection, release, supply-chain,
+migration, or tests. Regex success is not semantic approval.

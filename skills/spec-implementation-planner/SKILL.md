@@ -1,6 +1,6 @@
 ---
 name: spec-implementation-planner
-description: Use when approved specs need end-to-end waves, AFK tickets, parallel-agent plans, dependencies, status tracking, or readiness checks.
+description: Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks.
 ---
 
 # Spec Implementation Planner
@@ -18,6 +18,9 @@ Read `specs/.readiness-report.yaml`. Stop unless:
   English smoke checks are used
 
 If blocked, write a spec gap/readiness note. Do not create executable tickets.
+
+Generic planning is allowed only through approved specs, ticket rules,
+contracts, and scoped verification. Otherwise create a spec/plan gap.
 
 ## Workflow
 

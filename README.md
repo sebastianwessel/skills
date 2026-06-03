@@ -23,10 +23,10 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 <!-- skills-index:start -->
 | Skill | Description | Human docs |
 | --- | --- | --- |
-| [spec-architect](skills/spec-architect/SKILL.md) | Use when specs need creation, review, repair, or approval before autonomous or parallel AI implementation without ambiguity, invention, interface mismatch, drift, or gaps. | [docs](docs/skills/spec-architect.md) |
-| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Use when approved specs need end-to-end waves, AFK tickets, parallel-agent plans, dependencies, status tracking, or readiness checks. | [docs](docs/skills/spec-implementation-planner.md) |
-| [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Use when a completed or partial spec implementation wave, plan, or cross-ticket solution needs review before acceptance, merge, release, or handoff. | [docs](docs/skills/spec-implementation-review.md) |
-| [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Use when implementing one approved spec plan ticket with strict read/write scope, acceptance verification, dependency checks, and no implementation-time decisions. | [docs](docs/skills/spec-ticket-implementation.md) |
+| [spec-architect](skills/spec-architect/SKILL.md) | Creates, reviews, repairs, and approves implementation-ready specs. Use when specs need creation, evolution, gap repair, contracts, drift prevention, readiness gates, or approval. | [docs](docs/skills/spec-architect.md) |
+| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks. | [docs](docs/skills/spec-implementation-planner.md) |
+| [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings. | [docs](docs/skills/spec-implementation-review.md) |
+| [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Implements exactly one approved spec plan ticket in fixed scope. Use when a ready ticket needs code changes with contract/codegen-first, test-first, verification, and no invention. | [docs](docs/skills/spec-ticket-implementation.md) |
 <!-- skills-index:end -->
 
 ## Spec-Driven Development

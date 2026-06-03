@@ -1,6 +1,6 @@
 ---
 name: spec-ticket-implementation
-description: Use when implementing one approved spec plan ticket with strict read/write scope, acceptance verification, dependency checks, and no implementation-time decisions.
+description: Implements exactly one approved spec plan ticket in fixed scope. Use when a ready ticket needs code changes with contract/codegen-first, test-first, verification, and no invention.
 ---
 
 # Spec Ticket Implementation
@@ -8,6 +8,9 @@ description: Use when implementing one approved spec plan ticket with strict rea
 Implement exactly one approved AFK ticket. Follow specs exactly:
 contract/codegen-first, test-first, review-before-done. Stop on missing
 behavior instead of deciding it.
+
+Generic implementation is allowed only through approved interfaces, contracts,
+ticket scope, and project conventions. Unresolved behavior is a blocker.
 
 ## Preflight
 

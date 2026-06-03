@@ -12,7 +12,8 @@ Use these gates after building the path matrix.
   compatibility across languages, protocols, clients, services, jobs, and DBs.
 - Generated types, clients, validators, stubs, fixtures, docs, and contract
   tests derive from approved machine-readable contract/IDL/schema artifacts
-  through deterministic generators/tools where tooling exists.
+  through deterministic generators/tools when approved tooling or project
+  configuration supports generation.
 - No hand-written duplicate of an approved generated shape bypasses codegen,
   validation, compatibility, or drift checks.
 - No product/API/security/persistence/test behavior was invented locally.

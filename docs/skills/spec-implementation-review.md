@@ -21,8 +21,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Enforces spec conformance, interface correctness, test coverage, security, privacy, log redaction, data integrity, recovery, performance, robustness, maintainability, and public API/documentation quality.
 - Verifies generated types, validators, clients, stubs, fixtures, docs, and
   contract tests derive from approved machine-readable contract/IDL/schema
-  artifacts through deterministic generators/tools where tooling exists, and
-  rejects stale or hand-edited generated shapes.
+  artifacts through deterministic generators/tools when approved tooling or
+  project configuration supports generation, and rejects stale or hand-edited
+  generated shapes.
 - Enforces requirement traceability plus production readiness, release/rollback,
   runbook handoff, dependency policy, SBOM/provenance, vulnerability, license,
   and supply-chain evidence when in scope.

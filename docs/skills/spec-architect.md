@@ -72,13 +72,13 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 3. Describe public workflows, frontend UX states, accessibility, design-system usage, reusable components, and end-user behavior.
 4. Normalize requirements into traceable, verifiable, implementation-ready statements.
 5. Prefer industry-standard protocols, formats, interfaces, architectural patterns, observability, and framework conventions.
-6. Define best-fit standard or ecosystem-native contract/IDL/schema source-of-truth artifacts when possible, and mark not-applicable cases with evidence.
+6. Define best-fit standard or ecosystem-native contract/IDL/schema source-of-truth artifacts for every in-scope interface, and mark not-applicable cases with evidence.
 7. Specify developer experience, setup paths, safe defaults, and advanced escape hatches.
 8. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, examples, and source-of-truth links.
 9. Define production readiness, release/rollback, operations, and supply-chain expectations.
 10. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
 11. Check no-drift, ambiguity, requirements quality, spec-structure, visualization, standards-first, machine-readable-contract, semantic-alignment, async, interface, end-to-end, unhappy-path, security/privacy, observability, performance/resilience, data-integrity/recovery, production-readiness, supply-chain, contradiction, semantic-judge, migration, wave-readiness, and self-audit gates.
-12. Run self-critique, semantic judge review, and deterministic checks when available.
+12. Run self-critique, semantic judge review, and configured deterministic checks.
 13. Synchronize registries, provenance, readiness, dependent specs, and affected plan notes.
 14. Simulate implementation planning across all waves.
 15. Ask focused human review questions only for unsafe assumptions.

@@ -1,6 +1,6 @@
 ---
 name: spec-implementation-review
-description: Use when a completed or partial spec implementation wave, plan, or cross-ticket solution needs review before acceptance, merge, release, or handoff.
+description: Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings.
 ---
 
 # Spec Implementation Review
