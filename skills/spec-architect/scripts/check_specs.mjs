@@ -27,7 +27,7 @@ const gates = [
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
   "production_readiness_gate", "supply_chain_gate", "wave_readiness",
-  "migration_gate", "contradiction_check", "semantic_judge_gate",
+  "migration_gate", "contradiction_check", "spec_judge_loop", "semantic_judge_gate",
   "self_audit_gate", "gate_simulation",
 ];
 
@@ -52,6 +52,9 @@ if (!fs.existsSync(root)) {
     if (!/^language:\s*en\s*$/m.test(report)) fail("language: en required");
     if (!/\bopen_decisions:\s*\[\]/.test(report)) fail("open_decisions must be []");
     gates.forEach((g) => !new RegExp(`${g}:\\s*\\n\\s+status:\\s*passed\\b`, "m").test(report) && fail(`${g}.status must pass`));
+    if (!/spec_judge_loop:[\s\S]*?run_timing:\s*approval_only\b/m.test(report)) fail("spec_judge_loop.run_timing must be approval_only");
+    if (!/spec_judge_loop:[\s\S]*?reviewed_flows:\s*\n\s+-\s+flow_id:/m.test(report)) fail("spec_judge_loop must record reviewed_flows");
+    if (!/spec_judge_loop:[\s\S]*?blocking_findings_count:\s*0\b/m.test(report)) fail("spec_judge_loop.blocking_findings_count must be 0");
   }
 
   for (const file of all) {

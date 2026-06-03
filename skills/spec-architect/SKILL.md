@@ -8,7 +8,7 @@ description: Creates, reviews, repairs, and approves implementation-ready specs.
 ## Standard
 
 Approve only when agents can implement without deciding behavior, interfaces,
-failures, data, async/type, security, recovery, release, ops, or tests.
+failures, data, runtime, security, recovery, release, ops, or tests.
 
 ## Invariants
 
@@ -20,42 +20,44 @@ failures, data, async/type, security, recovery, release, ops, or tests.
   contracts, states, and verification; out-of-scope layers need N/A evidence.
 - User-facing specs define access, UX states, and design/component/style reuse;
   otherwise record N/A evidence.
-- Prefer industry standards and machine-readable contracts. Custom protocols,
-  formats, observability, errors, auth, architecture, or supply-chain choices
-  need rationale and approval.
-- Flow business/user outcome to components, workflows, interfaces, UX, NFRs,
-  production/release/supply-chain, and acceptance.
+- Prefer standards and machine-readable contracts; custom protocols, formats,
+  observability, errors, auth, architecture, or supply chain need approval.
+- Flow outcomes to components, workflows, interfaces, UX, NFRs, release, supply
+  chain, acceptance.
 - On update/fix-gap, update source of truth first, relink dependents, prune
   stale duplicates, and record impact.
 - Requirements/flows/contracts/NFRs need IDs, source/rationale, verification,
-  priority/risk where relevant, and traceability to acceptance.
+  priority/risk where relevant, and acceptance traceability.
 - English smoke checks require `language: en`; semantic approval needs a judge.
+- Run the spec judge loop before approval/planning handoff, not after every
+  intermediate spec edit.
 - Self-audit with evidence; do not approve on confidence.
 - Planning starts only after approved readiness and human approval.
-- If applicability, standard/tool choice, or N/A status lacks approved evidence,
-  block or ask one minimum decision.
+- If applicability, standard/tool choice, or N/A lacks evidence, block or ask
+  one minimum decision.
 
 ## Workflow
 
 1. Select mode: `Create`, `Review/Approve`, `Update`, or `Fix Gap`.
 2. Apply `references/readiness-gates.md`; normalize requirements.
-3. Update layered specs and complete E2E success/failure/recovery paths,
-   including existing frontends, clients, consumers, integrations, or N/A.
+3. Update layered specs and complete E2E success/failure/recovery paths across
+   frontends, clients, consumers, integrations, or N/A.
 4. Define frontend/client access, UX/design reuse, or N/A.
-5. Select standards-first protocols, formats, interfaces, and architecture.
-6. Define best-fit standard/ecosystem-native contract/IDL/schema artifacts as
-   source of truth for every in-scope interface; otherwise record N/A evidence.
+5. Select standards-first protocols, formats, interfaces, architecture.
+6. Define best-fit contract/IDL/schema sources for in-scope interfaces; else
+   record N/A evidence.
 7. Freeze interfaces, type/nullability, protocol semantics.
-8. Define security/privacy, data classification, log levels/redaction,
-   data-integrity/recovery, and performance/resilience budgets.
+8. Define security/privacy, classification, logging/redaction, integrity/
+   recovery, performance/resilience budgets.
 9. Define production readiness, release/rollback, operations, supply chain.
 10. Mark async/concurrency/runtime semantics explicitly.
 11. Add `plans/migrations/` entries for material implemented-behavior changes.
 12. Sync registries/provenance/readiness; prune duplicates.
-13. Run judge review and `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
-14. Simulate waves/tickets against the E2E coverage matrix; unresolved
+13. Run the approval-time spec judge loop in `references/readiness-gates.md`.
+14. Run semantic judge and `node skills/spec-architect/scripts/check_specs.mjs <spec-root>`.
+15. Simulate waves/tickets against the E2E coverage matrix; unresolved
     decisions stay in specs.
-15. Record deterministic, judge, maintenance, and self-audit evidence.
+16. Record deterministic, spec-judge, maintenance, self-audit evidence.
 
 ## Reference Map
 

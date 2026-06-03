@@ -28,9 +28,10 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 1. **Spec Gate**
    - Do: define business outcome, flows, interfaces/contracts, UX, happy and
      unhappy paths, NFRs, security/privacy, recovery, release, supply chain,
-     tests, and acceptance.
+     tests, acceptance, and run the approval-time spec judge loop.
    - Check: readiness approved, human approval recorded, semantic judge passed,
-     no open implementation decisions.
+     `spec_judge_loop.status: passed`, zero blocking judge findings, no open
+     implementation decisions.
    - Next: planning.
 
 2. **Plan Gate**

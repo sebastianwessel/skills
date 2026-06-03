@@ -39,16 +39,18 @@ Approved specs require:
   `observability_gate`, `performance_resilience_gate`,
   `data_integrity_recovery_gate`, `production_readiness_gate`,
   `supply_chain_gate`, `wave_readiness`, `migration_gate`,
-  `contradiction_check`, `semantic_judge_gate`, `self_audit_gate`,
-  `gate_simulation`
+  `contradiction_check`, `spec_judge_loop`, `semantic_judge_gate`,
+  `self_audit_gate`, `gate_simulation`
 - deterministic status, traceability, inferred defaults, risks, wave evidence,
-  production/release/supply-chain, migrations, semantic judge evidence,
-  self-audit
+  production/release/supply-chain, migrations, approval-time spec judge
+  evidence, semantic judge evidence, self-audit
 - machine-readable contracts: source contract/IDL/schema artifacts,
   deterministic generators/tools, regeneration commands, generated
   outputs/tests, drift checks, or N/A evidence
-- judge evidence: reviewer/model, time, scope, verdicts, paths, ambiguity,
-  gaps, uncertainty, verdict
+- spec judge evidence: approval-only timing, reviewed flows, paths, dimensions,
+  blocking/advisory counts, uncertainty, evidence refs, verdict
+- semantic judge evidence: reviewer/model, time, scope, verdicts, paths,
+  ambiguity, gaps, uncertainty, verdict
 - HITL: decision, context, recommendation, alternatives, pros/cons, impact, refs
 - maintenance: source refs, dependents, pruned refs, affected tickets, migrations
 
