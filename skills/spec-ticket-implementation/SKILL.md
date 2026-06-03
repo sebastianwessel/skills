@@ -67,6 +67,12 @@ Done means: scoped verification passes, acceptance has happy/unhappy tests, only
 ticket defect, frontend/client UX reuse checks pass when in scope, and tracking
 is updated.
 
+## Lifecycle Handoff
+
+When the ticket is done, update status and return to the plan. When a wave or
+partial wave is ready, use `spec-implementation-review`. If routing is unclear,
+use `spec-driven-workflow`.
+
 Read references for full checklists:
 
 - `references/pre-implementation-checks.md`

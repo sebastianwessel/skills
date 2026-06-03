@@ -1,0 +1,23 @@
+{
+  "skill_name": "spec-driven-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We have a rough product idea and want autonomous agents to build it. What should happen first and what blocks implementation?",
+      "expected_output": "Routes to spec-architect first, requires approved specs and readiness gates before planning or implementation.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Specs are approved, but there is no plan and the user asks to start coding with multiple agents.",
+      "expected_output": "Routes to spec-implementation-planner, requires vertical-slice waves, ticket scopes, dependencies, status, and test-first order before implementation.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A wave is partially implemented and review found a missing frontend failure state plus an unclear spec requirement.",
+      "expected_output": "Routes implementation defects to spec-ticket-implementation and the unclear requirement to spec-architect, with persisted findings and status updates before resuming.",
+      "files": []
+    }
+  ]
+}

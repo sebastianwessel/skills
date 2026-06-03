@@ -62,6 +62,11 @@ failures, data, async/type, security, recovery, release, ops, or tests.
 - `references/readiness-gates.md`: approval gates.
 - `references/artifact-shapes.md`: artifacts and report fields.
 
+## Lifecycle Handoff
+
+After approved readiness, hand off to `spec-implementation-planner`. If the
+current stage or route is unclear, use `spec-driven-workflow`.
+
 ## Approval Rule
 
 Do not approve if a ticket must decide, reconcile, interpret vague wording, or

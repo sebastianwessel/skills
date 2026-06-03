@@ -67,6 +67,9 @@ After `done`, keep work historical. New gates, spec changes, or gaps create
 later remediation/migration tickets. Mark obsolete planned work `skipped`,
 partial work `blocked` or `partial`, with `superseded_by` and resume notes.
 
+Ready tickets go to `spec-ticket-implementation`; waves go to
+`spec-implementation-review`; unclear routing uses `spec-driven-workflow`.
+
 ## Approval Rule
 
 Do not emit tickets that ask implementers to decide, infer, ask humans, read all

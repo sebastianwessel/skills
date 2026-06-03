@@ -76,6 +76,12 @@ Write `plans/reviews/<wave-or-plan-id>/<review-id>/`:
 Use `references/findings-format.md` for required fields and status handoff. Do
 not rely on chat-only feedback.
 
+## Lifecycle Handoff
+
+Route implementation findings to `spec-ticket-implementation`, plan gaps to
+`spec-implementation-planner`, and spec gaps to `spec-architect`. If routing is
+unclear, use `spec-driven-workflow`.
+
 ## Decision
 
 - `pass`: no blocking findings, commands pass, path matrix complete
