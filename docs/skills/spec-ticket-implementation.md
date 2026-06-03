@@ -22,8 +22,8 @@ The CLI and public skill directory are introduced in Vercel's
 - Stops on missing behavior, missing contracts, unresolved decisions, blocked dependencies, or insufficient scope.
 - Implements approved interfaces/contracts first when they are in scope, using
   deterministic project tools to generate types, validators, clients, stubs,
-  fixtures, docs, and contract tests from approved machine-readable sources
-  where tooling supports it.
+  fixtures, docs, and contract tests from approved machine-readable
+  contract/IDL/schema sources where tooling supports it.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
 - Preserves data-integrity, rollback/recovery, no-data-loss, no-leak,
   performance-budget, log-level, and redaction guarantees from the specs.

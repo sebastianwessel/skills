@@ -25,8 +25,8 @@ If blocked, write a spec gap/readiness note. Do not create executable tickets.
 2. Create `plans/implementation-plan.md` and `_registry`, `_status`,
    `_dependencies`, `_scope` indexes.
 3. Split work into end-to-end waves and AFK tickets.
-4. Start with interface/foundation tickets that wire approved machine-readable
-   contracts, deterministic generators/tools, and generated artifacts; then
+4. Start with interface/foundation tickets that wire approved contract/IDL/schema
+   sources, deterministic generators/tools, and generated artifacts; then
    parallelize backend/client/adapter work against those outputs.
 5. Keep parallel tickets isolated: disjoint writes, frozen contracts, no shared
    generated outputs.

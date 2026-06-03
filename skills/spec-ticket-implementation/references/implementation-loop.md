@@ -6,9 +6,10 @@ Use this loop for one approved ticket.
 
 - Identify approved interfaces, contracts, schemas, commands, events, jobs,
   config, persistence, and public APIs named by the ticket.
-- Prefer approved machine-readable sources and deterministic project generators
-  for code, types, clients, validators, server stubs, docs, fixtures, and
-  contract tests. Run regeneration before manual edits when tooling exists.
+- Prefer approved contract/IDL/schema sources and
+  deterministic project generators for code, types, clients, validators, server
+  stubs, docs, fixtures, and contract tests. Run regeneration before manual
+  edits when tooling exists.
 - If the ticket owns an interface/foundation, implement it before dependents and
   run type/schema/contract checks.
 - If the ticket consumes an interface, code against the approved interface
@@ -79,7 +80,7 @@ Before done, honestly check:
 - Traceability: source requirement IDs map to code, tests, and evidence.
 - Interfaces: types, nullability, async, errors, and serialization align.
 - Generation: generated outputs, generated tests, and drift checks align with
-  approved machine-readable contracts.
+  approved contract/IDL/schema sources.
 - Tests: every acceptance criterion has happy/unhappy verification.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
 - Integrity: state transitions, recovery, data-loss prevention, and performance

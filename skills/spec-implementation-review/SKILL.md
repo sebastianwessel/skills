@@ -47,7 +47,7 @@ Reject the wave/plan when any blocking issue exists:
   persistence, security, performance, recovery, release, supply chain, or
   public contracts
 - missing, stale, hand-edited, or bypassed generated contract outputs when
-  approved machine-readable contracts and deterministic tooling exist
+  approved contract/IDL/schema sources and deterministic tooling exist
 - missing source requirement traceability from specs to tickets, code, tests,
   and acceptance evidence
 - missing, untested, or incorrect success/failure/retry/timeout/cancel/rollback/

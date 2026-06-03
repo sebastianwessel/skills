@@ -64,19 +64,22 @@ Mermaid is optional and aligned.
 
 ## Standards First
 
-Default to standards: OpenTelemetry, structured JSON logs, RFC 9457,
-OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
-CloudEvents, Avro, OAuth/OIDC/JWT, framework conventions. Custom protocols, log
-levels, envelopes, serialization, auth, architecture, or interface semantics
-need rationale, tooling impact, migration, and approval.
+Default to industry-standard or ecosystem-native definitions before custom
+text: contract/IDL/schema artifacts, observability, logging, error formats,
+auth, security controls, architecture, and framework conventions. Examples
+such as OpenAPI, GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC, CloudEvents,
+Avro, Thrift, Smithy, OpenRPC/RAML, YANG, WSDL, or schema registries are
+non-exhaustive. Custom protocols, log levels, envelopes, serialization, auth,
+architecture, or interface semantics need rationale, tooling impact,
+migration, and approval.
 
 ## Machine-Readable Contract Sources
 
 Interfaces, APIs, events, queues, webhooks, plugins, configs, SDK/CLI surfaces,
-and durable data shapes must use a standard machine-readable source of truth
-when one fits: OpenAPI/JSON Schema for HTTP, GraphQL SDL/schema for GraphQL,
-AsyncAPI/CloudEvents/protobuf/Avro for events, gRPC/protobuf for RPC, and JSON
-Schema/Avro/protobuf/framework-native schemas for documents/configs.
+and durable data shapes must use the best-fit standard or ecosystem-native
+machine-readable contract/IDL/schema source of truth when one fits. Select by
+transport, ecosystem, interoperability, generator support, compatibility
+checks, and runtime validation. Named standards are examples, not limits.
 
 Human specs explain intent, rationale, flows, UX, security, failures, and
 operations, then link to contract artifacts instead of duplicating field lists.
@@ -85,10 +88,10 @@ compatibility checks, and drift gates. Specs must name deterministic generators
 or tooling, regeneration commands, generated outputs, generated tests, and drift
 checks when tooling exists. Manual or custom contract implementation needs
 rationale, approval, and evidence that generation is unavailable or unsafe. If
-no standard fits, state why, define the smallest custom shape, record lost
-tooling benefits, require approval, and add migration guidance. N/A needs
-evidence that no interface, transport, message, config, extension, or durable
-data contract is in scope.
+no standard fits, state why, define the smallest custom shape, preserve as many
+tooling guarantees as possible, require approval, and add migration guidance.
+N/A needs evidence that no interface, transport, message, config, extension, or
+durable data contract is in scope.
 
 ## Interfaces And Runtime Semantics
 

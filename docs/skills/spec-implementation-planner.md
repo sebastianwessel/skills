@@ -28,9 +28,9 @@ The CLI and public skill directory are introduced in Vercel's
   need stable boundaries, generated types, validators, clients, stubs,
   fixtures, or contract-test scaffolds, then isolates backend, frontend,
   adapter, docs, and test tickets against those outputs.
-- Requires tickets to name approved contract sources, generation commands,
-  deterministic generators/tools, generated outputs, generated/contract tests,
-  drift checks, or explicit not-applicable evidence.
+- Requires tickets to name approved contract/IDL/schema sources, generation
+  commands, deterministic generators/tools, generated outputs,
+  generated/contract tests, drift checks, or explicit not-applicable evidence.
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.

@@ -40,9 +40,8 @@ performance, recovery, release, supply chain, observability, or tests.
 3. Normalize traceable requirements.
 4. Update layered specs and end-to-end success/failure/recovery paths.
 5. Select standards-first protocols, formats, interfaces, and architecture.
-6. Define machine-readable contracts as source of truth where possible:
-   OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
-   CloudEvents, Avro, or equivalent standard artifacts.
+6. Define best-fit standard or ecosystem-native contract/IDL/schema artifacts
+   as source of truth where possible; examples are non-exhaustive.
 7. Freeze interfaces, type/nullability, and protocol semantics.
 8. Define security/privacy, data classification, log levels/redaction,
    data-integrity/recovery, and performance/resilience budgets.

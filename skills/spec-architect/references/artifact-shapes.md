@@ -6,9 +6,10 @@
 - `00-vision.md`, `00-stack.md`, `00-conventions.md`,
   `00-architecture-overview.md`, `glossary.md`
 - `01-domains/`, `02-capabilities/`, `03-contracts/`, `03-flows/`
-- `03-contracts/`: standard machine-readable sources when interfaces exist
-  (`openapi.yaml`, `*.graphql`, `asyncapi.yaml`, `*.schema.json`, `*.proto`,
-  `*.avsc`, CloudEvents, or equivalent).
+- `03-contracts/`: best-fit standard or ecosystem-native contract/IDL/schema
+  sources when interfaces exist. Examples are non-exhaustive: OpenAPI,
+  GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC, CloudEvents, Avro, Thrift,
+  Smithy, OpenRPC/RAML, YANG, WSDL, schema registries, or comparable artifacts.
 - `04-backend/` or equivalent technical specs
 - `04-frontend/` or equivalent UX/design specs when user-facing UI exists
 - `04-nfr/`: security/privacy, data integrity/recovery,
@@ -37,8 +38,9 @@ Approved specs require:
 - deterministic status, traceability, inferred defaults, risks, wave evidence,
   production/release/supply-chain, migrations, semantic judge evidence,
   self-audit
-- machine-readable contracts: source artifacts, deterministic generators/tools,
-  regeneration commands, generated outputs/tests, drift checks, or N/A evidence
+- machine-readable contracts: source contract/IDL/schema artifacts,
+  deterministic generators/tools, regeneration commands, generated
+  outputs/tests, drift checks, or N/A evidence
 - judge evidence: reviewer/model, time, scope, verdicts, paths, ambiguity,
   gaps, uncertainty, verdict
 - HITL: decision, context, recommendation, alternatives, pros/cons, impact, refs
@@ -47,12 +49,12 @@ Approved specs require:
 ## Inference Policy
 
 Infer only toolchain/standard defaults: framework-native, ports-and-adapters,
-OpenTelemetry, structured JSON logs, RFC 9457, suitable OpenAPI, GraphQL SDL,
-AsyncAPI, JSON Schema, gRPC/protobuf, CloudEvents, Avro, standard
-validation/tests, SPDX/CycloneDX, SLSA, local-first adapters. Block for custom
-protocols/formats, scope, compliance/privacy, security boundaries, data
-classification, public semantics, production/release, supply-chain policy,
-irreversible architecture, trust boundaries, contradictions.
+OpenTelemetry, structured JSON logs, RFC 9457, suitable standard
+contract/IDL/schema artifacts, standard validation/tests, SPDX/CycloneDX, SLSA,
+local-first adapters. Block for custom protocols/formats, scope,
+compliance/privacy, security boundaries, data classification, public semantics,
+production/release, supply-chain policy, irreversible architecture, trust
+boundaries, contradictions.
 
 ## Standard Failures
 

@@ -31,9 +31,8 @@ inside scope, the ticket must fix them.
       dependency, SBOM/provenance, vulnerability, and license expectations are
       identified or explicitly not applicable.
 - [ ] Approved interfaces/contracts and consumer expectations are identified.
-- [ ] Machine-readable contract sources are identified: OpenAPI, GraphQL
-      SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf, CloudEvents, Avro, or
-      approved equivalent.
+- [ ] Best-fit standard or ecosystem-native machine-readable contract/IDL/schema
+      sources are identified. Named standards are examples, not limits.
 - [ ] `generated_contracts` lists source artifacts, generation commands,
       deterministic generators/tools, generated output paths,
       generated/contract tests, drift checks, or N/A evidence.

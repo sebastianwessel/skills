@@ -28,10 +28,11 @@ The CLI and public skill directory are introduced in Vercel's
   dependents, pruning stale or duplicate text, and recording plan impact.
 - Uses Mermaid diagrams only when they improve human understanding, and requires diagrams to stay aligned with authoritative text.
 - Defaults to industry-standard protocols, formats, errors, structured logging, observability, architecture, and framework conventions; custom designs need rationale and approval.
-- Requires standard machine-readable contract artifacts whenever possible, such
-  as OpenAPI, GraphQL SDL/schema, AsyncAPI, JSON Schema, gRPC/protobuf,
-  CloudEvents, or Avro. Human-facing specs link to those artifacts instead of
-  duplicating field lists.
+- Requires best-fit standard or ecosystem-native machine-readable
+  contract/IDL/schema artifacts whenever possible. OpenAPI, GraphQL, AsyncAPI,
+  JSON Schema, protobuf/gRPC, CloudEvents, Avro, Thrift, Smithy, OpenRPC/RAML,
+  YANG, WSDL, and schema registries are non-exhaustive examples. Human-facing
+  specs link to those artifacts instead of duplicating field lists.
 - Requires specs to name deterministic generators/tools, regeneration commands,
   generated outputs/tests, and drift checks when contract tooling exists.
 - Requires clear, concise, non-contradictory specs with no implementation gaps.
@@ -71,7 +72,7 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 3. Describe public workflows, frontend UX states, accessibility, design-system usage, reusable components, and end-user behavior.
 4. Normalize requirements into traceable, verifiable, implementation-ready statements.
 5. Prefer industry-standard protocols, formats, interfaces, architectural patterns, observability, and framework conventions.
-6. Define machine-readable interface and transport contracts as source-of-truth artifacts when possible, and mark not-applicable cases with evidence.
+6. Define best-fit standard or ecosystem-native contract/IDL/schema source-of-truth artifacts when possible, and mark not-applicable cases with evidence.
 7. Specify developer experience, setup paths, safe defaults, and advanced escape hatches.
 8. Ensure public APIs, configs, schemas, plugins, policies, and extension points have contracts, docs, examples, and source-of-truth links.
 9. Define production readiness, release/rollback, operations, and supply-chain expectations.

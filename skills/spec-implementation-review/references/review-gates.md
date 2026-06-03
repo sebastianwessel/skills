@@ -11,8 +11,8 @@ Use these gates after building the path matrix.
   defaults, serialization, async timing, cancellation, retries, errors, and
   compatibility across languages, protocols, clients, services, jobs, and DBs.
 - Generated types, clients, validators, stubs, fixtures, docs, and contract
-  tests derive from approved machine-readable contracts through deterministic
-  generators/tools where tooling exists.
+  tests derive from approved machine-readable contract/IDL/schema artifacts
+  through deterministic generators/tools where tooling exists.
 - No hand-written duplicate of an approved generated shape bypasses codegen,
   validation, compatibility, or drift checks.
 - No product/API/security/persistence/test behavior was invented locally.
