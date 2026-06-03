@@ -12,6 +12,7 @@ const read = (f) => fs.readFileSync(at(f), "utf8");
 const rel = (f) => path.relative(root, f).split(path.sep).join("/");
 const contractTerm = String.raw`contract definition|interface definition|schema definition|machine-readable|source of truth|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|schema artifact|IDL`;
 const clientTerm = String.raw`frontend|client|consumer|UI|SDK|CLI|web app|mobile app|integration|adapter|N/A|not applicable`;
+const frontendTerm = String.raw`frontend|UI|UX|screen|surface|navigation|access path|user flow|UI state|design system|design\.md|framework component|reusable component|shared styles|CSS|tokens|N/A|not applicable`;
 const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
   const f = path.join(d, e.name);
   return e.isDirectory() ? walk(f) : [f];
@@ -21,7 +22,7 @@ const gates = [
   "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
   "spec_structure_gate", "visualization_gate", "requirements_quality_gate",
   "concise_spec_gate", "client_consumer_coverage_gate",
-  "standards_first_gate", "machine_readable_contract_gate",
+  "frontend_ux_integration_gate", "standards_first_gate", "machine_readable_contract_gate",
   "async_semantics_gate", "interface_gate", "e2e_gate",
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
@@ -75,6 +76,8 @@ if (!fs.existsSync(root)) {
       [/\b(concise|single source of truth|one source of truth|no duplicate|no stale|centralize|link instead of duplicating|shared facts)\b/i, "Missing concise single-source spec discipline"],
       [/\b(end-to-end|e2e|full working solution|complete working solution|coverage matrix|entrypoint).{0,120}\b(success|failure|verification|client|consumer|frontend|service|state)\b/i, "Missing E2E coverage matrix evidence"],
       [new RegExp(`\\b(${clientTerm})\\b`, "i"), "Missing frontend/client/consumer coverage or N/A evidence"],
+      [new RegExp(`\\b(${frontendTerm})\\b`, "i"), "Missing frontend UX/design reuse or N/A evidence"],
+      [/\b(reuse|reusable|shared|design system|design\.md|framework component|shared styles|CSS|tokens|custom UI|N\/A|not applicable)\b/i, "Missing frontend reuse or N/A evidence"],
       [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Missing source links"],
       [/\b(standard|industry|ecosystem-native|convention|OpenTelemetry|structured JSON|RFC 9457|contract definition|interface definition|schema definition|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
       [new RegExp(`\\b(${contractTerm})\\b`, "i"), "Missing machine-readable contract source"],

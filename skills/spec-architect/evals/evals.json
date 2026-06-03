@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "Create specs for a SaaS workflow that backend and frontend agents implement in parallel.",
-      "expected_output": "Creates concise specs with business context, contracts, E2E client/service matrix, happy/unhappy paths, NFRs, gates, and no open decisions.",
+      "expected_output": "Creates concise specs with business context, contracts, E2E client/service matrix, frontend access/UX/design reuse, happy/unhappy paths, NFRs, gates, and no open decisions.",
       "files": []
     },
     {

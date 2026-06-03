@@ -6,15 +6,16 @@
 - `00-vision.md`, `00-stack.md`, `00-conventions.md`,
   `00-architecture-overview.md`, `glossary.md`
 - `01-domains/`, `02-capabilities/`, `03-contracts/`, `03-flows/`
-- `03-flows/e2e-coverage.md`: matrix proving each business outcome reaches a
-  complete working solution across clients/consumers, services, contracts,
-  state, unhappy paths, recovery, and verification.
+- `03-flows/e2e-coverage.md`: E2E matrix for each business outcome across
+  clients/consumers, services, contracts, state, unhappy paths, recovery,
+  verification.
 - `03-contracts/`: best-fit standard or ecosystem-native contract/IDL/schema
   sources when interfaces exist. Examples are non-exhaustive: OpenAPI,
   GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC, CloudEvents, Avro, Thrift,
   Smithy, OpenRPC/RAML, YANG, WSDL, schema registries, or comparable artifacts.
 - `04-backend/` or equivalent technical specs
-- `04-frontend/` or equivalent UX/design specs when user-facing UI exists
+- `04-frontend/` or equivalent UX/design specs: access, screens, flows, states,
+  design/component/style reuse, custom UI rationale, or N/A evidence.
 - `04-nfr/`: security/privacy, data integrity/recovery,
   performance/resilience, observability/logging, test strategy
 - `04-operations/` for production readiness when software is deployable
@@ -30,7 +31,8 @@ Approved specs require:
 - these gate statuses `passed`: `no_drift_gate`, `ambiguity_gate`,
   `spec_structure_gate`, `visualization_gate`, `semantic_alignment_gate`,
   `requirements_quality_gate`, `concise_spec_gate`,
-  `client_consumer_coverage_gate`, `standards_first_gate`,
+  `client_consumer_coverage_gate`, `frontend_ux_integration_gate`,
+  `standards_first_gate`,
   `machine_readable_contract_gate`, `async_semantics_gate`,
   `interface_gate`, `e2e_gate`,
   `unhappy_path_gate`, `security_privacy_gate`,

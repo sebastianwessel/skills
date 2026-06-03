@@ -43,6 +43,10 @@ The CLI and public skill directory are introduced in Vercel's
   fully working end-to-end solution across existing frontends, clients,
   consumers, services, contracts, state, unhappy paths, recovery, and
   verification, or records explicit N/A evidence.
+- Requires user-facing features to define access paths, screens/surfaces, user
+  flows, UI states, accessibility/responsiveness, and reuse of project design
+  sources, shared styles, framework components, and reusable components before
+  custom UI.
 - Requires specs to stay concise by keeping one source of truth per fact,
   linking to central contracts/conventions, and pruning duplicated or stale
   prose.
@@ -85,12 +89,12 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 9. Define production readiness, release/rollback, operations, and supply-chain expectations.
 10. Add Mermaid diagrams only where useful and keep them aligned with prose/contracts.
 11. Check no-drift, ambiguity, requirements quality, concise-spec,
-    client/consumer coverage, spec-structure, visualization, standards-first,
-    machine-readable-contract, semantic-alignment, async, interface,
-    end-to-end, unhappy-path, security/privacy, observability,
-    performance/resilience, data-integrity/recovery, production-readiness,
-    supply-chain, contradiction, semantic-judge, migration, wave-readiness, and
-    self-audit gates.
+    client/consumer coverage, frontend/UX integration, spec-structure,
+    visualization, standards-first, machine-readable-contract,
+    semantic-alignment, async, interface, end-to-end, unhappy-path,
+    security/privacy, observability, performance/resilience,
+    data-integrity/recovery, production-readiness, supply-chain, contradiction,
+    semantic-judge, migration, wave-readiness, and self-audit gates.
 12. Run self-critique, semantic judge review, and configured deterministic checks.
 13. Synchronize registries, provenance, readiness, dependent specs, and affected plan notes.
 14. Simulate implementation planning across all waves.
@@ -111,7 +115,7 @@ It uses compact reference files for readiness gates and artifact shapes. It can 
 | Path | Purpose |
 | --- | --- |
 | `skills/spec-architect/SKILL.md` | Executable agent instructions and trigger metadata. |
-| `skills/spec-architect/references/readiness-gates.md` | No-drift, ambiguity, requirements quality, concision, client/consumer coverage, standards-first, machine-readable contracts, semantic-alignment, async, security, privacy, observability, performance, resilience, production, supply-chain, data-integrity, migration, wave, interface, and parallel readiness gates. |
+| `skills/spec-architect/references/readiness-gates.md` | No-drift, ambiguity, requirements quality, concision, client/consumer coverage, frontend/UX integration, standards-first, machine-readable contracts, semantic-alignment, async, security, privacy, observability, performance, resilience, production, supply-chain, data-integrity, migration, wave, interface, and parallel readiness gates. |
 | `skills/spec-architect/references/artifact-shapes.md` | Expected spec tree, readiness report fields, inference policy, and standard failure defaults. |
 | `skills/spec-architect/scripts/check_specs.mjs` | Deterministic consistency checker. |
 | `skills/spec-architect/evals/evals.json` | Evaluation scenarios for the skill. |
@@ -124,4 +128,4 @@ Run the checker when a spec tree exists:
 node skills/spec-architect/scripts/check_specs.mjs specs
 ```
 
-A passing deterministic check means the spec set is mechanically coherent. It does not prove semantic completeness. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, `language: en`, and the readiness gates for no drift, ambiguity, requirements quality, concise specs, client/consumer coverage, spec structure, visualization, standards-first choices, machine-readable contracts, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, production readiness, supply-chain integrity, migrations, waves, contradictions, semantic judge review, and self-audit have passed.
+A passing deterministic check means the spec set is mechanically coherent. It does not prove semantic completeness. Planning is allowed only after `specs/.readiness-report.yaml` has `status: approved`, `human_approval.status: approved`, `language: en`, and the readiness gates for no drift, ambiguity, requirements quality, concise specs, client/consumer coverage, frontend/UX integration, spec structure, visualization, standards-first choices, machine-readable contracts, semantic alignment, async semantics, interfaces, end-to-end paths, unhappy paths, security/privacy, observability/logging, performance/resilience, data-integrity/recovery, production readiness, supply-chain integrity, migrations, waves, contradictions, semantic judge review, and self-audit have passed.
