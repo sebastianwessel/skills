@@ -10,6 +10,7 @@ const at = (f) => path.join(root, f);
 const exists = (f) => fs.existsSync(at(f));
 const read = (f) => fs.readFileSync(at(f), "utf8");
 const rel = (f) => path.relative(root, f).split(path.sep).join("/");
+const contractTerm = String.raw`contract definition|interface definition|schema definition|machine-readable|source of truth|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|schema artifact|IDL`;
 const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
   const f = path.join(d, e.name);
   return e.isDirectory() ? walk(f) : [f];
@@ -18,7 +19,8 @@ const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }
 const gates = [
   "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
   "spec_structure_gate", "visualization_gate", "requirements_quality_gate",
-  "standards_first_gate", "async_semantics_gate", "interface_gate", "e2e_gate",
+  "standards_first_gate", "machine_readable_contract_gate",
+  "async_semantics_gate", "interface_gate", "e2e_gate",
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
   "production_readiness_gate", "supply_chain_gate", "wave_readiness",
@@ -30,6 +32,10 @@ if (!fs.existsSync(root)) {
   fail(`Missing spec root: ${root}`);
 } else {
   const all = walk(root), text = all.map((f) => fs.readFileSync(f, "utf8")).join("\n");
+  const contractFiles = all.filter((f) =>
+    rel(f).startsWith("03-contracts/") &&
+    /\.(ya?ml|json|graphql|gql|proto|avsc|thrift|smithy|yang|wsdl|raml)$/i.test(f)
+  );
   [".readiness-report.yaml", "_registry.yaml", "_provenance.yaml", "00-vision.md",
    "00-stack.md", "00-conventions.md", "00-architecture-overview.md", "glossary.md"]
     .forEach((f) => !exists(f) && fail(`Missing artifact: ${f}`));
@@ -58,14 +64,16 @@ if (!fs.existsSync(root)) {
   if (approved) {
     const must = [
       [/\b(as appropriate|if needed|where possible|to be determined|decide later|future work will decide|handle errors|support auth|validate input|make configurable|sync data|recover gracefully|log appropriately|securely|performant|best effort)\b/i, "ambiguous implementation language", true],
-      [/\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|gRPC|protobuf)\b/i, "Missing type mapping", false, /\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i],
+      [new RegExp(`\\b(GraphQL|TypeScript|JavaScript|Go|Python|OpenAPI|REST|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|contract|schema|IDL)\\b`, "i"), "Missing type mapping", false, /\b(null|undefined|omitted|required|optional|type mapping|semantic mapping)\b/i],
       [/\b(async|queue|stream|event|job|worker|callback|goroutine|promise|coroutine)\b/i, "Missing async semantics", false, /\b(timeout|retry|cancellation|idempotency|ordering|concurrency|ack|backpressure)\b/i],
       [/\b(unhappy|failure path|validation failure|authorization|denial|timeout|retry|rollback|recovery|cancellation|manual intervention)\b/i, "Missing unhappy/recovery paths"],
       [/\b(business|user|customer|outcome|goal|why|rationale)\b/i, "Missing business context"],
       [/\b(requirement|flow|contract|NFR|acceptance).{0,80}\b(id|trace|source|owner|priority|risk|verification method|test|inspection|analysis|demo)\b/i, "Missing requirement traceability"],
       [/\b(component|module|service|package|workflow|process|interface|contract|frontend|UX|design|accessibility|reusable)\b/i, "Missing component/workflow structure"],
       [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Missing source links"],
-      [/\b(standard|industry|convention|OpenTelemetry|structured JSON|RFC 9457|OpenAPI|GraphQL|gRPC|protobuf|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
+      [/\b(standard|industry|ecosystem-native|convention|OpenTelemetry|structured JSON|RFC 9457|contract definition|interface definition|schema definition|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
+      [new RegExp(`\\b(${contractTerm})\\b`, "i"), "Missing machine-readable contract source"],
+      [/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check|not applicable|N\/A)\b/i, "Missing contract generation/tooling evidence"],
       [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Missing security/privacy"],
       [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Missing observability"],
       [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Missing performance budgets"],
@@ -76,6 +84,16 @@ if (!fs.existsSync(root)) {
     all.forEach((f) => must[0][0].test(fs.readFileSync(f, "utf8")) && fail(`${rel(f)} contains ${must[0][1]}`));
     for (const [trigger, msg, badOnly, required] of must.slice(1)) {
       if (required ? trigger.test(text) && !required.test(text) : !trigger.test(text)) fail(msg);
+    }
+    const hasInterfaceScope = /\b(interface|contract|API|endpoint|GraphQL|REST|HTTP|event|message|queue|topic|webhook|SDK|CLI|plugin|configuration|schema|storage shape|data model)\b/i.test(text);
+    const machineReadableNotApplicable = /\b(machine-readable contract|contract artifact|03-contracts).{0,120}\b(not applicable|n\/a|no interface|no transport|no message|no durable data contract)\b/i.test(text);
+    if (hasInterfaceScope && !machineReadableNotApplicable && contractFiles.length === 0) {
+      fail("Missing machine-readable contract artifact in specs/03-contracts");
+    }
+    const hasMachineReadableContract = new RegExp(`\\b(${contractTerm})\\b`, "i").test(text);
+    const generationNotApplicable = /\b(generator|codegen|generated|regeneration|drift check).{0,120}\b(not applicable|n\/a|unavailable|unsafe|out of scope)\b/i.test(text);
+    if (hasMachineReadableContract && !generationNotApplicable && !/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check)\b/i.test(text)) {
+      fail("Missing deterministic generator/tooling, generated output, or drift-check evidence");
     }
   }
 

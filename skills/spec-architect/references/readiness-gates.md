@@ -3,6 +3,21 @@
 Specs are approvable only when every gate passes or is marked not applicable
 with evidence.
 
+## Contents
+
+- No Drift, Ambiguity, And Honesty
+- Validation Layers
+- Human Decision Requests
+- Maintenance, Sync, And Cleanup
+- Requirements And Structure
+- Standards First
+- Machine-Readable Contract Sources
+- Interfaces And Runtime Semantics
+- Paths, Integrity, And Recovery
+- Security, Privacy, Observability, Performance
+- Production, Release, And Supply Chain
+- Wave, Migration, And Rationale
+
 ## No Drift, Ambiguity, And Honesty
 
 - No ticket may decide product behavior, interfaces, errors, security/privacy,
@@ -64,10 +79,34 @@ Mermaid is optional and aligned.
 
 ## Standards First
 
-Default to standards: OpenTelemetry, structured JSON logs, RFC 9457,
-OpenAPI/GraphQL/gRPC/protobuf, OAuth/OIDC/JWT, framework conventions.
-Custom protocols, log levels, envelopes, serialization, auth, architecture, or
-interface semantics need rationale, tooling impact, migration, and approval.
+Default to industry-standard or ecosystem-native definitions before custom
+text: contract/IDL/schema artifacts, observability, logging, error formats,
+auth, security controls, architecture, and framework conventions. Examples
+such as OpenAPI, GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC, CloudEvents,
+Avro, Thrift, Smithy, OpenRPC/RAML, YANG, WSDL, or schema registries are
+non-exhaustive. Custom protocols, log levels, envelopes, serialization, auth,
+architecture, or interface semantics need rationale, tooling impact,
+migration, and approval.
+
+## Machine-Readable Contract Sources
+
+Interfaces, APIs, events, queues, webhooks, plugins, configs, SDK/CLI surfaces,
+and durable data shapes must use the best-fit standard or ecosystem-native
+machine-readable contract/IDL/schema source of truth when one fits. Select by
+transport, ecosystem, interoperability, generator support, compatibility
+checks, and runtime validation. Named standards are examples, not limits.
+
+Human specs explain intent, rationale, flows, UX, security, failures, and
+operations, then link to contract artifacts instead of duplicating field lists.
+Those artifacts drive generated types, validation, docs, UI/schema rendering,
+compatibility checks, and drift gates. Specs must name deterministic generators
+or tooling, regeneration commands, generated outputs, generated tests, and drift
+checks when tooling exists. Manual or custom contract implementation needs
+rationale, approval, and evidence that generation is unavailable or unsafe. If
+no standard fits, state why, define the smallest custom shape, preserve as many
+tooling guarantees as possible, require approval, and add migration guidance.
+N/A needs evidence that no interface, transport, message, config, extension, or
+durable data contract is in scope.
 
 ## Interfaces And Runtime Semantics
 
@@ -77,6 +116,12 @@ validation, errors, auth/policy, lifecycle, observability, tests.
 Cross-language/protocol specs map source/wire/target types, required/optional,
 defaulted, `null`, `undefined`, omitted, zero/empty, enum unknowns, precision,
 time zones, IDs, encoding, ordering, pagination, partial data, errors.
+
+Machine-readable contracts must define or link the exact wire names,
+serialization, type/nullability semantics, versioning and deprecation policy,
+compatibility rules, generation targets, validation entry points, and owning
+source file. Human diagrams or UI documentation must derive from or link back
+to those contract artifacts and must be updated in the same change.
 
 Async specs define runtime model, ordering, concurrency, cancellation, timeout,
 retry budget, idempotency, ack/commit, lease/heartbeat, backpressure, DLQ,

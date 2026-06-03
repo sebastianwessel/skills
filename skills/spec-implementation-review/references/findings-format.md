@@ -7,6 +7,13 @@ Persist review output under:
 Use a stable `review-id` such as `YYYYMMDD-HHMM-review` or the existing review
 directory when continuing.
 
+## Contents
+
+- review.md
+- findings.yaml
+- Status Handoff
+- agent-feedback/<ticket-id>.md
+
 ## review.md
 
 ```markdown

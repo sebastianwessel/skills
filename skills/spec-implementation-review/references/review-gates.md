@@ -10,6 +10,12 @@ Use these gates after building the path matrix.
 - Interfaces preserve fields, generated types, nullability, optionality,
   defaults, serialization, async timing, cancellation, retries, errors, and
   compatibility across languages, protocols, clients, services, jobs, and DBs.
+- Generated types, clients, validators, stubs, fixtures, docs, and contract
+  tests derive from approved machine-readable contract/IDL/schema artifacts
+  through deterministic generators/tools when approved tooling or project
+  configuration supports generation.
+- No hand-written duplicate of an approved generated shape bypasses codegen,
+  validation, compatibility, or drift checks.
 - No product/API/security/persistence/test behavior was invented locally.
 
 ## Tests And Verification
@@ -17,6 +23,7 @@ Use these gates after building the path matrix.
 - Ticket and wave verification commands pass.
 - Every acceptance criterion and path has behavior evidence.
 - Contract and end-to-end tests cover cross-ticket integration.
+- Contract/codegen drift checks pass, or N/A evidence matches the approved plan.
 - Tests include happy, unhappy, async/error, retry/timeout, and security paths.
 - Default checks remain hermetic; external integrations are opt-in.
 

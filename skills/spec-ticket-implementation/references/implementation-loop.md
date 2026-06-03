@@ -6,10 +6,17 @@ Use this loop for one approved ticket.
 
 - Identify approved interfaces, contracts, schemas, commands, events, jobs,
   config, persistence, and public APIs named by the ticket.
+- Prefer approved contract/IDL/schema sources and
+  deterministic project generators for code, types, clients, validators, server
+  stubs, docs, fixtures, and contract tests. Run regeneration before manual
+  edits when tooling exists.
 - If the ticket owns an interface/foundation, implement it before dependents and
   run type/schema/contract checks.
 - If the ticket consumes an interface, code against the approved interface
   unchanged.
+- Do not hand-write or fork generated shapes unless the ticket/spec explicitly
+  approves manual implementation and states why deterministic generation is
+  unavailable, unsafe, or out of scope.
 - Preserve null/undefined, optional fields, async timing, cancellation, retries,
   serialization, and error semantics exactly. Stop on mismatch.
 - Preserve specified state transitions, data integrity, redaction, performance
@@ -23,10 +30,12 @@ For each acceptance criterion:
 
 1. Write or update a public-interface test.
 2. Include happy and relevant unhappy paths.
-3. Include async, timeout, cancellation, retry, logging, or error propagation
+3. Generate contract/schema tests from approved artifacts where project tooling
+   supports it; otherwise write equivalent public-interface contract tests.
+4. Include async, timeout, cancellation, retry, logging, or error propagation
    when specified or required by convention.
-4. Confirm the test fails for the expected missing behavior.
-5. Implement the minimum code to pass, then re-run focused and ticket checks.
+5. Confirm the test fails for the expected missing behavior.
+6. Implement the minimum code to pass, then re-run focused and ticket checks.
 
 If strict test-first is mechanically impossible, record why and still map every
 acceptance criterion to verification.
@@ -47,6 +56,9 @@ acceptance criterion to verification.
   vulnerability, license, artifact, and secret-scan requirements when in scope.
 - Use precise types. Avoid unapproved `any`, unchecked casts, dynamic maps,
   stringly typed unions, or broad exception types.
+- Keep generated files deterministic, clearly marked as generated when the
+  project does so, and regenerated from approved sources rather than edited by
+  hand.
 - Keep files cohesive with speakable names.
 - Centralize repeated hardcoded values into inline-documented constants.
 - Include units in duration, size, count, rate, and limit names.
@@ -67,6 +79,8 @@ Before done, honestly check:
 - Spec: every behavior maps to scoped specs, ticket text, or approved convention.
 - Traceability: source requirement IDs map to code, tests, and evidence.
 - Interfaces: types, nullability, async, errors, and serialization align.
+- Generation: generated outputs, generated tests, and drift checks align with
+  approved contract/IDL/schema sources.
 - Tests: every acceptance criterion has happy/unhappy verification.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
 - Integrity: state transitions, recovery, data-loss prevention, and performance

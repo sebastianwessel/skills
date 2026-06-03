@@ -1,6 +1,6 @@
 ---
 name: spec-implementation-review
-description: Use when a completed or partial spec implementation wave, plan, or cross-ticket solution needs review before acceptance, merge, release, or handoff.
+description: Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings.
 ---
 
 # Spec Implementation Review
@@ -30,7 +30,8 @@ review scope cannot be identified.
 2. Build a solution path matrix using `references/path-tracing.md`.
 3. Follow every relevant path end to end: request/input, validation, auth,
    routing, interface boundaries, domain logic, persistence, async work,
-   external boundaries, observability, response/output, cleanup, recovery.
+   external boundaries, generated artifacts, observability, response/output,
+   cleanup, recovery.
 4. Apply `references/review-gates.md` for spec drift, interfaces, tests,
    requirements traceability, security, performance, operations, supply chain,
    robustness, maintainability, docs, and false work.
@@ -45,6 +46,8 @@ Reject the wave/plan when any blocking issue exists:
 - spec drift in behavior, interfaces, types/nullability, async, errors, logging,
   persistence, security, performance, recovery, release, supply chain, or
   public contracts
+- missing, stale, hand-edited, or bypassed generated contract outputs when
+  approved contract/IDL/schema sources and deterministic tooling exist
 - missing source requirement traceability from specs to tickets, code, tests,
   and acceptance evidence
 - missing, untested, or incorrect success/failure/retry/timeout/cancel/rollback/
