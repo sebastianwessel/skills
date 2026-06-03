@@ -2,6 +2,14 @@
 
 Use this loop for one approved ticket.
 
+## Contents
+
+- Contract First
+- Test First
+- Quality Rules
+- No False Completion
+- Review-Judge Loop
+
 ## Contract First
 
 - Identify approved interfaces, contracts, schemas, commands, events, jobs,
@@ -21,24 +29,38 @@ Use this loop for one approved ticket.
   serialization, and error semantics exactly. Stop on mismatch.
 - Preserve specified state transitions, data integrity, redaction, performance
   budgets, and recovery behavior exactly. Stop on mismatch.
+- Preserve specified frontend/client access paths, screens/surfaces, user
+  flows, UI states, accessibility/responsiveness, design sources, shared styles,
+  framework/component-library use, reusable components/modules, and custom
+  UI/style rationale exactly. Stop on mismatch.
 - Preserve requirement IDs, release/rollback, configuration/secrets,
   operations, and supply-chain semantics exactly when in scope. Stop on mismatch.
 
 ## Test First
 
+Tests are the executable form of the spec for one ticket. Define or generate
+them before writing the business logic they validate.
+
 For each acceptance criterion:
 
-1. Write or update a public-interface test.
-2. Include happy and relevant unhappy paths.
-3. Generate contract/schema tests from approved artifacts where project tooling
+1. Map the criterion to source spec refs, approved contracts/schemas, expected
+   outputs, and happy/unhappy paths.
+2. Generate contract/schema tests from approved artifacts where project tooling
    supports it; otherwise write equivalent public-interface contract tests.
-4. Include async, timeout, cancellation, retry, logging, or error propagation
-   when specified or required by convention.
-5. Confirm the test fails for the expected missing behavior.
-6. Implement the minimum code to pass, then re-run focused and ticket checks.
+3. Write or update public-interface unit/integration/E2E tests before business
+   logic changes.
+4. Include happy, unhappy, validation, auth, async, timeout, cancellation, retry,
+   logging, recovery, and error propagation tests when specified or required by
+   convention.
+5. Confirm the new or changed tests fail for the expected missing behavior or
+   missing generated artifact.
+6. Implement the minimum business logic to pass, then re-run focused, contract,
+   drift, and ticket checks.
 
 If strict test-first is mechanically impossible, record why and still map every
-acceptance criterion to verification.
+acceptance criterion to verification. "Already passing" is acceptable only when
+the test already exists, traces to the source requirement, and proves the scoped
+behavior before new business logic is added.
 
 ## Quality Rules
 
@@ -54,6 +76,11 @@ acceptance criterion to verification.
   timeout, retry, backpressure, and overload limits.
 - Respect specified deployment, rollback, runbook, dependency, SBOM/provenance,
   vulnerability, license, artifact, and secret-scan requirements when in scope.
+- For UI/client work, reuse project design sources, shared styles, framework or
+  component-library components, and existing reusable components/modules before
+  custom code. Do not invent look and feel, duplicate styling, or introduce
+  custom components/interactions unless the ticket/spec explicitly approves the
+  rationale.
 - Use precise types. Avoid unapproved `any`, unchecked casts, dynamic maps,
   stringly typed unions, or broad exception types.
 - Keep generated files deterministic, clearly marked as generated when the
@@ -81,7 +108,13 @@ Before done, honestly check:
 - Interfaces: types, nullability, async, errors, and serialization align.
 - Generation: generated outputs, generated tests, and drift checks align with
   approved contract/IDL/schema sources.
+- Frontend/client: access path, screen/surface behavior, user flows, UI states,
+  accessibility/responsiveness, design/style reuse, and component/module reuse
+  match specs and project conventions.
 - Tests: every acceptance criterion has happy/unhappy verification.
+- Test order: spec/contract/acceptance tests existed or were generated before
+  business logic for the behavior, or a concrete mechanical exception is
+  recorded.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
 - Integrity: state transitions, recovery, data-loss prevention, and performance
   budgets match specs.

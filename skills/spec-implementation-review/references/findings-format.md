@@ -49,7 +49,7 @@ Each finding must be actionable without chat context:
 findings:
   - id: REVIEW-001
     severity: blocking # blocking | advisory
-    category: SPEC_DRIFT # SPEC_DRIFT | TRACEABILITY | PATH | TEST | SECURITY | PERF | ROBUSTNESS | OPERATIONS | SUPPLY_CHAIN | MAINTAINABILITY | INTERFACE | PLAN | SPEC_GAP | CLEANUP
+    category: SPEC_DRIFT # SPEC_DRIFT | TRACEABILITY | PATH | TEST | SECURITY | PERF | ROBUSTNESS | OPERATIONS | SUPPLY_CHAIN | MAINTAINABILITY | INTERFACE | FRONTEND_UX | PLAN | SPEC_GAP | CLEANUP
     status: open # open | fixed | accepted | obsolete
     owner_ticket: TICKET-123
     route: implementation # implementation | planner | spec-architect

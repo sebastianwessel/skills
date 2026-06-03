@@ -1,35 +1,35 @@
 {
   "skill_name": "spec-architect",
   "evals": [
-    {
-      "id": 1,
-      "prompt": "Create specs for a SaaS workflow that backend and frontend agents implement in parallel.",
-      "expected_output": "Creates implementation-ready specs with business context, flows, contracts, happy/unhappy paths, NFRs, gates, and no open implementation decisions.",
-      "files": []
-    },
+        {
+            "id": 1,
+            "prompt": "Create specs for a SaaS workflow that backend and frontend agents implement in parallel.",
+            "expected_output": "Creates concise specs with contracts, E2E matrix, UX reuse, happy/unhappy paths, NFRs, gates, and no open decisions.",
+            "files": []
+        },
     {
       "id": 2,
       "prompt": "Approve specs missing API shape, nullability, retries, logging, and rollback.",
       "expected_output": "Refuses approval and records concrete gaps instead of letting implementers infer behavior.",
       "files": []
     },
-    {
-      "id": 3,
-      "prompt": "Repair specs where Go, TypeScript, and protobuf null/omitted/enum semantics drift.",
-      "expected_output": "Defines cross-language semantics, source contracts, validation, compatibility checks, and blocks readiness until ambiguity is resolved.",
-      "files": []
-    },
-    {
-      "id": 4,
-      "prompt": "Update specs after implemented persistence behavior changes materially.",
-      "expected_output": "Updates source specs first, relinks dependents, prunes stale text, records impact, and creates migration plan entries.",
-      "files": []
-    },
-    {
-      "id": 5,
-      "prompt": "Review broad enterprise specs with vague error, security, logging, and sync behavior.",
-      "expected_output": "Rejects vague prose and requires verifiable behavior, redaction, failure/recovery paths, integrity rules, and minimal HITL only for hard gaps.",
-      "files": []
-    }
-  ]
+        {
+            "id": 3,
+            "prompt": "Repair specs where Go, TypeScript, and protobuf null/omitted/enum semantics drift.",
+            "expected_output": "Defines cross-language semantics, contracts, validation, compatibility checks, and blocks ambiguous readiness.",
+            "files": []
+        },
+        {
+            "id": 4,
+            "prompt": "Approve specs for planning, but they have not run a path-by-path flow judge yet.",
+            "expected_output": "Blocks approval until approval-time spec judge evidence has zero blocking findings.",
+            "files": []
+        },
+        {
+            "id": 5,
+            "prompt": "Update one draft spec section during authoring.",
+            "expected_output": "Updates canonical spec source without full judge loop until approval or planning handoff.",
+            "files": []
+        }
+    ]
 }

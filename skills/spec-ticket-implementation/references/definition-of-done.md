@@ -2,6 +2,16 @@
 
 A ticket is done only when all relevant checks pass.
 
+## Contents
+
+- Code Quality
+- Errors, Logging, And Security
+- Data Integrity, Recovery, And Performance
+- Frontend, UX, And Reuse
+- Testing
+- Scope And Spec Compliance
+- Documentation And Completion
+
 ## Code Quality
 
 - [ ] No new static analysis errors or lint warnings in scope.
@@ -41,9 +51,25 @@ A ticket is done only when all relevant checks pass.
 - [ ] Latency, throughput, memory/CPU, pagination, batching, timeout, retry,
       backpressure, and overload behavior match specified budgets when relevant.
 
+## Frontend, UX, And Reuse
+
+- [ ] User-facing/client work preserves specified access paths, screens/surfaces,
+      user flows, and loading/empty/error/success/permission states.
+- [ ] Accessibility, responsiveness, keyboard/focus behavior, and visual states
+      match specs and project conventions when in scope.
+- [ ] Project design sources, shared styles, framework/component-library
+      components, and reusable components/modules are used before custom UI.
+- [ ] No unapproved look-and-feel invention, duplicate styling, custom
+      component, or custom interaction remains.
+
 ## Testing
 
 - [ ] Every acceptance criterion has passing public-interface tests.
+- [ ] Tests trace to spec refs, approved contracts/schemas, and acceptance
+      criteria before business logic is accepted.
+- [ ] Unit, contract/generated, integration, and E2E tests were written or
+      generated before the business logic they prove, or a concrete mechanical
+      exception is recorded.
 - [ ] Happy and relevant unhappy paths are covered.
 - [ ] Failure paths have dedicated tests.
 - [ ] Test-first evidence exists, or a concrete exception is recorded.
@@ -64,8 +90,9 @@ A ticket is done only when all relevant checks pass.
       acceptance evidence.
 - [ ] Acceptance criteria are fully met; non-goals are respected.
 - [ ] No unapproved product behavior, contracts, API/event/job/stream schemas,
-      persistence, policy, failure, async, error, logging, security,
-      performance, or recovery behavior invented.
+      persistence, policy, failure, async, error, logging, frontend/client UX,
+      design/style/component behavior, security, performance, or recovery
+      behavior invented.
 - [ ] No production mock, fake, stub, placeholder, no-op, hidden flag, or demo
       path remains unless explicitly approved.
 - [ ] Public API inventory, execution semantics, docs, examples, and generated

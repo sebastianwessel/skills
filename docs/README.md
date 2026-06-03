@@ -4,6 +4,7 @@ Human-facing documentation for the skills in this repository.
 
 ## Skills
 
+- [spec-driven-workflow](skills/spec-driven-workflow.md)
 - [spec-implementation-planner](skills/spec-implementation-planner.md)
 - [spec-architect](skills/spec-architect.md)
 - [spec-implementation-review](skills/spec-implementation-review.md)

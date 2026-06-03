@@ -11,6 +11,8 @@ const exists = (f) => fs.existsSync(at(f));
 const read = (f) => fs.readFileSync(at(f), "utf8");
 const rel = (f) => path.relative(root, f).split(path.sep).join("/");
 const contractTerm = String.raw`contract definition|interface definition|schema definition|machine-readable|source of truth|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|schema artifact|IDL`;
+const clientTerm = String.raw`frontend|client|consumer|UI|SDK|CLI|web app|mobile app|integration|adapter|N/A|not applicable`;
+const frontendTerm = String.raw`frontend|UI|UX|screen|surface|navigation|access path|user flow|UI state|design system|design\.md|framework component|reusable component|shared styles|CSS|tokens|N/A|not applicable`;
 const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
   const f = path.join(d, e.name);
   return e.isDirectory() ? walk(f) : [f];
@@ -19,12 +21,13 @@ const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }
 const gates = [
   "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate",
   "spec_structure_gate", "visualization_gate", "requirements_quality_gate",
-  "standards_first_gate", "machine_readable_contract_gate",
+  "concise_spec_gate", "client_consumer_coverage_gate",
+  "frontend_ux_integration_gate", "standards_first_gate", "machine_readable_contract_gate",
   "async_semantics_gate", "interface_gate", "e2e_gate",
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
   "production_readiness_gate", "supply_chain_gate", "wave_readiness",
-  "migration_gate", "contradiction_check", "semantic_judge_gate",
+  "migration_gate", "contradiction_check", "spec_judge_loop", "semantic_judge_gate",
   "self_audit_gate", "gate_simulation",
 ];
 
@@ -49,6 +52,9 @@ if (!fs.existsSync(root)) {
     if (!/^language:\s*en\s*$/m.test(report)) fail("language: en required");
     if (!/\bopen_decisions:\s*\[\]/.test(report)) fail("open_decisions must be []");
     gates.forEach((g) => !new RegExp(`${g}:\\s*\\n\\s+status:\\s*passed\\b`, "m").test(report) && fail(`${g}.status must pass`));
+    if (!/spec_judge_loop:[\s\S]*?run_timing:\s*approval_only\b/m.test(report)) fail("spec_judge_loop.run_timing must be approval_only");
+    if (!/spec_judge_loop:[\s\S]*?reviewed_flows:\s*\n\s+-\s+flow_id:/m.test(report)) fail("spec_judge_loop must record reviewed_flows");
+    if (!/spec_judge_loop:[\s\S]*?blocking_findings_count:\s*0\b/m.test(report)) fail("spec_judge_loop.blocking_findings_count must be 0");
   }
 
   for (const file of all) {
@@ -70,6 +76,11 @@ if (!fs.existsSync(root)) {
       [/\b(business|user|customer|outcome|goal|why|rationale)\b/i, "Missing business context"],
       [/\b(requirement|flow|contract|NFR|acceptance).{0,80}\b(id|trace|source|owner|priority|risk|verification method|test|inspection|analysis|demo)\b/i, "Missing requirement traceability"],
       [/\b(component|module|service|package|workflow|process|interface|contract|frontend|UX|design|accessibility|reusable)\b/i, "Missing component/workflow structure"],
+      [/\b(concise|single source of truth|one source of truth|no duplicate|no stale|centralize|link instead of duplicating|shared facts)\b/i, "Missing concise single-source spec discipline"],
+      [/\b(end-to-end|e2e|full working solution|complete working solution|coverage matrix|entrypoint).{0,120}\b(success|failure|verification|client|consumer|frontend|service|state)\b/i, "Missing E2E coverage matrix evidence"],
+      [new RegExp(`\\b(${clientTerm})\\b`, "i"), "Missing frontend/client/consumer coverage or N/A evidence"],
+      [new RegExp(`\\b(${frontendTerm})\\b`, "i"), "Missing frontend UX/design reuse or N/A evidence"],
+      [/\b(reuse|reusable|shared|design system|design\.md|framework component|shared styles|CSS|tokens|custom UI|N\/A|not applicable)\b/i, "Missing frontend reuse or N/A evidence"],
       [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Missing source links"],
       [/\b(standard|industry|ecosystem-native|convention|OpenTelemetry|structured JSON|RFC 9457|contract definition|interface definition|schema definition|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
       [new RegExp(`\\b(${contractTerm})\\b`, "i"), "Missing machine-readable contract source"],
@@ -94,6 +105,9 @@ if (!fs.existsSync(root)) {
     const generationNotApplicable = /\b(generator|codegen|generated|regeneration|drift check).{0,120}\b(not applicable|n\/a|unavailable|unsafe|out of scope)\b/i.test(text);
     if (hasMachineReadableContract && !generationNotApplicable && !/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check)\b/i.test(text)) {
       fail("Missing deterministic generator/tooling, generated output, or drift-check evidence");
+    }
+    if (!exists("03-flows/e2e-coverage.md")) {
+      fail("Missing E2E coverage matrix: 03-flows/e2e-coverage.md");
     }
   }
 

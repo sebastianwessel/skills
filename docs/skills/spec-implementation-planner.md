@@ -19,8 +19,11 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires approved specs to declare `language: en` and pass semantic judge
   review when the deterministic English smoke checks are used.
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
-- Splits implementation work into dependency-ordered waves that each end in a
-  working end-to-end increment for that wave's scope.
+- Prefers vertical-slice waves that each end in a working, reachable, testable
+  end-to-end increment for that wave's scope.
+- Allows horizontal foundation or refactor waves only when they unlock safer
+  parallel implementation or reliability, and requires a rationale, unblocked
+  tickets, next vertical slice, and test evidence.
 - Records implementation order plus `depends_on`, `blocked_by`, and `unblocks`
   relationships so agents know which tickets can start, which are blocked, and
   what becomes available when a ticket is done.
@@ -34,11 +37,25 @@ The CLI and public skill directory are introduced in Vercel's
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.
+- Maps user-facing and client-consumed work into tickets for reachable access,
+  screens/surfaces, user flows, UI states, accessibility/responsiveness, design
+  source reuse, framework/component-library reuse, reusable components/modules,
+  and explicit N/A evidence when there is no frontend/client scope.
 - Preserves source requirement IDs and maps production readiness,
   release/rollback, operations, dependency, SBOM/provenance, vulnerability, and
   license responsibilities into tickets or explicit not-applicable dispositions.
 - Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
-- Blocks tickets that would require agents to invent behavior, choose interfaces, or resolve missing specs.
+- Requires each ticket and wave to state its slice strategy so agents know
+  whether they are delivering a vertical end-to-end increment or an approved
+  horizontal exception.
+- Requires unit tests, end-to-end tests, and a default 80% code coverage target
+  unless approved specs or project standards define another threshold.
+- Requires test-driven implementation order: tests are derived from approved
+  specs, contracts/schemas, acceptance criteria, and unhappy-path definitions
+  before business logic is planned or implemented.
+- Blocks tickets that would require agents to invent behavior, choose
+  interfaces, invent frontend look and feel, duplicate styles/components, or
+  resolve missing specs.
 - Rejects placeholder, mock, fake, stub, or no-op implementation shortcuts unless the specs explicitly require test fixtures or fake providers.
 - Tracks planned, in-progress, partial, blocked, done, and skipped work so plans can pause and resume.
 - Syncs changed specs into indexes, impact notes, dependencies, status, and
@@ -46,6 +63,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires a plan-level self-audit that names weak assumptions, readiness
   evidence, fake-work risk, parallel-boundary risk, and blockers or `none`.
 - Preserves completed tickets as historical records and creates remediation or migration tickets for later quality gates.
+- Treats final plan completion as full spec implementation: no gaps, no
+  unresolved implementation work, no unapproved mocks/fakes/placeholders, full
+  end-to-end alignment with specs, and complete verification evidence.
 
 ## How It Works
 
@@ -58,13 +78,21 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 1. Read the approved spec readiness report.
 2. Simulate the planned ticket areas from specs.
 3. Create the plan root and indexes.
-4. Group work into waves with end-to-end outcomes and isolation notes.
-5. Plan contract/codegen foundation work before dependent parallel tickets.
-6. Write implementation-ready tickets with compact context digests.
-7. Record a plan-level self-audit.
-8. Update plan impact notes when specs changed.
-9. Verify registry, dependencies, unblocks links, scope, status, path coverage, generated-contract ownership, NFR ownership, and ticket readiness.
-10. Run plan and wave checker scripts.
+4. Group work into vertical-slice waves with end-to-end outcomes and isolation notes.
+5. Document horizontal foundation/refactor exceptions only when they unlock
+   parallel work or reliability.
+6. Plan contract/codegen foundation work before dependent parallel tickets.
+7. Assign frontend/client access, UX states, design reuse, and component reuse
+   ownership when relevant.
+8. Assign unit, contract/generated, integration, end-to-end, and coverage
+   verification ownership.
+9. Put test-definition and generated-test tasks before business-logic tasks for
+   the behavior they prove.
+10. Write implementation-ready tickets with compact context digests.
+11. Record a plan-level self-audit.
+12. Update plan impact notes when specs changed.
+13. Verify registry, dependencies, unblocks links, scope, status, slice strategy, test-first order, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, test coverage, and ticket readiness.
+14. Run plan and wave checker scripts.
 
 ## Output Files
 

@@ -2,6 +2,13 @@
 
 Run before writing code.
 
+## Contents
+
+- Environment And Baseline
+- Ticket Parsing
+- Project Patterns
+- Scoped Spec Reading
+
 ## Environment And Baseline
 
 - [ ] Working directory is the project root.
@@ -23,7 +30,13 @@ inside scope, the ticket must fix them.
 - [ ] Dependencies are `done` or `merged` in `_status.yaml` or equivalent.
 - [ ] Acceptance criteria are mapped to public-interface tests.
 - [ ] Source requirement IDs and verification methods are mapped to acceptance.
+- [ ] Test-first order is mapped: spec/contract/acceptance/unhappy-path tests are
+      written or generated before business logic for the behavior they prove.
 - [ ] Happy path, unhappy path, async/error/logging expectations are identified.
+- [ ] Frontend/client access paths, screens/surfaces, user flows, UI states,
+      accessibility/responsiveness, design sources, shared styles,
+      framework/component-library use, reusable components/modules, custom
+      UI/style rationale, or explicit N/A evidence are identified.
 - [ ] Security/privacy, data classification, redaction, performance,
       data-integrity, rollback, recovery, and manual-intervention expectations
       are identified.
@@ -59,6 +72,8 @@ Read only `read_scope` and `spec_refs`.
 - [ ] Existing deterministic codegen tools, generated-file headers,
       regeneration commands, generated test patterns, and drift/contract-check
       commands are read.
+- [ ] Existing unit, contract, integration, E2E, generated-test, and failing-test
+      conventions are read before adding or changing business logic.
 - [ ] Nullability, optionality, async behavior, cancellation, retries,
       serialization, and cross-language/protocol type semantics are checked.
 - [ ] Data classification, trust boundaries, auth/policy, retention, redaction,
@@ -69,6 +84,10 @@ Read only `read_scope` and `spec_refs`.
       checked when in scope.
 - [ ] Public API inventory and execution semantics are read for changed public
       surfaces.
+- [ ] Frontend/client access, screen/surface ownership, user flow behavior,
+      loading/empty/error/success/permission states, accessibility,
+      responsiveness, design-system/style reuse, and reusable component/module
+      expectations are read when UI/client work is in scope.
 - [ ] Manifest version, digest, canonicalization, snapshot, replay,
       compatibility, and validation-error rules are read when manifests apply.
 - [ ] Docs/example paths and public builder/helper paths are checked when public
@@ -77,6 +96,12 @@ Read only `read_scope` and `spec_refs`.
 Stop if a required contract, field, flow, policy, error, persistence rule,
 logging/audit behavior, performance budget, recovery path, or failure path is
 missing. Also stop if requirement traceability, release/operations, or
-supply-chain expectations are missing for in-scope work. Stop if the ticket
-requires hand-writing shapes that approved deterministic tooling can generate,
-or if generation commands/outputs are undefined. Do not infer it.
+supply-chain expectations are missing for in-scope work. Stop if frontend/client
+access, UX states, design-source reuse, component/style reuse, or custom UI
+rationale is missing for user-facing/client work. Stop if the ticket requires
+hand-writing shapes that approved deterministic tooling can generate, or if
+generation commands/outputs are undefined. Do not infer it.
+
+Stop if the ticket does not define test-first order, or if business logic would
+be implemented before the required spec/contract/acceptance/unhappy-path tests
+exist, unless a concrete mechanical exception is recorded.
