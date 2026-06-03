@@ -29,9 +29,9 @@ review scope cannot be identified.
 1. Confirm scope, ticket status, changed files, verification evidence, and spec refs.
 2. Build a solution path matrix using `references/path-tracing.md`.
 3. Follow every relevant path end to end: request/input, validation, auth,
-   routing, interface boundaries, domain logic, persistence, async work,
-   external boundaries, generated artifacts, observability, response/output,
-   cleanup, recovery.
+   routing, frontend/client access and states, design/component reuse, interface
+   boundaries, domain logic, persistence, async work, external boundaries,
+   generated artifacts, observability, response/output, cleanup, recovery.
 4. Apply `references/review-gates.md` for spec drift, interfaces, tests,
    requirements traceability, security, performance, operations, supply chain,
    robustness, maintainability, docs, and false work.
@@ -44,8 +44,8 @@ review scope cannot be identified.
 Reject the wave/plan when any blocking issue exists:
 
 - spec drift in behavior, interfaces, types/nullability, async, errors, logging,
-  persistence, security, performance, recovery, release, supply chain, or
-  public contracts
+  frontend/client UX, design/component reuse, persistence, security,
+  performance, recovery, release, supply chain, or public contracts
 - missing, stale, hand-edited, or bypassed generated contract outputs when
   approved contract/IDL/schema sources and deterministic tooling exist
 - missing source requirement traceability from specs to tickets, code, tests,
@@ -53,6 +53,8 @@ Reject the wave/plan when any blocking issue exists:
 - missing, untested, or incorrect success/failure/retry/timeout/cancel/rollback/
   idempotency/recovery paths
 - missing acceptance, cross-layer contract, unhappy-path, or end-to-end tests
+- missing reachable frontend/client access, UI state, accessibility/
+  responsiveness, design/component reuse, or approved custom UI rationale
 - unapproved mocks, fakes, stubs, placeholders, no-ops, demo paths, or hidden flags
 - material security, privacy, data-loss, isolation, performance, resource-leak,
   undefined-state, concurrency, release/rollback, supply-chain,

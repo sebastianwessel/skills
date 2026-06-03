@@ -12,6 +12,10 @@ For each entry point or workflow, record:
 - Inputs: schema, type, nullability, defaults, auth context, idempotency key.
 - Steps: validation, auth/policy, routing, domain logic, persistence, external
   calls, async queues/workers, transactions, cache, observability.
+- Frontend/client surface: reachable access path, screen/surface, user flow,
+  loading/empty/error/success/permission states, accessibility, responsiveness,
+  design source, shared style reuse, framework/component-library reuse, and
+  reusable component/module ownership when user-facing or client-consumed.
 - Outputs: response, state change, emitted event/job, log/metric/audit entry,
   error envelope, retry/cancel behavior.
 - Safety: data classification, redaction, state transition, rollback,
@@ -33,6 +37,9 @@ Check these when relevant:
 - persistence failure, rollback, partial write, migration compatibility
 - concurrency/race condition and resource cleanup
 - serialization/deserialization mismatch across languages or protocols
+- frontend/client path: navigation/access, loading, empty, success, error,
+  permission/denied, responsive/accessibility behavior, and design/component
+  reuse
 - observability path: logs, metrics, audit, tracing, redaction
 - overload/performance budget breach and degraded/recovery behavior
 - production/release path: deploy, config/secrets, readiness, rollback,

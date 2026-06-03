@@ -42,6 +42,12 @@
       "prompt": "Review happy-path-only tickets with no owner for security, redaction, budgets, rollback, or recovery.",
       "expected_output": "Rejects until path coverage, traceability, and NFR ownership map to tickets and verification.",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Plan a user-facing feature where backend tickets exist but no ticket owns access path, screens, UI states, design reuse, or component reuse.",
+      "expected_output": "Rejects or adds scoped frontend/client tickets with UX states, design/component reuse, acceptance tests, verification, and N/A evidence where applicable.",
+      "files": []
     }
   ]
 }

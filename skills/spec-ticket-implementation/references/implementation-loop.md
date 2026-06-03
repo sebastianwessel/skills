@@ -2,6 +2,14 @@
 
 Use this loop for one approved ticket.
 
+## Contents
+
+- Contract First
+- Test First
+- Quality Rules
+- No False Completion
+- Review-Judge Loop
+
 ## Contract First
 
 - Identify approved interfaces, contracts, schemas, commands, events, jobs,
@@ -21,6 +29,10 @@ Use this loop for one approved ticket.
   serialization, and error semantics exactly. Stop on mismatch.
 - Preserve specified state transitions, data integrity, redaction, performance
   budgets, and recovery behavior exactly. Stop on mismatch.
+- Preserve specified frontend/client access paths, screens/surfaces, user
+  flows, UI states, accessibility/responsiveness, design sources, shared styles,
+  framework/component-library use, reusable components/modules, and custom
+  UI/style rationale exactly. Stop on mismatch.
 - Preserve requirement IDs, release/rollback, configuration/secrets,
   operations, and supply-chain semantics exactly when in scope. Stop on mismatch.
 
@@ -54,6 +66,11 @@ acceptance criterion to verification.
   timeout, retry, backpressure, and overload limits.
 - Respect specified deployment, rollback, runbook, dependency, SBOM/provenance,
   vulnerability, license, artifact, and secret-scan requirements when in scope.
+- For UI/client work, reuse project design sources, shared styles, framework or
+  component-library components, and existing reusable components/modules before
+  custom code. Do not invent look and feel, duplicate styling, or introduce
+  custom components/interactions unless the ticket/spec explicitly approves the
+  rationale.
 - Use precise types. Avoid unapproved `any`, unchecked casts, dynamic maps,
   stringly typed unions, or broad exception types.
 - Keep generated files deterministic, clearly marked as generated when the
@@ -81,6 +98,9 @@ Before done, honestly check:
 - Interfaces: types, nullability, async, errors, and serialization align.
 - Generation: generated outputs, generated tests, and drift checks align with
   approved contract/IDL/schema sources.
+- Frontend/client: access path, screen/surface behavior, user flows, UI states,
+  accessibility/responsiveness, design/style reuse, and component/module reuse
+  match specs and project conventions.
 - Tests: every acceptance criterion has happy/unhappy verification.
 - Quality: errors, logs, security, names, types, constants, and docs are sound.
 - Integrity: state transitions, recovery, data-loss prevention, and performance

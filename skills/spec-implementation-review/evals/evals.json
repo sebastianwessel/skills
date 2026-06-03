@@ -36,6 +36,12 @@
       "prompt": "Review a wave that passes functional tests but lacks requirement traceability, rollback evidence, runbook handoff, dependency policy, and SBOM/provenance artifacts required by specs.",
       "expected_output": "Creates blocking traceability, production/release, and supply-chain findings with owner tickets, evidence, fix boundaries, and required verification.",
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Review a wave where the API works but the feature is unreachable in the frontend, lacks error/loading states, and uses custom styles instead of the approved design system.",
+      "expected_output": "Creates blocking FRONTEND_UX or SPEC_DRIFT findings with spec refs, evidence, owner tickets, fix boundaries, and required verification.",
+      "files": []
     }
   ]
 }

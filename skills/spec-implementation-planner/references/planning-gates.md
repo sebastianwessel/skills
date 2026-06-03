@@ -40,12 +40,17 @@ verification, no pasted specs, no implementation prose.
 - happy, unhappy, recovery, security/privacy, observability/logging,
   performance/resilience, data-integrity, production/release, and supply-chain
   requirements map to ticket acceptance and verification
+- user-facing or client-consumed flows map to tickets for access path,
+  screens/surfaces, user flows, UI states, accessibility/responsiveness, design
+  sources, framework/component-library use, reusable components/modules, and
+  custom UI/style rationale or explicit N/A evidence
 - dependencies acyclic; same-wave write scopes disjoint
 - wave `Implementation Order`; `_dependencies.yaml` mirrors dependencies and
   each dependency lists matching `unblocks`
 - no ticket asks agents to read all specs, ask users, decide behavior, choose
-  logging/retry/performance/rollback/security, hand-write generated contract
-  shapes, or use vague phrasing
+  logging/retry/performance/rollback/security, invent frontend look and feel,
+  create custom UI/components/styles without spec approval, hand-write generated
+  contract shapes, or use vague phrasing
 - no placeholder/fake/mock/stub/no-op work unless specs explicitly require a
   test fixture/fake provider
 - `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
@@ -59,6 +64,10 @@ verification, no pasted specs, no implementation prose.
   risk, parallel risk, blockers or none
 - public surfaces include inventory, execution semantics, tests, docs, examples,
   helpers, safe defaults, and hermetic fixtures; raw refs stay advanced only
+- frontend/client surfaces include reachable navigation/access, screen or
+  component ownership, loading/empty/error/success/permission states,
+  accessibility/responsiveness, design-source reuse, and shared style/component
+  reuse; non-UI waves cite N/A evidence from specs
 - default verification is hermetic; external systems are opt-in
 - deterministic generators/tools are preferred when approved contract sources
   support them; manual code/types/tests/docs must cite why generation is

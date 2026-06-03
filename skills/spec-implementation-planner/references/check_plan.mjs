@@ -49,6 +49,7 @@ const happy = /\b(happy path|success path|valid request|successful|success)\b/i;
 const unhappy = /\b(unhappy path|failure path|invalid|validation failure|denied|unauthorized|forbidden|timeout|retry|rollback|recovery|cancel|error)\b/i;
 const nfr = /\b(security|privacy|performance|resilience|observability|logging|log level|redaction|data integrity|recovery|production|release|supply chain|SBOM|provenance|not applicable|N\/A|deferred by spec)\b/i;
 const generated = /\b(generated_contracts|deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated server|generated stubs?|generated validators?|generated tests?|contract tests?|drift check|not applicable|N\/A|unavailable|unsafe|out of scope)\b/i;
+const frontend = /\b(frontend|client|UI|UX|screen|surface|user flow|access path|navigation|loading|empty|error state|success state|permission state|accessibility|responsive|design system|design\.md|style reuse|shared style|component library|framework component|reusable component|not applicable|N\/A|out of scope)\b/i;
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));
@@ -69,6 +70,7 @@ if (plan && !/\b(requirement coverage|traceability|requirement IDs?|source requi
 if (plan && !/\b(path coverage|unhappy|failure path|operational path)\b/i.test(plan)) fail("implementation-plan.md: missing path coverage");
 if (plan && !nfr.test(plan)) fail("implementation-plan.md: missing NFR/operations/supply-chain ownership");
 if (plan && !generated.test(plan)) fail("implementation-plan.md: missing generated contract/codegen ownership");
+if (plan && !frontend.test(plan)) fail("implementation-plan.md: missing frontend/client UX ownership or N/A evidence");
 
 const depBlock = (id) => {
   const m = depsText.match(new RegExp(`\\n\\s{2}${id}:\\s*\\n([\\s\\S]*?)(?=\\n\\s{2}TICKET-\\d+:|\\n\\S|$)`));
@@ -103,6 +105,7 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && !unhappy.test(text)) fail(`${rel}: missing unhappy/failure path coverage`);
   if (active && !nfr.test(text)) fail(`${rel}: missing NFR disposition`);
   if (active && !generated.test(text)) fail(`${rel}: missing generated contract/codegen disposition`);
+  if (active && !frontend.test(text)) fail(`${rel}: missing frontend/client UX or N/A disposition`);
   if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
   for (const ref of list(front, "spec_refs")) {
     const target = ref.split("#")[0];
@@ -122,6 +125,7 @@ for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).f
   if (wp && !/Operational Path|Path Coverage|Unhappy|Failure/i.test(wp)) fail(`${d.name}/plan.md: missing path coverage`);
   if (wp && !/Security|Privacy|Performance|Resilience|Observability|Recovery|Data Integrity|Production|Release|Supply Chain|SBOM|Provenance|N\/A|Not Applicable/i.test(wp)) fail(`${d.name}/plan.md: missing NFR/operations/supply-chain coverage`);
   if (wp && !generated.test(wp)) fail(`${d.name}/plan.md: missing generated contract/codegen coverage`);
+  if (wp && !frontend.test(wp)) fail(`${d.name}/plan.md: missing frontend/client UX coverage or N/A evidence`);
   if (!exists(path.join(plans, d.name, "tickets"))) fail(`${d.name}: missing tickets/`);
 }
 for (const [id, t] of tickets) {

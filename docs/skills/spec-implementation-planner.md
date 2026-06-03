@@ -34,11 +34,17 @@ The CLI and public skill directory are introduced in Vercel's
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.
+- Maps user-facing and client-consumed work into tickets for reachable access,
+  screens/surfaces, user flows, UI states, accessibility/responsiveness, design
+  source reuse, framework/component-library reuse, reusable components/modules,
+  and explicit N/A evidence when there is no frontend/client scope.
 - Preserves source requirement IDs and maps production readiness,
   release/rollback, operations, dependency, SBOM/provenance, vulnerability, and
   license responsibilities into tickets or explicit not-applicable dispositions.
 - Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
-- Blocks tickets that would require agents to invent behavior, choose interfaces, or resolve missing specs.
+- Blocks tickets that would require agents to invent behavior, choose
+  interfaces, invent frontend look and feel, duplicate styles/components, or
+  resolve missing specs.
 - Rejects placeholder, mock, fake, stub, or no-op implementation shortcuts unless the specs explicitly require test fixtures or fake providers.
 - Tracks planned, in-progress, partial, blocked, done, and skipped work so plans can pause and resume.
 - Syncs changed specs into indexes, impact notes, dependencies, status, and
@@ -60,11 +66,13 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 3. Create the plan root and indexes.
 4. Group work into waves with end-to-end outcomes and isolation notes.
 5. Plan contract/codegen foundation work before dependent parallel tickets.
-6. Write implementation-ready tickets with compact context digests.
-7. Record a plan-level self-audit.
-8. Update plan impact notes when specs changed.
-9. Verify registry, dependencies, unblocks links, scope, status, path coverage, generated-contract ownership, NFR ownership, and ticket readiness.
-10. Run plan and wave checker scripts.
+6. Assign frontend/client access, UX states, design reuse, and component reuse
+   ownership when relevant.
+7. Write implementation-ready tickets with compact context digests.
+8. Record a plan-level self-audit.
+9. Update plan impact notes when specs changed.
+10. Verify registry, dependencies, unblocks links, scope, status, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, and ticket readiness.
+11. Run plan and wave checker scripts.
 
 ## Output Files
 

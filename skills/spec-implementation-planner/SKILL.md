@@ -19,8 +19,8 @@ Read `specs/.readiness-report.yaml`. Stop unless:
 
 If blocked, write a spec gap/readiness note. Do not create executable tickets.
 
-Generic planning is allowed only through approved specs, ticket rules,
-contracts, and scoped verification. Otherwise create a spec/plan gap.
+Plan only from approved specs, ticket rules, contracts, and scoped
+verification. Otherwise create a spec/plan gap.
 
 ## Workflow
 
@@ -28,21 +28,19 @@ contracts, and scoped verification. Otherwise create a spec/plan gap.
 2. Create `plans/implementation-plan.md` and `_registry`, `_status`,
    `_dependencies`, `_scope` indexes.
 3. Split work into end-to-end waves and AFK tickets.
-4. Start with interface/foundation tickets that wire approved contract/IDL/schema
+4. Start with interface/foundation tickets for approved contract/IDL/schema
    sources, deterministic generators/tools, and generated artifacts; then
    parallelize backend/client/adapter work against those outputs.
 5. Keep parallel tickets isolated: disjoint writes, frozen contracts, no shared
    generated outputs.
-6. Map happy/unhappy paths plus security, privacy, observability, performance,
-   data-integrity, recovery, production/release, and supply-chain specs into
-   ticket acceptance and verification.
+6. Map happy/unhappy, NFR, operations, supply-chain, frontend/client UX, design
+   reuse, and component reuse specs into ticket acceptance and verification.
 7. Track status and resume state: planned, in_progress, partial, blocked, done,
    skipped.
 8. Maintain wave `Implementation Order` plus `depends_on`, `blocked_by`, and
    `unblocks`.
-9. Self-audit wave boundaries, path coverage, NFR ownership, parallel
-   assumptions, ticket clarity, release/supply-chain ownership, fake-work risk,
-   and blockers.
+9. Self-audit boundaries, path/NFR/frontend/release/supply-chain ownership,
+   parallel risk, ticket clarity, fake-work risk, and blockers.
 10. When specs change, update indexes/impact/follow-ups without rewriting done
     tickets.
 11. Run `references/planning-gates.md`, then
@@ -51,16 +49,16 @@ contracts, and scoped verification. Otherwise create a spec/plan gap.
 ## Required Ticket Evidence
 
 Tickets require exact refs/scopes/dependencies/status, ready contracts,
-generated-contract evidence, implementation-ready ticket state, empty
-decisions, decision ledger, contract and requirement traceability, acceptance
-matrix, and hermetic verification. Keep tickets crisp: enough context to
-prevent drift, no pasted specs, no implementation prose.
+generated-contract evidence, implementation-ready state, empty decisions,
+decision ledger, contract/requirement traceability, acceptance matrix,
+frontend/client UX and design/component reuse evidence or N/A evidence, and
+hermetic verification. Keep tickets crisp: enough context to prevent drift, no
+pasted specs, no implementation prose.
 
-Return to `spec-architect` when behavior, interface shape, persistence, errors,
-security/privacy, logging/redaction, performance budgets, data integrity,
-recovery/self-healing, unhappy paths, async semantics, production readiness,
-release/rollback, supply-chain integrity, migration, or test strategy is
-missing.
+Return to `spec-architect` when any behavior, interface, persistence, error,
+security/privacy, logging/redaction, budget, integrity, recovery, unhappy path,
+async, production/release, supply-chain, migration, frontend/client UX,
+design/component reuse, custom UI rationale, or test strategy is missing.
 
 ## Plan Evolution
 
@@ -72,10 +70,10 @@ affected specs, and resume notes.
 ## Approval Rule
 
 Do not emit tickets that ask implementers to decide, infer, ask humans, read all
-specs, hand-write generated contract shapes, or use vague phrasing. No
-placeholder/fake/mock/stub/no-op work unless specs require a fixture/fake
-provider. Plans need `Self-Audit` with assumptions, path/NFR evidence, and
-blockers or `none`.
+specs, hand-write generated shapes, invent frontend UX/look and feel, or use
+vague phrasing. No placeholder/fake/mock/stub/no-op work unless specs require a
+fixture/fake provider. Plans need `Self-Audit` with assumptions, path/NFR/
+frontend evidence, and blockers or `none`.
 
 Use `references/planning-gates.md` for ticket shape, quality checks, public
 developer workflow rules, and anti-patterns.

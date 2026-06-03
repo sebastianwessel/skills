@@ -18,6 +18,22 @@ Use these gates after building the path matrix.
   validation, compatibility, or drift checks.
 - No product/API/security/persistence/test behavior was invented locally.
 
+## Frontend, UX, And Reuse
+
+- User-facing/client behavior is reachable through the specified navigation,
+  route, command, integration, or embedding path.
+- Screens/surfaces, user flows, loading/empty/error/success/permission states,
+  accessibility, responsiveness, keyboard/focus behavior, and visual states
+  match approved specs and project conventions.
+- Implementation reuses approved design sources, shared styles, framework or
+  component-library components, and existing reusable components/modules before
+  custom code.
+- Custom UI, custom interactions, duplicate styles, or new reusable components
+  have explicit spec/ticket rationale and do not fragment the application look,
+  feel, UX, or maintenance model.
+- Frontend/client tests or equivalent evidence cover access, state transitions,
+  failure display, and contract alignment with backend/service interfaces.
+
 ## Tests And Verification
 
 - Ticket and wave verification commands pass.

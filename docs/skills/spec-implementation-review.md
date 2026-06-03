@@ -16,8 +16,12 @@ The CLI and public skill directory are introduced in Vercel's
 ## What It Does
 
 - Reviews a wave or plan-level implementation before acceptance, merge, release, or handoff.
-- Traces request, command, event, job, UI, and async paths from entry point to final output.
+- Traces request, command, event, job, UI, frontend/client, and async paths from entry point to final output.
 - Checks success, validation failure, authorization failure, downstream failure, timeout, retry, cancellation, rollback, idempotency, cleanup, and observability paths when relevant.
+- Checks reachable access, screens/surfaces, user flows, loading/empty/error/
+  success/permission states, accessibility/responsiveness, design source reuse,
+  shared style reuse, framework/component-library reuse, and reusable component
+  reuse when frontend/client work is in scope.
 - Enforces spec conformance, interface correctness, test coverage, security, privacy, log redaction, data integrity, recovery, performance, robustness, maintainability, and public API/documentation quality.
 - Verifies generated types, validators, clients, stubs, fixtures, docs, and
   contract tests derive from approved machine-readable contract/IDL/schema
@@ -40,7 +44,7 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
 
 1. Confirm approved specs, valid plan, wave scope, ticket status, and verification evidence.
 2. Build an end-to-end path matrix for every relevant entry point and failure mode.
-3. Review spec conformance, requirement traceability, generated artifacts, interfaces, tests, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
+3. Review spec conformance, requirement traceability, generated artifacts, interfaces, frontend/client UX and reuse, tests, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
 4. Persist `review.md`, `findings.yaml`, and `agent-feedback/<ticket-id>.md`.
 5. Update plan status metadata for partial tickets, blocked spec gaps, or blocked plan gaps when a tracker exists.
 6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-architect`.
