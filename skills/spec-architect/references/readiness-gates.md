@@ -3,6 +3,21 @@
 Specs are approvable only when every gate passes or is marked not applicable
 with evidence.
 
+## Contents
+
+- No Drift, Ambiguity, And Honesty
+- Validation Layers
+- Human Decision Requests
+- Maintenance, Sync, And Cleanup
+- Requirements And Structure
+- Standards First
+- Machine-Readable Contract Sources
+- Interfaces And Runtime Semantics
+- Paths, Integrity, And Recovery
+- Security, Privacy, Observability, Performance
+- Production, Release, And Supply Chain
+- Wave, Migration, And Rationale
+
 ## No Drift, Ambiguity, And Honesty
 
 - No ticket may decide product behavior, interfaces, errors, security/privacy,

@@ -23,6 +23,7 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 <!-- skills-index:start -->
 | Skill | Description | Human docs |
 | --- | --- | --- |
+| [agent-skill-architect](skills/agent-skill-architect/SKILL.md) | Creates, reviews, repairs, and optimizes agent skills. Use when a skill needs authoring, trigger tuning, evals, checks, packaging readiness, or drift controls. | [docs](docs/skills/agent-skill-architect.md) |
 | [spec-architect](skills/spec-architect/SKILL.md) | Creates, reviews, repairs, and approves implementation-ready specs. Use when specs need creation, evolution, gap repair, contracts, drift prevention, readiness gates, or approval. | [docs](docs/skills/spec-architect.md) |
 | [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks. | [docs](docs/skills/spec-implementation-planner.md) |
 | [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings. | [docs](docs/skills/spec-implementation-review.md) |
