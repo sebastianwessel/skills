@@ -2,6 +2,17 @@
 
 Use these gates after building the path matrix.
 
+## Contents
+
+- Spec And Interface Conformance
+- Frontend, UX, And Reuse
+- Tests And Verification
+- Security And Privacy
+- Performance And Robustness
+- Production, Release, And Supply Chain
+- Maintainability And Public Surfaces
+- Honest Review
+
 ## Spec And Interface Conformance
 
 - Approved specs, plan, and tickets align with implementation.
@@ -16,6 +27,8 @@ Use these gates after building the path matrix.
   configuration supports generation.
 - No hand-written duplicate of an approved generated shape bypasses codegen,
   validation, compatibility, or drift checks.
+- Generated files were not hand-edited without approved manual evidence;
+  generator/export commands and dirty-diff drift checks are recorded.
 - No product/API/security/persistence/test behavior was invented locally.
 
 ## Frontend, UX, And Reuse
@@ -53,6 +66,9 @@ Use these gates after building the path matrix.
 - Auth, authorization, tenancy, isolation, input validation, output encoding,
   secrets handling, data classification, retention, redaction, log levels,
   audit logging, dependency use, and safe defaults match specs and conventions.
+- Tenant isolation is proven at adapters/resources, not only middleware:
+  cross-tenant list, known-id get, update/delete, owner-only command, and
+  missing/expired/revoked-session negative paths are tested when relevant.
 - No sensitive data leaks through logs, errors, metrics, traces, tests,
   fixtures, generated artifacts, caches, or persisted review files.
 
@@ -81,6 +97,9 @@ Use these gates after building the path matrix.
 ## Maintainability And Public Surfaces
 
 - Code is cohesive, readable, convention-aligned, and not over-abstracted.
+- Composition files only compose/mount. Domain/provider/persistence/security,
+  session, tenant, workspace, invitation, or raw adapter logic in composition
+  files is blocking drift unless specs approve it.
 - Names are speakable; constants are centralized and documented with units.
 - Public APIs, exported constants, enum types/values, docs, examples,
   inventories, generated artifacts, and execution semantics are synchronized.

@@ -12,29 +12,21 @@ Use this loop for one approved ticket.
 
 ## Contract First
 
-- Identify approved interfaces, contracts, schemas, commands, events, jobs,
-  config, persistence, and public APIs named by the ticket.
-- Prefer approved contract/IDL/schema sources and
-  deterministic project generators for code, types, clients, validators, server
-  stubs, docs, fixtures, and contract tests. Run regeneration before manual
-  edits when tooling exists.
-- If the ticket owns an interface/foundation, implement it before dependents and
-  run type/schema/contract checks.
-- If the ticket consumes an interface, code against the approved interface
-  unchanged.
-- Do not hand-write or fork generated shapes unless the ticket/spec explicitly
-  approves manual implementation and states why deterministic generation is
+- Identify approved interfaces, contracts, schemas, commands/events/jobs,
+  config, persistence, frontend/client paths, and public APIs named by ticket.
+- Prefer approved contract/IDL/schema sources plus deterministic generators for
+  code, types, clients, validators, stubs, docs, fixtures, and contract tests.
+  Run regeneration before manual edits when tooling exists.
+- Interface/foundation tickets implement interfaces before dependents and run
+  type/schema/contract checks; consumer tickets code against them unchanged.
+- Do not hand-write or fork generated shapes unless approved and generation is
   unavailable, unsafe, or out of scope.
-- Preserve null/undefined, optional fields, async timing, cancellation, retries,
-  serialization, and error semantics exactly. Stop on mismatch.
-- Preserve specified state transitions, data integrity, redaction, performance
-  budgets, and recovery behavior exactly. Stop on mismatch.
-- Preserve specified frontend/client access paths, screens/surfaces, user
-  flows, UI states, accessibility/responsiveness, design sources, shared styles,
-  framework/component-library use, reusable components/modules, and custom
-  UI/style rationale exactly. Stop on mismatch.
-- Preserve requirement IDs, release/rollback, configuration/secrets,
-  operations, and supply-chain semantics exactly when in scope. Stop on mismatch.
+- If ticket tasks require generated services/resources/clients before handler
+  edits, verify those paths exist or run approved generation. Stop if generation
+  is unavailable; do not hand-write substitute skeletons.
+- Preserve approved type/nullability, async/cancel/retry/serialization/error,
+  state, integrity, redaction, performance, recovery, UX/client,
+  release/operations, and supply-chain semantics. Stop on mismatch.
 
 ## Test First
 
@@ -45,17 +37,14 @@ For each acceptance criterion:
 
 1. Map the criterion to source spec refs, approved contracts/schemas, expected
    outputs, and happy/unhappy paths.
-2. Generate contract/schema tests from approved artifacts where project tooling
-   supports it; otherwise write equivalent public-interface contract tests.
-3. Write or update public-interface unit/integration/E2E tests before business
-   logic changes.
-4. Include happy, unhappy, validation, auth, async, timeout, cancellation, retry,
-   logging, recovery, and error propagation tests when specified or required by
-   convention.
-5. Confirm the new or changed tests fail for the expected missing behavior or
-   missing generated artifact.
-6. Implement the minimum business logic to pass, then re-run focused, contract,
-   drift, and ticket checks.
+2. Generate contract/schema tests when tooling supports it; otherwise write
+   equivalent public-interface tests.
+3. Add unit/integration/E2E tests before business logic.
+4. Cover happy, unhappy, validation, auth, async/timeout/cancel/retry, logging,
+   recovery, and error propagation when specified or convention-required.
+5. Confirm new or changed tests fail for the expected missing behavior/artifact.
+6. Implement minimum logic to pass, then rerun focused, contract, drift, and
+   ticket checks.
 
 If strict test-first is mechanically impossible, record why and still map every
 acceptance criterion to verification. "Already passing" is acceptable only when
@@ -64,64 +53,45 @@ behavior before new business logic is added.
 
 ## Quality Rules
 
-- Handle errors with canonical types/codes; never swallow sync, async, stream,
-  timeout, cancellation, retry, or background task failures.
-- Log only through project conventions, with specified levels, event names,
-  useful context, and no PII, confidential, restricted, secret, or sensitive
-  payloads.
-- Keep failures safe: no undefined state, data loss, duplicate side effects, or
-  unbounded self-healing loops. Use specified rollback, compensation,
-  idempotency, recovery checkpoints, and manual escalation.
-- Respect specified latency, throughput, memory/CPU, pagination, batching,
-  timeout, retry, backpressure, and overload limits.
-- Respect specified deployment, rollback, runbook, dependency, SBOM/provenance,
-  vulnerability, license, artifact, and secret-scan requirements when in scope.
-- For UI/client work, reuse project design sources, shared styles, framework or
-  component-library components, and existing reusable components/modules before
-  custom code. Do not invent look and feel, duplicate styling, or introduce
-  custom components/interactions unless the ticket/spec explicitly approves the
-  rationale.
-- Use precise types. Avoid unapproved `any`, unchecked casts, dynamic maps,
-  stringly typed unions, or broad exception types.
-- Keep generated files deterministic, clearly marked as generated when the
-  project does so, and regenerated from approved sources rather than edited by
-  hand.
-- Keep files cohesive with speakable names.
-- Centralize repeated hardcoded values into inline-documented constants.
-- Include units in duration, size, count, rate, and limit names.
-- Inline-document public APIs, exported constants, enum types, and enum values.
+- Use canonical errors; never swallow sync/async/stream/timeout/cancel/retry or
+  background failures.
+- Log through project conventions with specified levels/events/context and no
+  PII, secrets, confidential, restricted, or sensitive payloads.
+- Keep failures bounded and safe: no undefined state, data loss, duplicate side
+  effects, or unbounded recovery loops.
+- Respect specified performance, pagination, timeout, retry, backpressure,
+  deployment, rollback, runbook, dependency, SBOM/provenance, vulnerability,
+  license, artifact, and secret-scan requirements.
+- For UI/client work, reuse design sources, shared styles, framework/component
+  library components, and existing reusable modules before custom code.
+- Use precise types, cohesive files, speakable names, centralized documented
+  constants, unit-bearing names, and inline docs for public APIs/enums/constants.
 
 ## No False Completion
 
-- Do not add production mocks, fakes, stubs, placeholders, no-ops, hidden feature
-  flags, or hardcoded demo paths unless explicitly approved.
-- Test doubles are allowed only by the test strategy or ticket, only at external
-  boundaries, and never for the code under test.
+- No unapproved production mocks, fakes, stubs, placeholders, no-ops, hidden
+  flags, hardcoded demo paths, or test doubles for code under test.
+- No full-slice completion with a partial local slice; route to planner for
+  split/partial scope.
+- No direct generated-file edits unless approved evidence says regeneration is
+  impossible or unsafe; otherwise run generator and drift check.
+- No provider, persistence, security, session, tenant, workspace, invitation, or
+  domain logic in composition files unless specs require it.
 
 ## Review-Judge Loop
 
 Before done, honestly check:
 
-- Scope: changed files are inside `write_scope`.
-- Spec: every behavior maps to scoped specs, ticket text, or approved convention.
-- Traceability: source requirement IDs map to code, tests, and evidence.
-- Interfaces: types, nullability, async, errors, and serialization align.
-- Generation: generated outputs, generated tests, and drift checks align with
-  approved contract/IDL/schema sources.
-- Frontend/client: access path, screen/surface behavior, user flows, UI states,
-  accessibility/responsiveness, design/style reuse, and component/module reuse
-  match specs and project conventions.
-- Tests: every acceptance criterion has happy/unhappy verification.
-- Test order: spec/contract/acceptance tests existed or were generated before
-  business logic for the behavior, or a concrete mechanical exception is
-  recorded.
-- Quality: errors, logs, security, names, types, constants, and docs are sound.
-- Integrity: state transitions, recovery, data-loss prevention, and performance
-  budgets match specs.
-- Operations: release, production readiness, and supply-chain behavior match
-  specs when in scope.
-- Honesty: assumptions, skipped checks, pre-existing failures, gaps, and risks
-  are reported.
+- Scope, spec traceability, interfaces, generation, acceptance matrix, tests,
+  test order, quality, integrity, operations, and UX/client behavior match the
+  approved ticket/spec evidence.
+- Acceptance rows are implemented, tested, verified, N/A with spec evidence, or
+  blocked; any missing/blocked row means partial, not done.
+- Auth/tenancy tickets include negative tests for cross-tenant list/get-known-id,
+  writes/deletes, owner-only commands, and missing/expired/revoked sessions
+  before handler logic.
+- Assumptions, skipped checks, pre-existing failures, gaps, and risks are stated
+  honestly.
 
 Fix ticket-scope defects and re-run checks. For undefined or out-of-scope issues,
 stop with a blocker instead of inventing behavior.

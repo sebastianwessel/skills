@@ -50,9 +50,10 @@ findings:
   - id: REVIEW-001
     severity: blocking # blocking | advisory
     category: SPEC_DRIFT # SPEC_DRIFT | TRACEABILITY | PATH | TEST | SECURITY | PERF | ROBUSTNESS | OPERATIONS | SUPPLY_CHAIN | MAINTAINABILITY | INTERFACE | FRONTEND_UX | PLAN | SPEC_GAP | CLEANUP
+    root_cause: implementation_drift # spec_gap | plan_gap | implementation_drift | tooling_gap
     status: open # open | fixed | accepted | obsolete
     owner_ticket: TICKET-123
-    route: implementation # implementation | planner | spec-architect
+    route: implementation # implementation | planner | spec-architect | skill-maintenance
     spec_refs:
       - specs/flows/user-login.md#validation-failure
     impacted_path: "POST /login invalid password"
@@ -78,6 +79,8 @@ When `plans/_status.yaml` or an equivalent tracker exists:
   `spec-implementation-planner` with cleanup refs and affected tickets
 - plan/scope/dependency gaps set affected tickets or wave to `blocked` and
   route to `spec-implementation-planner`
+- tooling gaps route to the relevant skill/checker maintainer with reproducer,
+  expected enforcement, and missing deterministic/semantic check
 - passing review records `review_id`, reviewed scope, command evidence, and
   zero open blocking findings
 

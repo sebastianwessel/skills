@@ -53,6 +53,8 @@ const frontend = /\b(frontend|client|UI|UX|screen|surface|user flow|access path|
 const slice = /\b(vertical slice|slice strategy|end-to-end increment|end-to-end outcome|horizontal exception|foundation exception|refactor exception|unblocks|next vertical slice)\b/i;
 const coverage = /\b(unit tests?|end-to-end tests?|E2E tests?|code coverage|coverage threshold|80%|eighty percent|not applicable|N\/A|approved threshold)\b/i;
 const testFirst = /\b(test-first|test driven|TDD|tests? before (business )?logic|failing tests?|contract tests?|acceptance tests?|unhappy-path tests?|public-interface tests?|generated tests?)\b/i;
+const acceptanceStatus = /\b(implemented|tested|verified by command|verified by browser|not applicable|N\/A|blocked|partial)\b/i;
+const preflightArtifacts = /\b(preflight|required generated artifacts?|prerequisite paths?|generation command|generated services?|generated clients?|not applicable|N\/A|blocked)\b/i;
 const finalComplete = /\b(full(y)? implemented|all spec requirements|no gaps|no unresolved implementation work|no unapproved (fake|mock|stub|placeholder)|full end-to-end alignment|end-to-end working solution)\b/i;
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
 
@@ -78,6 +80,8 @@ if (plan && !frontend.test(plan)) fail("implementation-plan.md: missing frontend
 if (plan && !slice.test(plan)) fail("implementation-plan.md: missing vertical slice strategy or horizontal exception");
 if (plan && !coverage.test(plan)) fail("implementation-plan.md: missing unit/E2E test and coverage ownership");
 if (plan && !testFirst.test(plan)) fail("implementation-plan.md: missing test-first implementation order");
+if (plan && !acceptanceStatus.test(plan)) fail("implementation-plan.md: missing acceptance matrix status ownership");
+if (plan && !preflightArtifacts.test(plan)) fail("implementation-plan.md: missing preflight/generated artifact ownership");
 if (plan && !finalComplete.test(plan)) fail("implementation-plan.md: missing final completion/no-gap expectation");
 
 const depBlock = (id) => {
@@ -117,6 +121,8 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && !slice.test(text)) fail(`${rel}: missing vertical slice strategy or horizontal exception`);
   if (active && !coverage.test(text)) fail(`${rel}: missing unit/E2E test or coverage disposition`);
   if (active && !testFirst.test(text)) fail(`${rel}: missing test-first order`);
+  if (active && !acceptanceStatus.test(text)) fail(`${rel}: missing acceptance matrix row status disposition`);
+  if (active && !preflightArtifacts.test(text)) fail(`${rel}: missing generated artifact/preflight disposition`);
   if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
   for (const ref of list(front, "spec_refs")) {
     const target = ref.split("#")[0];
