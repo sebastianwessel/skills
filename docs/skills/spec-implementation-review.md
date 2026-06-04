@@ -28,6 +28,11 @@ The CLI and public skill directory are introduced in Vercel's
   artifacts through deterministic generators/tools when approved tooling or
   project configuration supports generation, and rejects stale or hand-edited
   generated shapes.
+- Flags tenant isolation false positives where middleware sets tenant context
+  but resource adapters do not constrain reads/writes.
+- Flags monolithic composition drift when provider, persistence, security,
+  session, tenant, workspace, invitation, or domain logic lands in composition
+  files without approval.
 - Verifies tests were derived from approved specs, contracts/schemas,
   acceptance criteria, and unhappy-path definitions before the business logic
   they prove was accepted.
@@ -38,6 +43,8 @@ The CLI and public skill directory are introduced in Vercel's
 - Flags stale, duplicate, or contradictory spec/plan text that would mislead
   later implementation agents.
 - Persists findings, plan status handoff, and per-ticket feedback so implementation agents can resume with complete context.
+- Classifies finding root cause as spec gap, plan gap, implementation drift, or
+  tooling gap and routes it to the owning skill/checker.
 
 ## How It Works
 

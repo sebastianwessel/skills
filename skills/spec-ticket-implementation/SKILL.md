@@ -6,17 +6,15 @@ description: Implements exactly one approved spec plan ticket in fixed scope. Us
 # Spec Ticket Implementation
 
 Implement one approved AFK ticket. Work contract/codegen-first, test-first, and
-only through approved interfaces, ticket scope, and project conventions. Define
-or generate spec/contract/acceptance tests before business logic. Missing
-behavior is a blocker.
+only through approved interfaces, ticket scope, and project conventions.
+Missing behavior is a blocker.
 
 ## Preflight
 
-Before editing, load `references/pre-implementation-checks.md`, run gates,
-record baseline verification, confirm dependencies, and map refs/scopes,
-acceptance, contracts/codegen, requirement IDs, paths, NFRs, frontend/client UX,
-release, and supply chain. Stop on active dependencies; record unrelated
-baseline failures.
+Before editing, load `references/pre-implementation-checks.md`. Record baseline
+verification, dependency status, allowed reads/writes, contract/codegen
+disposition, test-first order, acceptance matrix, and required UX/NFR/security/
+release evidence.
 
 ## Stop Conditions
 
@@ -24,48 +22,48 @@ Stop and write a blocker when:
 
 - specs or plan are not approved/ready
 - ticket is blocked, HITL, ambiguous, or has open decisions
-- scoped specs/ticket lack behavior, contract/codegen disposition,
-  API/event/job/stream, persistence, policy, error, failure path, or test
-- ticket lacks test-first order from specs/contracts/acceptance before business
-  logic
+- the ticket is full-slice but only a subset can be implemented; route to
+  `spec-implementation-planner` for a split before production edits
+- scoped specs/ticket lack behavior, contract/codegen disposition, interface,
+  persistence, policy, error, failure path, UX/client, NFR, release, or test
+- ticket lacks test-first order from specs/contracts/acceptance before logic
 - implementation needs files outside `write_scope`
+- required generated artifacts or preflight paths from ticket tasks are absent
+  and approved generation cannot be run
 - interface/type/nullability/async/error/logging semantics are missing
-- user-facing/client scope lacks access, screens, states,
-  accessibility/responsiveness, design/component reuse, or custom UI rationale
-- security/privacy, redaction, performance, integrity, rollback, recovery, or
-  manual-intervention semantics are missing
-- traceability, production/release, operations, dependency, SBOM/provenance, or
-  vulnerability/license expectations are missing in scope
+- user-facing/client scope lacks access, states, accessibility/responsiveness,
+  design/component reuse, or custom UI rationale
+- security/privacy, redaction, performance, integrity, rollback, recovery,
+  production, operations, dependency, or supply-chain semantics are missing
 - a mock, fake, stub, placeholder, or test-only production path would be needed
   without explicit ticket/spec approval
-- ticket asks the implementer to decide, infer, fill gaps, use judgment, ask
-  humans, read all specs, or work "as appropriate"
+- ticket asks the implementer to decide, infer, ask humans, read all specs, or
+  work "as appropriate"
 
 ## Discipline
 
 - Modify only `write_scope`.
 - Follow `references/implementation-loop.md`: generators/interfaces first,
-  spec/contract/acceptance failing tests first, business logic second, review.
-- Cover happy, unhappy, async/error, security, recovery, and logging paths.
-- For frontend/client work, preserve specified access, flows, screens, states,
-  accessibility/responsiveness, design/style/component reuse. Do not invent UX.
-- Preserve state, recovery, idempotency, no-data-loss/no-leak, release,
-  operations, dependency, SBOM/provenance, artifact, and license behavior.
-- Use precise types, documented public APIs/enums/constants, centralized
-  constants, and unit-bearing names such as `timeout_in_ms`.
+  spec/contract/acceptance tests first, business logic second, review.
+- Do not hand-edit generated files or implement local smoke paths as completion
+  of full tickets.
+- Cover happy, unhappy, async/error, security, recovery, logging, and UX/client
+  paths when in scope.
+- Preserve approved state, recovery, idempotency, no-data-loss/no-leak,
+  frontend/client behavior, release, operations, and supply-chain behavior.
+- Use precise types, documented public APIs/enums/constants, centralized values,
+  and unit-bearing names such as `timeout_in_ms`.
 - Keep default verification hermetic; external integrations stay opt-in.
 - Keep docs, examples, generated artifacts, public inventory, and execution
   semantics synced when public surfaces change.
-- Preserve manifest identity/version/digest/canonicalization/snapshot/replay
-  semantics when manifests are in scope.
 - Record changed files and completion evidence.
 
 ## Done
 
-Done means: scoped verification passes, acceptance has happy/unhappy tests, only
-`write_scope` changed, no unapproved fakes/placeholders remain, review found no
-ticket defect, frontend/client UX reuse checks pass when in scope, and tracking
-is updated.
+Done means `references/definition-of-done.md` passes: scoped verification,
+acceptance happy/unhappy tests, exact `write_scope`, no unapproved fakes,
+frontend/client and NFR gates in scope, no generated-file drift, review clean,
+and tracking updated.
 
 ## Lifecycle Handoff
 

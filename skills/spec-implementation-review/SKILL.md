@@ -48,6 +48,7 @@ Reject the wave/plan when any blocking issue exists:
   performance, recovery, release, supply chain, or public contracts
 - missing, stale, hand-edited, or bypassed generated contract outputs when
   approved contract/IDL/schema sources and deterministic tooling exist
+- partial local slice presented as completion of a full-slice ticket
 - missing source requirement traceability from specs to tickets, code, tests,
   and acceptance evidence
 - missing evidence that tests were derived from specs/contracts/acceptance and
@@ -61,6 +62,8 @@ Reject the wave/plan when any blocking issue exists:
 - material security, privacy, data-loss, isolation, performance, resource-leak,
   undefined-state, concurrency, release/rollback, supply-chain,
   maintainability, or public-contract risk
+- composition file gained unrelated provider, persistence, security/session,
+  tenant/workspace/invitation, or domain logic without approval
 - feedback cannot route to a ticket, planner remediation, or spec gap
 - stale, duplicate, or contradictory spec/plan text would mislead later agents
 

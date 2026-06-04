@@ -20,6 +20,8 @@ The CLI and public skill directory are introduced in Vercel's
 - Reads only ticket `spec_refs` and `read_scope`.
 - Writes only files listed by `write_scope`.
 - Stops on missing behavior, missing contracts, unresolved decisions, blocked dependencies, or insufficient scope.
+- Stops when a full-slice ticket can only be partially implemented and routes to
+  the planner for a split before production edits.
 - Implements approved interfaces/contracts first when they are in scope, using
   deterministic project tools to generate types, validators, clients, stubs,
   fixtures, docs, and contract tests from approved machine-readable
@@ -28,6 +30,10 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires tests to be defined or generated from specs, contracts/schemas,
   acceptance criteria, and unhappy-path definitions before business logic is
   implemented.
+- Blocks hand-edited generated artifacts unless manual edits are explicitly
+  approved, and requires generation/drift-check evidence.
+- Requires every acceptance matrix row to be implemented, tested, verified, N/A
+  with spec evidence, or blocked; blocked rows make the ticket partial.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
 - Preserves data-integrity, rollback/recovery, no-data-loss, no-leak,
   performance-budget, log-level, and redaction guarantees from the specs.
@@ -55,15 +61,17 @@ The skill starts with preflight checks, maps approved requirement IDs, generated
 6. Confirm frontend/client UX, design-source reuse, and component reuse
    expectations or explicit N/A evidence when relevant.
 7. Regenerate approved contract artifacts first when tooling exists.
-8. Add or generate failing unit, contract, integration, and E2E tests from
+8. Verify required generated artifacts and task prerequisite paths exist or run
+   approved generation before production edits.
+9. Add or generate failing unit, contract, integration, and E2E tests from
    specs/contracts/acceptance for happy paths, unhappy paths, recovery,
    security, frontend/client states, and performance behavior when relevant.
-9. Implement approved interfaces/contracts and business logic after the tests
+10. Implement approved interfaces/contracts and business logic after the tests
    exist and fail for the expected missing behavior.
-10. Modify only `write_scope`.
-11. Run ticket, project, contract, and drift verification.
-12. Run the implementation-review-judge loop.
-13. Record files changed and completion evidence.
+11. Modify only `write_scope`.
+12. Run ticket, project, contract, and drift verification.
+13. Run the implementation-review-judge loop.
+14. Record files changed and completion evidence.
 
 ## Included Files
 

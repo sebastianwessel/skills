@@ -36,60 +36,56 @@ verification, no pasted specs, no implementation prose.
 
 ## Checks
 
-- specs approved; otherwise return gaps to `spec-architect`
-- approved specs declare `language: en` and passed semantic judge review when
-  English smoke checks are used
-- no Wave 0/spec-closure implementation wave
-- every wave declares `Slice Strategy`: vertical slice, or horizontal exception
-  with rationale, unblocks, next vertical slice, and test evidence
-- every non-exception wave has a reachable, testable end-to-end outcome; avoid
-  many horizontal parts with no finished user/client path
-- ready contracts, no missing contracts, no open decisions
-- contract-backed tickets identify generation commands, generated outputs,
-  generated tests, owning source artifacts, deterministic generators/tools, and
-  regeneration/drift checks
-- tickets declare `Test-First Order`: spec/contract/acceptance/unhappy-path
-  tests first, business logic after those tests exist
-- business-logic tickets depend on required contract/test foundation tickets
-  when split across agents
-- every requirement/spec/capability/flow/NFR maps to ticket or explicit deferral
-  with source requirement IDs preserved
-- happy/unhappy, recovery, security/privacy, logging, performance, integrity,
-  production/release, and supply-chain requirements map to acceptance and
-  verification
-- user/client flows map access, screens, states, accessibility/responsiveness,
-  design/component reuse, and custom UI rationale or N/A evidence
-- dependencies acyclic; same-wave write scopes disjoint
-- wave `Implementation Order`; `_dependencies.yaml` mirrors dependencies and
-  each dependency lists matching `unblocks`
-- no ticket asks agents to read all specs, ask users, decide behavior, invent
-  frontend look and feel, hand-write generated contract shapes, or use vague
-  phrasing
-- no placeholder/fake/mock/stub/no-op work unless specs explicitly require a
-  test fixture/fake provider
+- Specs are approved; `language: en` and semantic judge passed when English
+  smoke checks are used. Otherwise return gaps to `spec-architect`.
+- No Wave 0/spec-closure implementation wave.
+- Every wave declares `Slice Strategy`: vertical slice with reachable E2E
+  outcome, or horizontal exception with rationale, unblocks, next vertical slice,
+  and tests.
+- Over-broad tickets spanning many domains/layers must be split or include
+  explicit phase gates with blocking preflight checks and dependencies.
+- Contracts are ready. Contract-backed tickets name source artifacts, generation
+  commands, deterministic tools, generated outputs/tests, regeneration, and
+  drift checks.
+- Tickets declare generated artifact prerequisites and owner before
+  handler/client edits.
+- Tickets declare `Test-First Order`: spec/contract/acceptance/unhappy-path
+  tests first, then business logic. Split business-logic tickets depend on
+  required contract/test foundations.
+- Every requirement, flow, NFR, public surface, and user/client path maps to a
+  ticket or explicit deferral with source IDs preserved.
+- Acceptance covers happy/unhappy, security/privacy, recovery, logging,
+  performance, integrity, release/operations, supply chain, UX states,
+  accessibility, responsiveness, design/component reuse, and custom UI rationale
+  or N/A evidence.
+- Dependencies are acyclic; same-wave write scopes are disjoint; `_dependencies`
+  mirrors `depends_on` and `unblocks`.
+- No ticket asks agents to read all specs, ask users, decide behavior, invent
+  frontend look and feel, hand-write generated shapes, or use vague phrasing.
+- No placeholder/fake/mock/stub/no-op work unless specs explicitly require a test
+  fixture/fake provider.
 - `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
-  resume notes, current proof, `superseded_by`, and affected specs
-- changed specs update indexes, wave impact notes, and follow-up tickets;
-  completed tickets stay historical
-- `implementation-plan.md` has `Self-Audit`: assumptions, evidence,
-  requirement/path coverage, NFR/operations/supply-chain ownership, fake-work
-  risk, parallel risk, blockers or none
-- public surfaces include inventory, execution semantics, tests, docs, examples,
-  helpers, safe defaults, hermetic fixtures, and advanced raw refs only
-- frontend/client surfaces include reachable access, screen/component ownership,
-  loading/empty/error/success/permission states, accessibility/responsiveness,
-  and design/style/component reuse or N/A evidence
-- default verification is hermetic; external systems are opt-in
-- completed waves include unit and end-to-end tests; final completion requires
-  all spec requirements implemented, no gaps, no unresolved work, no unapproved
-  fake/mock/stub/placeholder paths, and full E2E spec alignment
-- coverage defaults to 80% code coverage unless approved specs or project
-  standards define a different threshold; lower coverage needs explicit spec
-  approval
-- deterministic generators/tools are preferred when approved contract sources
-  support them; manual code/types/tests/docs must cite why generation is
-  unavailable, unsafe, or out of scope
-- release, rollback, runbook, dependency, SBOM/provenance, vulnerability/license
-  work is assigned or marked N/A from specs
+  resume notes, current proof, `superseded_by`, and affected specs. Changed
+  specs create impact notes/follow-up tickets; completed tickets stay historical.
+- `implementation-plan.md` has `Self-Audit`: assumptions, evidence, coverage,
+  NFR/ops/supply-chain ownership, fake-work risk, parallel risk, blockers or
+  none.
+- Public and frontend/client surfaces include inventory, execution semantics,
+  tests, docs/examples, safe defaults, hermetic fixtures, reachable access,
+  screen/component ownership, states, accessibility, responsiveness, and
+  design/style/component reuse or N/A.
+- Default verification is hermetic; external systems are opt-in.
+- Completed waves include unit and E2E tests. Final completion means all specs
+  implemented, no gaps, no unresolved work, no unapproved fakes/placeholders, and
+  full E2E alignment.
+- Acceptance rows map to tests, command/browser verification, N/A evidence, or
+  blocked status; no silent partial completion.
+- Coverage defaults to 80% unless approved specs/project standards say
+  otherwise; lower coverage needs explicit spec approval.
+- Prefer deterministic generators/tools from approved contract sources; manual
+  code/types/tests/docs must cite why generation is unavailable, unsafe, or out
+  of scope.
+- Release, rollback, runbook, dependency, SBOM/provenance,
+  vulnerability/license work is assigned or marked N/A from specs.
 
 Run `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.

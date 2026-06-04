@@ -43,11 +43,29 @@
       "expected_output": "Creates blocking FRONTEND_UX or SPEC_DRIFT findings with spec refs, evidence, owner tickets, fix boundaries, and required verification.",
       "files": []
     },
-    {
-      "id": 8,
-      "prompt": "Review a wave where tests were added after implementation and do not trace to contracts, acceptance criteria, or unhappy-path definitions.",
-      "expected_output": "Creates blocking TEST or TRACEABILITY findings requiring spec/contract-derived test-first evidence and missing unhappy-path tests before acceptance.",
-      "files": []
-    }
-  ]
+        {
+            "id": 8,
+            "prompt": "Review a wave where tests were added after implementation and do not trace to contracts, acceptance criteria, or unhappy-path definitions.",
+            "expected_output": "Creates blocking TEST or TRACEABILITY findings requiring spec/contract-derived test-first evidence and missing unhappy-path tests before acceptance.",
+            "files": []
+        },
+        {
+            "id": 9,
+            "prompt": "Review auth tenancy where middleware sets tenantId but repository get(id) does not constrain by tenant.",
+            "expected_output": "Creates a blocking SECURITY finding for adapter/resource isolation, requiring cross-tenant known-id, list, write/delete, owner-only, and revoked-session negative tests.",
+            "files": []
+        },
+        {
+            "id": 10,
+            "prompt": "Review a ticket that hand-edited generated frontend API types instead of exporting OpenAPI and regenerating the client.",
+            "expected_output": "Creates blocking INTERFACE or SPEC_DRIFT finding with root_cause implementation_drift or tooling_gap, requiring generation command evidence and drift check.",
+            "files": []
+        },
+        {
+            "id": 11,
+            "prompt": "Review http.ts after OAuth provider exchange, cookie policy, session persistence, CSRF, workspace, invitation, and raw adapter logic were added there.",
+            "expected_output": "Creates blocking MAINTAINABILITY/SPEC_DRIFT finding for monolithic composition drift and routes by root cause to implementation or planner.",
+            "files": []
+        }
+    ]
 }

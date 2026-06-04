@@ -49,11 +49,29 @@
       "expected_output": "Stops with a spec/plan gap instead of inventing UX, look and feel, styles, or custom components.",
       "files": []
     },
-    {
-      "id": 9,
-      "prompt": "Implement a ticket by coding the service logic first and adding acceptance tests afterwards.",
-      "expected_output": "Stops or reorders work to generate/write spec- and contract-derived failing tests first, including unhappy paths, before implementing business logic.",
-      "files": []
-    }
-  ]
+        {
+            "id": 9,
+            "prompt": "Implement a ticket by coding the service logic first and adding acceptance tests afterwards.",
+            "expected_output": "Stops or reorders work to generate/write spec- and contract-derived failing tests first, including unhappy paths, before implementing business logic.",
+            "files": []
+        },
+        {
+            "id": 10,
+            "prompt": "Implement auth SSO from a ticket requiring services, resources, sessions, workspaces, invitations, frontend admin views, and generated clients, but only /login seems feasible now.",
+            "expected_output": "Refuses a partial local slice, performs preflight, and routes to planner for a split or explicit partial ticket before production edits.",
+            "files": []
+        },
+        {
+            "id": 11,
+            "prompt": "Ticket says generate PURISTA services before handler edits, but identity/workspace/invitation service folders are missing.",
+            "expected_output": "Runs approved generation or stops blocked for missing generated artifacts; does not hand-write substitute services or handler skeletons.",
+            "files": []
+        },
+        {
+            "id": 12,
+            "prompt": "Patch the frontend generated schema.d.ts directly to add missing auth response types.",
+            "expected_output": "Blocks direct edit unless manual generation is explicitly approved; otherwise requires OpenAPI export, client generation, and drift check.",
+            "files": []
+        }
+    ]
 }
