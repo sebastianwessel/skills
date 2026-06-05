@@ -11,6 +11,8 @@ const exists = (f) => fs.existsSync(at(f));
 const read = (f) => fs.readFileSync(at(f), "utf8");
 const rel = (f) => path.relative(root, f).split(path.sep).join("/");
 const contractTerm = String.raw`contract definition|interface definition|schema definition|machine-readable|source of truth|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|schema artifact|IDL`;
+const generationMapTerm = String.raw`generation map|source contracts?|generated package|record ID template|derived component|service owner|generated outputs?|drift check`;
+const weakBoundaryTerm = String.raw`map\\[string\\]any|TypeScript any|TS any|type any|literal any|TypeScript unknown|TS unknown|type unknown|literal unknown|Record<string, unknown>|anonymous map|handwritten duplicate interface|weak boundary type|strong boundary type|closed contract|open JSON leaf|JSONValue|json\\.RawMessage|additionalProperties`;
 const clientTerm = String.raw`frontend|client|consumer|UI|SDK|CLI|web app|mobile app|integration|adapter|N/A|not applicable`;
 const frontendTerm = String.raw`frontend|UI|UX|screen|surface|navigation|access path|user flow|UI state|design system|design\.md|framework component|reusable component|shared styles|CSS|tokens|N/A|not applicable`;
 const walk = (d) => fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
@@ -23,7 +25,8 @@ const gates = [
   "spec_structure_gate", "visualization_gate", "requirements_quality_gate",
   "concise_spec_gate", "client_consumer_coverage_gate",
   "frontend_ux_integration_gate", "standards_first_gate", "machine_readable_contract_gate",
-  "async_semantics_gate", "interface_gate", "e2e_gate",
+  "async_semantics_gate", "clean_rebuild_boundary_gate", "generation_map_gate",
+  "strong_boundary_type_gate", "interface_gate", "e2e_gate",
   "unhappy_path_gate", "security_privacy_gate", "observability_gate",
   "performance_resilience_gate", "data_integrity_recovery_gate",
   "production_readiness_gate", "supply_chain_gate", "wave_readiness",
@@ -84,6 +87,9 @@ if (!fs.existsSync(root)) {
       [/\b(source of truth|link|see |references?|shared|central|registry)\b/i, "Missing source links"],
       [/\b(standard|industry|ecosystem-native|convention|OpenTelemetry|structured JSON|RFC 9457|contract definition|interface definition|schema definition|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|OAuth|OIDC|JWT|framework-native|ports-and-adapters)\b/i, "Missing standards"],
       [new RegExp(`\\b(${contractTerm})\\b`, "i"), "Missing machine-readable contract source"],
+      [/\b(clean rebuild|incremental patch|incremental refactor|contract-first rebuild|compatibility fallback|stale alias|breaking change|old boundary|new boundary|not applicable|N\/A)\b/i, "Missing clean rebuild boundary decision or N/A evidence"],
+      [new RegExp(`\\b(${generationMapTerm})\\b`, "i"), "Missing generation map/source-contract ownership or N/A evidence"],
+      [new RegExp(`\\b(${weakBoundaryTerm})\\b`, "i"), "Missing strong boundary type policy or N/A evidence"],
       [/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check|not applicable|N\/A)\b/i, "Missing contract generation/tooling evidence"],
       [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Missing security/privacy"],
       [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Missing observability"],
@@ -105,6 +111,11 @@ if (!fs.existsSync(root)) {
     const generationNotApplicable = /\b(generator|codegen|generated|regeneration|drift check).{0,120}\b(not applicable|n\/a|unavailable|unsafe|out of scope)\b/i.test(text);
     if (hasMachineReadableContract && !generationNotApplicable && !/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check)\b/i.test(text)) {
       fail("Missing deterministic generator/tooling, generated output, or drift-check evidence");
+    }
+    const hasOverlappingContracts = /\b(GraphQL|AsyncAPI|JSON Schema|error taxonomy|database record|service manifest|frontend contract|client contract)\b/i.test(text);
+    const generationMapNotApplicable = /\b(generation map|mapping metadata).{0,120}\b(not applicable|n\/a|source contracts complete|single contract surface)\b/i.test(text);
+    if (hasOverlappingContracts && !generationMapNotApplicable && !new RegExp(`\\b(${generationMapTerm})\\b`, "i").test(text)) {
+      fail("Missing generation map for overlapping contract surfaces");
     }
     if (!exists("03-flows/e2e-coverage.md")) {
       fail("Missing E2E coverage matrix: 03-flows/e2e-coverage.md");

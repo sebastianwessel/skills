@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "We have a rough product idea and want autonomous agents to build it. What should happen first and what blocks implementation?",
-      "expected_output": "Routes to spec-architect first, requires approved specs and readiness gates before planning or implementation.",
+      "expected_output": "Routes to spec-architect first, then spec-readiness-review for approval gates before planning or implementation.",
       "files": []
     },
     {
@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "A wave is partially implemented and review found a missing frontend failure state plus an unclear spec requirement.",
-      "expected_output": "Routes implementation defects to spec-ticket-implementation and the unclear requirement to spec-architect, with persisted findings and status updates before resuming.",
+      "expected_output": "Routes implementation defects to spec-ticket-implementation and the unclear requirement through spec-readiness-review for spec gap repair or authoring, with persisted findings and status updates before resuming.",
       "files": []
     },
     {
@@ -29,6 +29,12 @@
       "id": 5,
       "prompt": "Implement this one ready ticket; dependencies are done and write_scope is fixed.",
       "expected_output": "Treats this as a near miss for orchestration and routes directly to spec-ticket-implementation instead of re-planning the lifecycle.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "A backend rebuild has GraphQL, AsyncAPI, JSON Schema entities, error taxonomy, database records, stale aliases, and compatibility fallbacks. The user asks agents to refactor the old backend.",
+      "expected_output": "Routes to spec-readiness-review for a patch-vs-clean-rebuild readiness decision, generation map, source-contract inventory, and strong boundary type policy before planning or coding; broad missing authoring routes to spec-architect.",
       "files": []
     }
   ]

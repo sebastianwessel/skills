@@ -16,11 +16,19 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## What It Does
 
-- Chooses between `spec-architect`, `spec-implementation-planner`,
-  `spec-ticket-implementation`, and `spec-implementation-review`.
-- Defines the lifecycle order: specify, plan, implement, review, route feedback.
-- Blocks implementation until specs are approved and tickets are ready.
+- Chooses between `spec-architect`, `spec-readiness-review`,
+  `spec-implementation-planner`, `spec-ticket-implementation`, and
+  `spec-implementation-review`.
+- Defines the lifecycle order: specify, readiness review, plan, implement,
+  implementation review, route feedback.
+- Blocks planning until specs pass readiness review and blocks implementation
+  until tickets are ready.
+- Forces a patch/refactor versus contract-first clean-rebuild decision before
+  agents edit contract-heavy boundaries with stale aliases, fallback synthesis,
+  handwritten mirrors, or drifting protocol/language/storage surfaces.
 - Requires planning before parallel agents start coding.
+- Routes missing generation maps, weak boundary type policies, and broad
+  parallel-agent requests back to specs or planning.
 - Routes findings back to the right owner: spec, plan, ticket, or review.
 - Supports pause/resume by requiring status, proof, blockers, and next commands.
 
@@ -33,16 +41,18 @@ the current stage and applies the corresponding gate from
 
 ## Workflow
 
-1. Orient: find current artifacts and stage.
-2. Specify: use `spec-architect` until specs are approved.
-3. Plan: use `spec-implementation-planner` for waves, tickets, dependencies,
-   scopes, status, and test-first order.
-4. Implement: use `spec-ticket-implementation` for one ready ticket at a time.
-5. Review: use `spec-implementation-review` for wave, partial-wave, merge, or
+1. Orient: find current artifacts, stage, and clean-rebuild boundary decision.
+2. Specify: use `spec-architect` until canonical specs are ready for review.
+3. Readiness review: use `spec-readiness-review` until specs are approved.
+4. Plan: use `spec-implementation-planner` for waves, tickets, dependencies,
+   scopes, status, generation-map ownership, bounded parallel work, and
+   test-first order.
+5. Implement: use `spec-ticket-implementation` for one ready ticket at a time.
+6. Review: use `spec-implementation-review` for wave, partial-wave, merge, or
    release acceptance.
-6. Route feedback to the owning skill and repeat until no blocking findings
+7. Route feedback to the owning skill and repeat until no blocking findings
    remain.
-7. Self-audit stage choice, gate evidence, owner routing, skipped checks, and
+8. Self-audit stage choice, gate evidence, owner routing, skipped checks, and
    residual uncertainty.
 
 ## Included Files

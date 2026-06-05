@@ -18,9 +18,16 @@ A ticket is done only when all relevant checks pass.
 - [ ] Naming, file/folder structure, and file sizes follow conventions.
 - [ ] Types are precise; no unapproved `any`, unchecked casts, dynamic maps,
       stringly typed contracts, or broad exception types.
+- [ ] Closed contract boundaries expose strong source-derived/generated types;
+      weak maps, `any`, `unknown`, anonymous wrappers, and handwritten duplicate
+      mirrors appear only for explicitly open JSON leaves or approved N/A
+      evidence.
 - [ ] Generated outputs/tests derive from approved sources through deterministic
       tooling where available; generated files were not hand-edited unless
       explicitly approved with evidence.
+- [ ] Contract-heavy rebuild work has generation-map, generator-test,
+      compile-check, drift-check, and generated-package evidence before
+      handwritten service logic is marked done.
 - [ ] Required generated artifacts exist and trace to approved generation
       commands, or the ticket was blocked before production edits.
 - [ ] Semantic hardcoded values are centralized into inline-documented constants
@@ -80,6 +87,9 @@ A ticket is done only when all relevant checks pass.
 - [ ] No unapproved behavior, interface/schema, persistence, policy, failure,
       async, error, logging, UX/client, security, performance, or recovery
       behavior was invented.
+- [ ] Clean-rebuild tickets do not preserve stale aliases, compatibility
+      wrappers, fallback synthesis, storage-era shapes, or handwritten mirrors
+      unless approved migration scope explicitly owns them.
 - [ ] Auth/tenancy scope has negative tests for cross-tenant list/get-by-known-
       id/update/delete, owner-only commands, and missing/expired/revoked
       sessions when relevant.

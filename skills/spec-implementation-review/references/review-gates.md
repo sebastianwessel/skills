@@ -25,10 +25,23 @@ Use these gates after building the path matrix.
   tests derive from approved machine-readable contract/IDL/schema artifacts
   through deterministic generators/tools when approved tooling or project
   configuration supports generation.
+- Contract-first clean rebuilds follow the approved patch/refactor versus clean
+  boundary decision. Source contracts and generation maps cover generated
+  package layout, service-owner mappings, persistence mappings, record ID
+  templates, derived components, generated tests, compile checks, and drift
+  checks before handwritten service logic.
 - No hand-written duplicate of an approved generated shape bypasses codegen,
   validation, compatibility, or drift checks.
+- Closed contract surfaces use strong generated/source-derived types. Go
+  `map[string]any`, TypeScript `any`, TypeScript `unknown`,
+  `Record<string, unknown>`, anonymous map-shaped wrappers, and handwritten
+  duplicate interfaces are blocking unless the source contract explicitly
+  defines an open JSON leaf.
 - Generated files were not hand-edited without approved manual evidence;
   generator/export commands and dirty-diff drift checks are recorded.
+- Clean rebuild output does not preserve stale aliases, compatibility wrappers,
+  fallback synthesis, or storage-era shapes unless an approved migration ticket
+  owns them and tests their removal/rollback path.
 - No product/API/security/persistence/test behavior was invented locally.
 
 ## Frontend, UX, And Reuse
@@ -58,6 +71,9 @@ Use these gates after building the path matrix.
   mechanical exception.
 - Contract and end-to-end tests cover cross-ticket integration.
 - Contract/codegen drift checks pass, or N/A evidence matches the approved plan.
+- Generation-map checks fail on stale generated artifacts and invalid mapping
+  placeholders. Generated packages compile before dependent handwritten code is
+  accepted.
 - Tests include happy, unhappy, async/error, retry/timeout, and security paths.
 - Default checks remain hermetic; external integrations are opt-in.
 
@@ -103,6 +119,9 @@ Use these gates after building the path matrix.
 - Names are speakable; constants are centralized and documented with units.
 - Public APIs, exported constants, enum types/values, docs, examples,
   inventories, generated artifacts, and execution semantics are synchronized.
+- Generated manifests, service registrations, database metadata, error
+  taxonomy helpers, payload validators, and frontend/client contract artifacts
+  are synchronized with their source contracts or explicitly N/A.
 - No unapproved mocks, fakes, stubs, placeholders, no-ops, demo paths, or hidden
   feature flags create false completion.
 

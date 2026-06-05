@@ -14,7 +14,16 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 - No approved specs, changed requirements, spec contradiction, unclear behavior,
   missing interface/UX/NFR/security/release/test definition:
   use `spec-architect`.
-- Approved specs exist but no implementation plan, stale plan, missing wave
+- Contract drift, stale aliases, compatibility fallbacks, handwritten mirrors,
+  multiple protocol/language/storage surfaces, or unclear patch-vs-clean-rebuild
+  strategy:
+  use `spec-architect` for the clean-rebuild boundary decision and generation
+  map before planning or coding.
+- Specs are authored or repaired but readiness is unapproved, stale, missing
+  semantic judge evidence, missing human approval, or deterministic checks have
+  not passed:
+  use `spec-readiness-review`.
+- Approved readiness exists but no implementation plan, stale plan, missing wave
   order, missing dependencies, missing ticket scope, or no test-first order:
   use `spec-implementation-planner`.
 - One ticket is ready, dependencies are done, and scope is fixed:
@@ -25,42 +34,56 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 
 ## Ordered Gates
 
-1. **Spec Gate**
+1. **Spec Authoring Gate**
    - Do: define business outcome, flows, interfaces/contracts, UX, happy and
      unhappy paths, NFRs, security/privacy, recovery, release, supply chain,
-     tests, acceptance, and run the approval-time spec judge loop.
+     tests, acceptance, clean-rebuild boundary decision, generation-map
+     ownership, and strong boundary type rules.
+   - Check: source/rationale and canonical spec refs exist, open authoring gaps
+     are recorded, and the set is ready for readiness review.
+   - Next: readiness review.
+
+2. **Readiness Review Gate**
+   - Do: run approval-time spec judge loop, deterministic spec checker,
+     semantic judge, human approval recording, readiness report, and explicit
+     gap repair when requested.
    - Check: readiness approved, human approval recorded, semantic judge passed,
      `spec_judge_loop.status: passed`, zero blocking judge findings, no open
      implementation decisions.
    - Next: planning.
 
-2. **Plan Gate**
+3. **Plan Gate**
    - Do: create vertical-slice waves, dependency indexes, ticket scopes, status
-     tracking, contract/codegen foundations, and test-first order.
+     tracking, contract/codegen foundations, generation-map/drift-check work,
+     bounded parallel discovery or disjoint implementation, and test-first
+     order.
    - Check: every ready ticket has `Slice Strategy`, `Test-First Order`,
      acceptance matrix, traceability, scopes, dependencies, generated-contract
-     evidence, coverage ownership, and verification.
+     evidence, generation-map disposition, closed-boundary type checks, coverage
+     ownership, and verification.
    - Next: ticket implementation.
 
-3. **Ticket Implementation Gate**
+4. **Ticket Implementation Gate**
    - Do: run preflight, generate contract artifacts, write or generate
      spec/contract/acceptance/unhappy-path tests first, then implement business
      logic inside `write_scope`.
    - Check: focused tests, contract drift checks, scoped project verification,
-     changed-file tracking, and ticket review loop pass.
+     generated artifacts compile, closed contract boundaries expose strong
+     generated types, changed-file tracking, and ticket review loop pass.
    - Next: continue tickets in the wave or review when the wave increment is
      ready.
 
-4. **Wave Review Gate**
+5. **Wave Review Gate**
    - Do: trace every request/command/event/UI path from entry to output,
      including validation, auth, interfaces, persistence, async work,
-     observability, recovery, frontend/client states, and cleanup.
+     observability, recovery, frontend/client states, generated artifacts,
+     boundary type strength, stale compatibility paths, and cleanup.
    - Check: findings are persisted, routed, and closed; no blocking spec drift,
      path gap, test gap, security/privacy issue, false completion, or ownerless
      feedback remains.
    - Next: accept wave, implement routed fixes, replan, or repair specs.
 
-5. **Completion Gate**
+6. **Completion Gate**
    - Do: verify all approved specs are implemented.
    - Check: full end-to-end solution works, no gaps, no unresolved
      implementation work, no unapproved mock/fake/stub/placeholder production
@@ -71,8 +94,11 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 
 | Finding | Route |
 | --- | --- |
-| Missing or ambiguous requirement, interface, UX, security, recovery, release, or test definition | `spec-architect` |
+| Missing broad requirement, interface, UX, security, recovery, release, or test definition | `spec-architect` |
+| Missing readiness report, failed spec checks, stale approval, missing human approval, or semantic judge gap | `spec-readiness-review` |
+| Missing clean-rebuild decision, generation map, source-of-truth coverage, or closed-boundary type policy | `spec-readiness-review` |
 | Missing wave order, dependency, status, ticket scope, vertical slice, test-first order, or owner | `spec-implementation-planner` |
+| Over-broad parallel work, conflicting write scopes, missing sidecar-agent bounds, or missing generator-first phase order | `spec-implementation-planner` |
 | Code, test, generated artifact, path, quality, or ticket-scope defect | `spec-ticket-implementation` |
 | Completed or partial wave needs acceptance, merge, release, or persisted findings | `spec-implementation-review` |
 
@@ -80,6 +106,7 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 
 - Before pausing, update ticket status, current proof, changed files, blockers,
   and next command.
-- On resume, read status and latest review findings before doing new work.
+- On resume, read readiness status, plan status, and latest review findings
+  before doing new work.
 - Never mark a wave done while blocking findings, active dependencies, or
   unverified paths remain.

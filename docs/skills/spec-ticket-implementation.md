@@ -32,6 +32,11 @@ The CLI and public skill directory are introduced in Vercel's
   implemented.
 - Blocks hand-edited generated artifacts unless manual edits are explicitly
   approved, and requires generation/drift-check evidence.
+- Blocks handwritten service logic in contract-first clean rebuilds until the
+  approved generation map, generator tests, generated artifacts, compile checks,
+  and drift checks are in place.
+- Blocks weak closed-boundary types unless the source contract explicitly
+  defines an open JSON leaf.
 - Requires every acceptance matrix row to be implemented, tested, verified, N/A
   with spec evidence, or blocked; blocked rows make the ticket partial.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
@@ -60,18 +65,20 @@ The skill starts with preflight checks, maps approved requirement IDs, generated
 5. Read project conventions and scoped specs only.
 6. Confirm frontend/client UX, design-source reuse, and component reuse
    expectations or explicit N/A evidence when relevant.
-7. Regenerate approved contract artifacts first when tooling exists.
-8. Verify required generated artifacts and task prerequisite paths exist or run
+7. Verify the clean-rebuild/generation-map disposition when contract-heavy work
+   is in scope.
+8. Regenerate approved contract artifacts first when tooling exists.
+9. Verify required generated artifacts and task prerequisite paths exist or run
    approved generation before production edits.
-9. Add or generate failing unit, contract, integration, and E2E tests from
+10. Add or generate failing unit, contract, integration, and E2E tests from
    specs/contracts/acceptance for happy paths, unhappy paths, recovery,
    security, frontend/client states, and performance behavior when relevant.
-10. Implement approved interfaces/contracts and business logic after the tests
+11. Implement approved interfaces/contracts and business logic after the tests
    exist and fail for the expected missing behavior.
-11. Modify only `write_scope`.
-12. Run ticket, project, contract, and drift verification.
-13. Run the implementation-review-judge loop.
-14. Record files changed and completion evidence.
+12. Modify only `write_scope`.
+13. Run ticket, project, contract, and drift verification.
+14. Run the implementation-review-judge loop.
+15. Record files changed and completion evidence.
 
 ## Included Files
 
@@ -86,4 +93,4 @@ The skill starts with preflight checks, maps approved requirement IDs, generated
 
 ## Validation And Safety
 
-Use this skill only for one approved ticket at a time. If the agent needs to decide product behavior, change contracts, expand scope, invent frontend UX/look and feel, duplicate styles/components, use files outside `write_scope`, or simulate missing work with mocks/fakes/placeholders, the correct output is a blocker/spec gap, not code.
+Use this skill only for one approved ticket at a time. If the agent needs to decide product behavior, change contracts, expand scope, invent frontend UX/look and feel, duplicate styles/components, use files outside `write_scope`, handwrite around missing generated artifacts, accept weak closed-boundary types, or simulate missing work with mocks/fakes/placeholders, the correct output is a blocker/spec gap, not code.

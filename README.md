@@ -25,10 +25,11 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 | Skill | Description | Human docs |
 | --- | --- | --- |
 | [agent-skill-architect](skills/agent-skill-architect/SKILL.md) | Creates, reviews, repairs, and optimizes agent skills. Use when a skill needs authoring, trigger tuning, evals, checks, packaging readiness, or drift controls. | [docs](docs/skills/agent-skill-architect.md) |
-| [spec-architect](skills/spec-architect/SKILL.md) | Creates, reviews, repairs, and approves implementation-ready specs. Use when specs need creation, evolution, gap repair, contracts, drift prevention, readiness gates, or approval. | [docs](docs/skills/spec-architect.md) |
+| [spec-architect](skills/spec-architect/SKILL.md) | Creates and updates canonical implementation specs. Use when specs need authoring, evolution, source-of-truth repair, contracts, UX, NFRs, release, or supply-chain definition before readiness review. | [docs](docs/skills/spec-architect.md) |
 | [spec-driven-workflow](skills/spec-driven-workflow/SKILL.md) | Coordinates the spec-driven lifecycle. Use when choosing order across specs, plans, tickets, reviews, feedback routing, or pause/resume. | [docs](docs/skills/spec-driven-workflow.md) |
 | [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks. | [docs](docs/skills/spec-implementation-planner.md) |
 | [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings. | [docs](docs/skills/spec-implementation-review.md) |
+| [spec-readiness-review](skills/spec-readiness-review/SKILL.md) | Reviews, repairs, and approves implementation spec readiness. Use when specs need semantic review, deterministic checks, readiness reports, approval gates, or gap repair before planning. | [docs](docs/skills/spec-readiness-review.md) |
 | [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Implements exactly one approved spec plan ticket in fixed scope. Use when a ready ticket needs code changes with contract/codegen-first, test-first, verification, and no invention. | [docs](docs/skills/spec-ticket-implementation.md) |
 <!-- skills-index:end -->
 

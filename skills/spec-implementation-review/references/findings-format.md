@@ -53,7 +53,7 @@ findings:
     root_cause: implementation_drift # spec_gap | plan_gap | implementation_drift | tooling_gap
     status: open # open | fixed | accepted | obsolete
     owner_ticket: TICKET-123
-    route: implementation # implementation | planner | spec-architect | skill-maintenance
+    route: implementation # implementation | planner | spec-readiness-review | skill-maintenance
     spec_refs:
       - specs/flows/user-login.md#validation-failure
     impacted_path: "POST /login invalid password"
@@ -74,8 +74,8 @@ When `plans/_status.yaml` or an equivalent tracker exists:
 - ticket-scope implementation findings set the owner ticket to `partial` with
   `review_id`, open finding ids, and resume note
 - spec gaps set affected tickets or wave to `blocked` and route to
-  `spec-architect`
-- stale/duplicate spec or plan text routes to `spec-architect` or
+  `spec-readiness-review`
+- stale/duplicate spec or plan text routes to `spec-readiness-review` or
   `spec-implementation-planner` with cleanup refs and affected tickets
 - plan/scope/dependency gaps set affected tickets or wave to `blocked` and
   route to `spec-implementation-planner`
@@ -104,9 +104,9 @@ Do not close, merge, or mark done when blocking findings remain open.
 
 ## Handoff
 Use `spec-ticket-implementation` for fixes. Do not change files outside the
-listed fix boundary. Return to planner or spec architect for routed gaps.
+listed fix boundary. Return to planner or spec-readiness-review for routed gaps.
 ```
 
 Findings routed to `planner` require remediation tickets or dependency/scope
-changes. Findings routed to `spec-architect` require spec clarification before
-implementation continues.
+changes. Findings routed to `spec-readiness-review` require spec clarification
+before implementation continues.

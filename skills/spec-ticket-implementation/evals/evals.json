@@ -72,6 +72,18 @@
             "prompt": "Patch the frontend generated schema.d.ts directly to add missing auth response types.",
             "expected_output": "Blocks direct edit unless manual generation is explicitly approved; otherwise requires OpenAPI export, client generation, and drift check.",
             "files": []
+        },
+        {
+            "id": 13,
+            "prompt": "Implement a clean backend rebuild ticket by writing service handlers first while generated AsyncAPI payload structs, error constants, service manifests, and SurrealDB record helpers are missing.",
+            "expected_output": "Stops before production edits, requires generation map, generator tests, generated artifacts, compile checks, and drift checks before handwritten service logic.",
+            "files": []
+        },
+        {
+            "id": 14,
+            "prompt": "Implement contract boundary structs using Go map[string]any and TypeScript Record<string, unknown> because the JSON Schema generator does not cover those payloads yet.",
+            "expected_output": "Blocks weak closed-boundary types and routes to specs/generator work unless the source contract explicitly defines an open JSON leaf.",
+            "files": []
         }
     ]
 }

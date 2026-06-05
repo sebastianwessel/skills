@@ -40,6 +40,11 @@ inside scope, the ticket must fix them.
 - [ ] Approved interfaces, contracts, schemas, generated outputs, generation
       commands, deterministic tools, generated/contract tests, and drift checks
       are identified or explicitly N/A.
+- [ ] Clean rebuild versus incremental strategy, generation map, source-contract
+      inventory, generated package ownership, handwritten remainder, and
+      compatibility/migration stance are identified or explicitly N/A.
+- [ ] Closed contract boundaries have strong source-derived/generated types.
+      Weak types are approved only for explicitly open JSON leaves.
 - [ ] Required generated artifacts and task prerequisite paths exist, or the
       approved generation command can be run before production edits.
 - [ ] Mock/fake/stub/placeholder permissions are checked.
@@ -52,6 +57,8 @@ inside scope, the ticket must fix them.
 - [ ] Existing deterministic codegen tools, generated-file headers,
       regeneration commands, generated test patterns, and drift/contract-check
       commands are read.
+- [ ] Generation-map checks are read when present, including placeholder rules
+      for schema properties and derived components.
 - [ ] Generated-file paths are identified; direct edits need spec/ticket
       approval plus evidence generation is unavailable, unsafe, or out of scope.
 - [ ] Unit, contract, generated, integration, E2E, and failing-test conventions
@@ -68,8 +75,8 @@ inside scope, the ticket must fix them.
 Stop if a required contract, field, flow, policy, error, persistence rule,
 logging/audit behavior, performance budget, recovery path, or failure path is
 missing. Also stop if frontend/client UX/reuse, test-first order,
-release/operations, supply chain, generated artifact ownership, or verification
-evidence is missing for in-scope work. Stop before production edits if the
-ticket cannot be implemented end to end in scope; route to
-`spec-implementation-planner` instead of presenting a local smoke path as
-completion.
+release/operations, supply chain, generated artifact ownership, generation-map
+evidence, strong boundary type policy, or verification evidence is missing for
+in-scope work. Stop before production edits if the ticket cannot be implemented
+end to end in scope; route to `spec-implementation-planner` instead of
+presenting a local smoke path as completion.

@@ -17,6 +17,13 @@ Use this loop for one approved ticket.
 - Prefer approved contract/IDL/schema sources plus deterministic generators for
   code, types, clients, validators, stubs, docs, fixtures, and contract tests.
   Run regeneration before manual edits when tooling exists.
+- For contract-first clean rebuilds, verify the approved generation map before
+  codegen. Fix or block on missing source files, package layout, service-owner
+  mappings, persistence mappings, record ID templates, derived components, or
+  known definition gaps before generation.
+- Add or run generator tests and drift checks before treating generated outputs
+  as ready. Generated packages must compile before handwritten service logic
+  depends on them.
 - Interface/foundation tickets implement interfaces before dependents and run
   type/schema/contract checks; consumer tickets code against them unchanged.
 - Do not hand-write or fork generated shapes unless approved and generation is
@@ -24,6 +31,11 @@ Use this loop for one approved ticket.
 - If ticket tasks require generated services/resources/clients before handler
   edits, verify those paths exist or run approved generation. Stop if generation
   is unavailable; do not hand-write substitute skeletons.
+- Closed contract boundaries must expose strong source-derived or generated
+  types. Do not use Go `map[string]any`, TypeScript `any`, TypeScript
+  `unknown`, `Record<string, unknown>`, anonymous request/response maps, or
+  handwritten duplicate contract mirrors unless the source contract explicitly
+  defines an open JSON leaf.
 - Preserve approved type/nullability, async/cancel/retry/serialization/error,
   state, integrity, redaction, performance, recovery, UX/client,
   release/operations, and supply-chain semantics. Stop on mismatch.
@@ -75,6 +87,11 @@ behavior before new business logic is added.
   split/partial scope.
 - No direct generated-file edits unless approved evidence says regeneration is
   impossible or unsafe; otherwise run generator and drift check.
+- No handwritten service implementation before required mapping metadata,
+  generator tests, generated artifacts, compile checks, and drift checks are in
+  place for the scoped boundary.
+- No stale aliases, compatibility wrappers, fallback synthesis, or storage-era
+  shapes in a clean rebuild unless approved migration scope requires them.
 - No provider, persistence, security, session, tenant, workspace, invitation, or
   domain logic in composition files unless specs require it.
 
