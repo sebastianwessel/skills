@@ -66,6 +66,18 @@
             "prompt": "Review http.ts after OAuth provider exchange, cookie policy, session persistence, CSRF, workspace, invitation, and raw adapter logic were added there.",
             "expected_output": "Creates blocking MAINTAINABILITY/SPEC_DRIFT finding for monolithic composition drift and routes by root cause to implementation or planner.",
             "files": []
+        },
+        {
+            "id": 12,
+            "prompt": "Review a clean backend rebuild wave where handlers compile but payloads use map[string]any, TypeScript clients use unknown, service manifests were handwritten, and generator drift checks were skipped.",
+            "expected_output": "Creates blocking INTERFACE/SPEC_DRIFT/TEST findings for weak closed-boundary types, handwritten generated mirrors, missing generator tests, compile/drift evidence, and routes fixes to the responsible tickets or planner/spec gaps.",
+            "files": []
+        },
+        {
+            "id": 13,
+            "prompt": "Review a clean rebuild that keeps legacy aliases and fallback synthesis even though specs accepted breaking changes and selected a generated new boundary.",
+            "expected_output": "Creates blocking SPEC_DRIFT or MAINTAINABILITY findings for stale compatibility paths without approved migration scope and requires removal or a spec-approved migration ticket with tests.",
+            "files": []
         }
     ]
 }

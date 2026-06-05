@@ -56,6 +56,10 @@ const testFirst = /\b(test-first|test driven|TDD|tests? before (business )?logic
 const acceptanceStatus = /\b(implemented|tested|verified by command|verified by browser|not applicable|N\/A|blocked|partial)\b/i;
 const preflightArtifacts = /\b(preflight|required generated artifacts?|prerequisite paths?|generation command|generated services?|generated clients?|not applicable|N\/A|blocked)\b/i;
 const finalComplete = /\b(full(y)? implemented|all spec requirements|no gaps|no unresolved implementation work|no unapproved (fake|mock|stub|placeholder)|full end-to-end alignment|end-to-end working solution)\b/i;
+const cleanRebuild = /\b(clean rebuild|contract-first rebuild|incremental patch|incremental refactor|old boundary|new boundary|compatibility fallback|stale alias|breaking change|not applicable|N\/A)\b/i;
+const generationMap = /\b(generation map|source contract|GraphQL|AsyncAPI|JSON Schema|error taxonomy|service manifest|database record|record ID|derived component|generated package|not applicable|N\/A)\b/i;
+const strongBoundary = /\b(strong boundary type|weak boundary type|closed contract|open JSON leaf|map\[string\]any|TypeScript any|TS any|type any|`any`|TypeScript unknown|TS unknown|type unknown|`unknown`|Record<string, unknown>|JSONValue|json\.RawMessage|additionalProperties|not applicable|N\/A)\b/i;
+const boundedParallel = /\b(read-only discovery|sidecar agent|disjoint write_scope|parallel write|bounded parallel|integrate centrally|not applicable|N\/A)\b/i;
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));
@@ -83,6 +87,10 @@ if (plan && !testFirst.test(plan)) fail("implementation-plan.md: missing test-fi
 if (plan && !acceptanceStatus.test(plan)) fail("implementation-plan.md: missing acceptance matrix status ownership");
 if (plan && !preflightArtifacts.test(plan)) fail("implementation-plan.md: missing preflight/generated artifact ownership");
 if (plan && !finalComplete.test(plan)) fail("implementation-plan.md: missing final completion/no-gap expectation");
+if (plan && !cleanRebuild.test(plan)) fail("implementation-plan.md: missing clean rebuild vs incremental decision");
+if (plan && !generationMap.test(plan)) fail("implementation-plan.md: missing generation map/source-contract coverage");
+if (plan && !strongBoundary.test(plan)) fail("implementation-plan.md: missing strong boundary type coverage");
+if (plan && !boundedParallel.test(plan)) fail("implementation-plan.md: missing bounded parallel-agent guidance or N/A evidence");
 
 const depBlock = (id) => {
   const m = depsText.match(new RegExp(`\\n\\s{2}${id}:\\s*\\n([\\s\\S]*?)(?=\\n\\s{2}TICKET-\\d+:|\\n\\S|$)`));
@@ -123,6 +131,10 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && !testFirst.test(text)) fail(`${rel}: missing test-first order`);
   if (active && !acceptanceStatus.test(text)) fail(`${rel}: missing acceptance matrix row status disposition`);
   if (active && !preflightArtifacts.test(text)) fail(`${rel}: missing generated artifact/preflight disposition`);
+  if (active && !cleanRebuild.test(text)) fail(`${rel}: missing clean rebuild/incremental strategy disposition`);
+  if (active && !generationMap.test(text)) fail(`${rel}: missing generation map/source-contract disposition`);
+  if (active && !strongBoundary.test(text)) fail(`${rel}: missing strong boundary type disposition`);
+  if (active && scalar(front, "parallel_group") && !boundedParallel.test(text)) fail(`${rel}: parallel ticket lacks bounded sidecar/disjoint-scope guidance`);
   if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
   for (const ref of list(front, "spec_refs")) {
     const target = ref.split("#")[0];
@@ -146,6 +158,10 @@ for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).f
   if (wp && !slice.test(wp)) fail(`${d.name}/plan.md: missing vertical slice strategy or horizontal exception`);
   if (wp && !coverage.test(wp)) fail(`${d.name}/plan.md: missing unit/E2E test or coverage ownership`);
   if (wp && !testFirst.test(wp)) fail(`${d.name}/plan.md: missing test-first implementation order`);
+  if (wp && !cleanRebuild.test(wp)) fail(`${d.name}/plan.md: missing clean rebuild/incremental strategy`);
+  if (wp && !generationMap.test(wp)) fail(`${d.name}/plan.md: missing generation map/source-contract coverage`);
+  if (wp && !strongBoundary.test(wp)) fail(`${d.name}/plan.md: missing strong boundary type coverage`);
+  if (wp && !boundedParallel.test(wp)) fail(`${d.name}/plan.md: missing bounded parallel-agent guidance or N/A evidence`);
   if (!exists(path.join(plans, d.name, "tickets"))) fail(`${d.name}: missing tickets/`);
 }
 for (const [id, t] of tickets) {

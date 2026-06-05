@@ -66,6 +66,18 @@
             "prompt": "Plan one auth SSO ticket containing generated backend services, resource adapters, auth middleware, authorization guards, OpenAPI/client generation, frontend routes, browser tests, and security paths.",
             "expected_output": "Splits the ticket or adds explicit phase gates/dependencies for generation, resources, auth boundary, workspace/invitation commands, client generation, frontend surfaces, browser tests, and security verification.",
             "files": []
+        },
+        {
+            "id": 12,
+            "prompt": "Plan a clean core backend rebuild from approved specs with GraphQL SDL, AsyncAPI, JSON Schema entities, errors.yaml, service manifests, and SurrealDB record mappings. The draft starts handwritten service refactors first.",
+            "expected_output": "Rejects implementation-first planning and creates generator-first foundation waves for generation map, generator tests, drift checks, generated typed artifacts, compile checks, strong boundary type checks, then handwritten service tickets depending on those outputs.",
+            "files": []
+        },
+        {
+            "id": 13,
+            "prompt": "Plan parallel agents for backend rebuild by asking one agent to refactor the backend, one to fix all drift, and one to generate everything.",
+            "expected_output": "Rejects broad overlapping sidecar work and replaces it with read-only or disjoint scoped tasks with exact files, tests, acceptance criteria, central integration, and verification.",
+            "files": []
         }
     ]
 }

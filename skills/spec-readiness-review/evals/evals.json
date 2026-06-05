@@ -1,0 +1,35 @@
+{
+  "skill_name": "spec-readiness-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Approve specs for planning, but they have not run a path-by-path flow judge yet.",
+      "expected_output": "Blocks approval until approval-time spec judge evidence has zero blocking findings and readiness evidence is recorded.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Review specs missing API shape, nullability, retries, logging, rollback, and human approval.",
+      "expected_output": "Refuses approval, records concrete spec gaps, and routes repair instead of letting planners infer behavior.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Repair readiness findings where Go, TypeScript, and protobuf null/omitted/enum semantics drift.",
+      "expected_output": "Updates canonical specs from the findings, relinks dependents, reruns readiness checks, and does not approve unless all gates and human approval pass.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Review backend rebuild specs for GraphQL, AsyncAPI, JSON Schema entities, errors.yaml, service manifests, and database record mappings where old code has stale aliases and fallback synthesis.",
+      "expected_output": "Requires the clean-rebuild decision, source-contract inventory, generation map, generated package checks, strong boundary type policy, handwritten remainder, and compatibility/migration stance before approval.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Plan implementation from a draft spec set with no approved readiness report.",
+      "expected_output": "Treats planning as a near miss and blocks with readiness review requirements instead of creating tickets.",
+      "files": []
+    }
+  ]
+}

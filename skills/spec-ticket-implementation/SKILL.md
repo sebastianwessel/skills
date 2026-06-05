@@ -30,7 +30,13 @@ Stop and write a blocker when:
 - implementation needs files outside `write_scope`
 - required generated artifacts or preflight paths from ticket tasks are absent
   and approved generation cannot be run
+- contract-heavy work has no approved generation map, generator tests, compile
+  check, drift check, or strong boundary type disposition
 - interface/type/nullability/async/error/logging semantics are missing
+- a closed contract boundary would use weak types such as Go `map[string]any`,
+  TypeScript `any`, TypeScript `unknown`, `Record<string, unknown>`, anonymous
+  map wrappers, or handwritten duplicate contract interfaces without an
+  explicit open JSON leaf in the source contract
 - user-facing/client scope lacks access, states, accessibility/responsiveness,
   design/component reuse, or custom UI rationale
 - security/privacy, redaction, performance, integrity, rollback, recovery,
@@ -45,6 +51,9 @@ Stop and write a blocker when:
 - Modify only `write_scope`.
 - Follow `references/implementation-loop.md`: generators/interfaces first,
   spec/contract/acceptance tests first, business logic second, review.
+- For contract-first clean rebuild tickets, work against the new generated
+  boundary and do not preserve stale aliases, fallback synthesis, compatibility
+  wrappers, or storage-era shapes unless the ticket explicitly owns migration.
 - Do not hand-edit generated files or implement local smoke paths as completion
   of full tickets.
 - Cover happy, unhappy, async/error, security, recovery, logging, and UX/client

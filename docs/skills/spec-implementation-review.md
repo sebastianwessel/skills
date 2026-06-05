@@ -28,6 +28,12 @@ The CLI and public skill directory are introduced in Vercel's
   artifacts through deterministic generators/tools when approved tooling or
   project configuration supports generation, and rejects stale or hand-edited
   generated shapes.
+- Rejects contract-first clean rebuild waves that skip generation-map evidence,
+  generator tests, compile checks, drift checks, or strong boundary type checks
+  before handwritten implementation.
+- Rejects weak closed-boundary types, handwritten contract mirrors, stale
+  aliases, compatibility wrappers, fallback synthesis, and storage-era shapes
+  when specs selected a generated clean boundary without migration scope.
 - Flags tenant isolation false positives where middleware sets tenant context
   but resource adapters do not constrain reads/writes.
 - Flags monolithic composition drift when provider, persistence, security,
@@ -54,10 +60,14 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
 
 1. Confirm approved specs, valid plan, wave scope, ticket status, and verification evidence.
 2. Build an end-to-end path matrix for every relevant entry point and failure mode.
-3. Review spec conformance, requirement traceability, generated artifacts, interfaces, frontend/client UX and reuse, test-first evidence, security/privacy, observability, data integrity, recovery, performance, production/release, supply-chain, robustness, maintainability, and docs.
+3. Review spec conformance, requirement traceability, generated artifacts,
+   generation-map coverage, strong boundary types, interfaces, frontend/client
+   UX and reuse, test-first evidence, security/privacy, observability, data
+   integrity, recovery, performance, production/release, supply-chain,
+   robustness, maintainability, and docs.
 4. Persist `review.md`, `findings.yaml`, and `agent-feedback/<ticket-id>.md`.
 5. Update plan status metadata for partial tickets, blocked spec gaps, or blocked plan gaps when a tracker exists.
-6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-architect`.
+6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-readiness-review`.
 7. Return a decision: `pass`, `needs_fixes`, `blocked_spec_gap`, `blocked_plan_gap`, or `partial`.
 
 ## Included Files

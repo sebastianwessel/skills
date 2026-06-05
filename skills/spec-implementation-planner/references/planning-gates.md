@@ -4,6 +4,8 @@
 
 - Output
 - Ticket Shape
+- Contract-First Clean Rebuild Plans
+- Parallel Agent Boundaries
 - Checks
 
 ## Output
@@ -20,6 +22,10 @@ converge into the same wave result.
 Horizontal waves are exceptions for foundation/interface work or reliability
 refactors. State rationale, unblocks, next vertical slice, and test evidence.
 
+For contract-first clean rebuilds, the generated foundation may be an approved
+horizontal foundation wave when it produces a compilable, drift-checked boundary
+that unblocks the next vertical slice.
+
 ## Ticket Shape
 
 Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`, `depends_on`,
@@ -34,10 +40,50 @@ Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
 Tickets are crisp human/AI instructions: boundaries, expectations, acceptance,
 verification, no pasted specs, no implementation prose.
 
+## Contract-First Clean Rebuild Plans
+
+When approved specs select clean rebuild by boundary:
+
+- Start with source-contract and generation-map tickets before handwritten
+  implementation. The map owns GraphQL roots/args/outputs, AsyncAPI
+  subjects/channels/payloads, entity JSON Schemas, error taxonomy, service
+  manifests/handler signatures, database table/record metadata, frontend/client
+  contract timing, generated package layout, derived components, and known gaps.
+- Add generator tests and drift checks before generated artifacts are treated as
+  ready. Contract checks must fail on stale generated files and invalid mapping
+  placeholders.
+- Generate typed artifacts, validators, ports, payloads, manifests, metadata,
+  and helpers before service logic tickets. Compile generated packages before
+  dependent tickets start.
+- Business implementation tickets depend on generated contracts and must not
+  preserve stale aliases, compatibility wrappers, fallback synthesis, or
+  storage-era shapes unless a migration ticket explicitly owns them.
+- Frontend/client contract work waits until backend/service contracts are stable
+  or is planned as an explicit compatibility adapter with tests.
+- Acceptance criteria include deterministic generation under check mode, compile
+  of generated packages, no weak types at closed boundaries, no handwritten
+  duplicate contract mirrors, and no handwritten code crossing old compatibility
+  paths without approved migration scope.
+
+## Parallel Agent Boundaries
+
+Use parallel agents only for independent, bounded work:
+
+- Keep the immediate critical generator or integration path local to the
+  controller when edits would conflict.
+- Delegate read-only discovery for edge cases, generator slices, mapping gaps,
+  or acceptance criteria when implementation would overlap.
+- Delegate implementation only when `write_scope` is disjoint and contracts are
+  frozen.
+- Ask sidecar agents for exact files, tests, mapping fields, blockers, and
+  acceptance evidence. Do not ask for broad opinions or whole-backend refactors.
+- Integrate and verify centrally. Sidecar output is advisory until the
+  controller updates specs/plans/tickets and runs checks.
+
 ## Checks
 
 - Specs are approved; `language: en` and semantic judge passed when English
-  smoke checks are used. Otherwise return gaps to `spec-architect`.
+  smoke checks are used. Otherwise return gaps to `spec-readiness-review`.
 - No Wave 0/spec-closure implementation wave.
 - Every wave declares `Slice Strategy`: vertical slice with reachable E2E
   outcome, or horizontal exception with rationale, unblocks, next vertical slice,
@@ -47,8 +93,20 @@ verification, no pasted specs, no implementation prose.
 - Contracts are ready. Contract-backed tickets name source artifacts, generation
   commands, deterministic tools, generated outputs/tests, regeneration, and
   drift checks.
+- Clean-rebuild plans state patch/refactor versus clean boundary strategy,
+  source-contract inventory, generation-map ownership, generated package
+  sequence, handwritten remainder, compatibility/migration stance, and frontend
+  contract timing.
 - Tickets declare generated artifact prerequisites and owner before
   handler/client edits.
+- Closed contract surfaces reject weak boundary types such as Go
+  `map[string]any`, TypeScript `any`, TypeScript `unknown`,
+  `Record<string, unknown>`, anonymous map-shaped wrappers, and handwritten
+  duplicate contract interfaces unless the source contract defines an open JSON
+  leaf.
+- Parallel sidecar work is read-only or has disjoint `write_scope`; broad tasks
+  like "refactor backend", "fix all drift", or "generate everything" are
+  rejected.
 - Tickets declare `Test-First Order`: spec/contract/acceptance/unhappy-path
   tests first, then business logic. Split business-logic tickets depend on
   required contract/test foundations.

@@ -31,6 +31,9 @@ The CLI and public skill directory are introduced in Vercel's
   need stable boundaries, generated types, validators, clients, stubs,
   fixtures, or contract-test scaffolds, then isolates backend, frontend,
   adapter, docs, and test tickets against those outputs.
+- For contract-first clean rebuilds, starts with generation-map, generator-test,
+  drift-check, generated artifact, compile-check, and strong boundary type work
+  before handwritten service implementation.
 - Requires tickets to name approved contract/IDL/schema sources, generation
   commands, deterministic generators/tools, generated outputs,
   generated/contract tests, drift checks, or explicit not-applicable evidence.
@@ -55,6 +58,9 @@ The CLI and public skill directory are introduced in Vercel's
   before business logic is planned or implemented.
 - Flags tickets that are too broad for autonomous agents and requires split
   tickets or explicit phase gates when one ticket spans many domains/layers.
+- Constrains parallel sidecar agents to read-only discovery or disjoint
+  implementation slices with exact files, tests, acceptance criteria, central
+  integration, and verification.
 - Blocks tickets that would require agents to invent behavior, choose
   interfaces, invent frontend look and feel, duplicate styles/components, or
   resolve missing specs.
@@ -73,7 +79,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, generated-contract ownership, ticket readiness, decision ledgers, requirement and contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
 
-When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-architect`.
+When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-readiness-review` for repair routing.
 
 ## Workflow
 
@@ -83,7 +89,8 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 4. Group work into vertical-slice waves with end-to-end outcomes and isolation notes.
 5. Document horizontal foundation/refactor exceptions only when they unlock
    parallel work or reliability.
-6. Plan contract/codegen foundation work before dependent parallel tickets.
+6. Plan contract/codegen and generation-map foundation work before dependent
+   parallel tickets.
 7. Assign frontend/client access, UX states, design reuse, and component reuse
    ownership when relevant.
 8. Assign unit, contract/generated, integration, end-to-end, and coverage
@@ -96,7 +103,10 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 11. Write implementation-ready tickets with compact context digests.
 12. Record a plan-level self-audit.
 13. Update plan impact notes when specs changed.
-14. Verify registry, dependencies, unblocks links, scope, status, slice strategy, test-first order, path coverage, frontend/client ownership, generated-contract ownership, NFR ownership, test coverage, and ticket readiness.
+14. Verify registry, dependencies, unblocks links, scope, status, slice strategy,
+    test-first order, path coverage, frontend/client ownership,
+    generated-contract ownership, generation-map coverage, strong boundary type
+    disposition, NFR ownership, test coverage, and ticket readiness.
 15. Run plan and wave checker scripts.
 
 ## Output Files
@@ -128,4 +138,5 @@ Run the checkers after creating or changing a plan:
 node skills/spec-implementation-planner/references/check_plan.mjs .
 ```
 
-Passing checks mean the plan is mechanically coherent. They do not replace spec approval or semantic review.
+Passing checks mean the plan is mechanically coherent. They do not replace
+`spec-readiness-review` approval or semantic review.

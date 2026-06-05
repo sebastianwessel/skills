@@ -34,32 +34,38 @@ Otherwise create a spec/plan gap.
 4. Use horizontal waves only for approved foundation/interface work or
    reliability refactors; document rationale, unblocks, tests, and next vertical
    slice.
-5. Plan contract/codegen foundations before parallel backend/client/adapter
-   work; keep parallel writes isolated.
-6. Plan test-driven order: derive unit, contract, integration, and E2E tests
+5. When specs select a contract-first clean rebuild, plan the generated
+   foundation next to the old boundary and block handwritten service work until
+   mapping metadata, generators, generated tests, compile checks, and drift
+   checks pass.
+6. Plan contract/codegen foundations before parallel backend/client/adapter
+   work; keep parallel writes isolated and sidecar agents read-only unless their
+   write scopes are disjoint.
+7. Plan test-driven order: derive unit, contract, integration, and E2E tests
    from specs/contracts/acceptance/unhappy paths before business logic tickets
    implement the behavior those tests prove.
-7. Map happy/unhappy paths, NFRs, operations, supply chain, frontend/client UX,
+8. Map happy/unhappy paths, NFRs, operations, supply chain, frontend/client UX,
    design/component reuse, tests, and coverage into tickets.
-8. Track planned, in_progress, partial, blocked, done, skipped; maintain
+9. Track planned, in_progress, partial, blocked, done, skipped; maintain
    `depends_on`, `blocked_by`, and `unblocks`.
-9. Self-audit vertical-slice completeness, path/NFR/frontend/release ownership,
-   parallel risk, fake-work risk, and blockers.
-10. Run `references/planning-gates.md`, then
+10. Self-audit vertical-slice completeness, generation-map coverage, strong
+    boundary types, path/NFR/frontend/release ownership, parallel risk,
+    fake-work risk, and blockers.
+11. Run `references/planning-gates.md`, then
    `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
 
 ## Required Ticket Evidence
 
 Tickets require refs/scopes/dependencies/status, ready contracts/codegen,
-empty decisions, traceability, acceptance matrix, frontend/client UX and
-design/component reuse evidence or N/A, unit/E2E test ownership, coverage
-evidence, test-before-logic implementation order, and hermetic verification.
-Keep tickets crisp.
+empty decisions, traceability, generation-map disposition, strong boundary type
+checks, acceptance matrix, frontend/client UX and design/component reuse
+evidence or N/A, unit/E2E test ownership, coverage evidence, test-before-logic
+implementation order, and hermetic verification. Keep tickets crisp.
 
-Return to `spec-architect` when any behavior, interface, persistence, error,
-security/privacy, budget, recovery, unhappy path, async, release, supply-chain,
-migration, frontend/client UX, design/component reuse, custom UI rationale, or
-test strategy is missing.
+Return to `spec-readiness-review` when any behavior, interface, persistence,
+error, security/privacy, budget, recovery, unhappy path, async, release,
+supply-chain, migration, frontend/client UX, design/component reuse, custom UI
+rationale, or test strategy is missing from approved readiness.
 
 ## Plan Evolution
 
@@ -76,7 +82,8 @@ Do not emit tickets that ask implementers to decide, infer, ask humans, read all
 specs, hand-write generated shapes, invent frontend UX, or use vague phrasing.
 No placeholder/fake/mock/stub/no-op work unless specs require it. Avoid many
 horizontal parts with no working E2E result. Plans need `Self-Audit` with
-assumptions, vertical-slice/path/NFR/frontend evidence, and blockers or `none`.
+assumptions, vertical-slice/path/NFR/frontend evidence, generator-first evidence,
+bounded parallel-agent evidence, and blockers or `none`.
 
 Use `references/planning-gates.md` for ticket shape, quality checks, public
 developer workflow rules, and anti-patterns.

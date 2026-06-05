@@ -18,7 +18,7 @@ Read only the requested wave/plan scope:
 
 Run available gates before semantic review:
 
-- `node skills/spec-architect/scripts/check_specs.mjs specs`
+- `node skills/spec-readiness-review/scripts/check_specs.mjs specs`
 - `node skills/spec-implementation-planner/references/check_plan.mjs .`
 
 Stop if specs or plan are not approved, required evidence is missing, or the
@@ -31,7 +31,8 @@ review scope cannot be identified.
 3. Follow every relevant path end to end: request/input, validation, auth,
    routing, frontend/client access and states, design/component reuse, interface
    boundaries, domain logic, persistence, async work, external boundaries,
-   generated artifacts, observability, response/output, cleanup, recovery.
+   generated artifacts, generation-map coverage, boundary type strength,
+   observability, response/output, cleanup, recovery.
 4. Apply `references/review-gates.md` for spec drift, interfaces, tests,
    requirements traceability, security, performance, operations, supply chain,
    robustness, maintainability, docs, and false work.
@@ -48,6 +49,14 @@ Reject the wave/plan when any blocking issue exists:
   performance, recovery, release, supply chain, or public contracts
 - missing, stale, hand-edited, or bypassed generated contract outputs when
   approved contract/IDL/schema sources and deterministic tooling exist
+- missing generation-map evidence, generator tests, compile checks, or drift
+  checks before handwritten implementation in a contract-first clean rebuild
+- weak closed-boundary types such as Go `map[string]any`, TypeScript `any`,
+  TypeScript `unknown`, `Record<string, unknown>`, anonymous map wrappers, or
+  handwritten duplicate contract mirrors unless the source contract defines an
+  open JSON leaf
+- stale aliases, compatibility wrappers, fallback synthesis, or storage-era
+  shapes preserved in a clean rebuild without approved migration scope
 - partial local slice presented as completion of a full-slice ticket
 - missing source requirement traceability from specs to tickets, code, tests,
   and acceptance evidence
@@ -82,8 +91,8 @@ not rely on chat-only feedback.
 ## Lifecycle Handoff
 
 Route implementation findings to `spec-ticket-implementation`, plan gaps to
-`spec-implementation-planner`, and spec gaps to `spec-architect`. If routing is
-unclear, use `spec-driven-workflow`.
+`spec-implementation-planner`, and spec gaps to `spec-readiness-review`. If
+routing is unclear, use `spec-driven-workflow`.
 
 ## Decision
 

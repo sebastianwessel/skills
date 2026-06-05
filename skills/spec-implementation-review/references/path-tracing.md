@@ -12,6 +12,9 @@ For each entry point or workflow, record:
 - Inputs: schema, type, nullability, defaults, auth context, idempotency key.
 - Steps: validation, auth/policy, routing, domain logic, persistence, external
   calls, async queues/workers, transactions, cache, observability.
+- Contract generation: source contract, generation map, generated artifact,
+  generated test, compile check, drift check, strong boundary type evidence, and
+  handwritten remainder or N/A.
 - Frontend/client surface: reachable access path, screen/surface, user flow,
   loading/empty/error/success/permission states, accessibility, responsiveness,
   design source, shared style reuse, framework/component-library reuse, and
@@ -37,6 +40,8 @@ Check these when relevant:
 - persistence failure, rollback, partial write, migration compatibility
 - concurrency/race condition and resource cleanup
 - serialization/deserialization mismatch across languages or protocols
+- weak boundary type, handwritten contract mirror, stale alias, compatibility
+  fallback, or storage-era shape crossing a clean generated boundary
 - frontend/client path: navigation/access, loading, empty, success, error,
   permission/denied, responsive/accessibility behavior, and design/component
   reuse
