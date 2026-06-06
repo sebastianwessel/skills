@@ -30,6 +30,36 @@
       "prompt": "Plan implementation from a draft spec set with no approved readiness report.",
       "expected_output": "Treats planning as a near miss and blocks with readiness review requirements instead of creating tickets.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Approve specs that define behavior, contracts, and tests, but leave folder placement to implementation tickets.",
+      "expected_output": "Blocks approval until specs define the general file/folder structure by domain/topic, ownership boundaries, shared/reusable module placement, generated artifact locations, and public entrypoint or operational asset locations, without requiring an exhaustive file list.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Approve specs for auth and API keys where the readiness report has normal gates, but the specs omit signup/recovery flows, roles, database indexes, secret rotation, and unhappy-path tests.",
+      "expected_output": "Blocks approval through the checklist index and relevant topic files, records relevant topic gaps with evidence, requires checklist_walk_gate and checklist_walk blocking_findings_count to reflect the gaps, and routes repair instead of planning.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Approve specs that say to use best practices for a database schema and query layer with the latest ORM, but cite no official docs, release metadata, versions, or research.",
+      "expected_output": "Blocks approval through current_dependency_research_gate until specs cite current primary docs/package or release metadata, chosen stable versions, database index/query/performance guidance, and rationale for any older pins or nonstandard choices.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Approve specs for a SaaS app that mentions a React frontend, API backend, uploads, subscriptions, email notifications, search, analytics, admin support tools, and an AI summarizer, but the readiness report only walked auth, data, and deployment checklist topics.",
+      "expected_output": "Blocks approval because the checklist walk skipped relevant high-level indexes and topic files. Requires frontend, backend, platform, product/domain, quality, and performance applicability evidence plus gaps or coverage for files/media, payments/entitlements, notifications, search/reporting/analytics, admin/support/governance, AI/ML/automation, runtime/platform, service topology, security/abuse, and performance/capacity before planning.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Approve specs that define API endpoints, database tables, and tests, but do not list the application capabilities, frontend access paths, data lifecycle/PII retention, state transitions, or final states for exports, notifications, and background sync.",
+      "expected_output": "Blocks approval through end_to_end_definition_gate and checklist_walk_gate until specs include a capability inventory and end-to-end definition chains covering actor/consumer, entrypoint/reachability, contracts, data touched, classification/PII retention/deletion/export/redaction, state transitions, side effects, permissions, errors, recovery, observability, acceptance, verification, owner, and final state or explicit N/A evidence.",
+      "files": []
     }
   ]
 }

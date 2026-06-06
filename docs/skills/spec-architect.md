@@ -19,6 +19,21 @@ npx skills add sebastianwessel/skills
 - Repairs source-of-truth gaps from explicit findings.
 - Defines layered specs for domains, capabilities, contracts, ports, flows, UX,
   operations, release, and non-functional requirements.
+- Maintains a capability inventory and defines every capability end to end:
+  actor/consumer, entrypoint/reachability, contracts, data, states, side
+  effects, permissions, errors, recovery, observability, acceptance,
+  verification, owner, and final state or N/A.
+- Defines the general file/folder structure by domain/topic for in-scope
+  implementation areas, including ownership boundaries, nested structure
+  expectations, generated-artifact locations, shared/reusable module placement,
+  and public entrypoint or operational asset locations. It does not need to
+  enumerate every implementation file.
+- Walks the checklist index and relevant topic checklist files, filling gaps or
+  recording N/A evidence for topics such as auth, data, secrets, APIs, tests,
+  UX, operations, release, and supply chain.
+- Uses current stable versions by default for dependencies and third-party
+  solutions, backed by current primary docs, package/release metadata, or dated
+  research evidence. Older pins require rationale.
 - Centralizes shared facts such as vocabulary, policies, errors, type
   semantics, NFRs, and public contracts so specs link instead of repeating.
 - Defines best-fit machine-readable contract/IDL/schema artifacts when
@@ -44,20 +59,31 @@ contradictions.
 
 1. Generate or update layered specs from business/user intent to technical
    detail.
-2. Define repository topology, ownership boundaries, reusable packages,
-   components, modules, and services.
-3. Normalize requirements into traceable, verifiable statements.
-4. Define source-of-truth contracts and link human specs to them.
-5. Define frontend/client access, UX states, accessibility, design reuse, and
+2. Create or update the capability inventory, including user-facing,
+   admin/support, API/CLI/SDK, integration/webhook, worker/job, data lifecycle,
+   and operational capabilities or explicit N/A categories.
+3. Define repository topology and the general file/folder structure by
+   domain/topic, including ownership boundaries, reusable packages, components,
+   modules, services, generated artifacts, public entrypoints, migrations, and
+   runbooks.
+4. Research current primary docs/package metadata for dependencies and
+   third-party solutions, including database schema/query/index guidance.
+5. Walk the checklist index plus relevant topic files and record covered, N/A,
+   or gap evidence.
+6. Normalize requirements into traceable, verifiable statements.
+7. Define source-of-truth contracts and link human specs to them.
+8. Define frontend/client access, UX states, accessibility, design reuse, and
    component reuse or N/A evidence.
-6. Define unhappy paths, runtime semantics, security/privacy, observability,
-   data integrity, recovery, performance, production, release, and supply chain.
-7. For contract-heavy boundaries, define clean-rebuild strategy, generation map,
+9. Define data lifecycle, classification, PII handling, retention,
+   deletion/export, unhappy paths, runtime semantics, security/privacy,
+   observability, data integrity, recovery, performance, production, release,
+   and supply chain.
+10. For contract-heavy boundaries, define clean-rebuild strategy, generation map,
    strong boundary type policy, generated outputs/checks, and handwritten
    remainder.
-8. Sync registries/provenance and prune stale duplicates.
-9. Self-audit assumptions, gaps, contradictions, and skipped evidence.
-10. Hand off to `spec-readiness-review` for semantic review, deterministic
+11. Sync registries/provenance and prune stale duplicates.
+12. Self-audit assumptions, gaps, contradictions, and skipped evidence.
+13. Hand off to `spec-readiness-review` for semantic review, deterministic
     checks, readiness report, and approval.
 
 ## Modes

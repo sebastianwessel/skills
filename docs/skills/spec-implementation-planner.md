@@ -16,6 +16,10 @@ The CLI and public skill directory are introduced in Vercel's
 ## What It Does
 
 - Reads `specs/.readiness-report.yaml` and stops unless specs are approved.
+- Requires the readiness checklist walk to pass with zero blocking findings
+  before creating tickets.
+- Requires the approved readiness report to pass `end_to_end_definition_gate`
+  so tickets trace to capability inventory rows and complete definition chains.
 - Requires approved specs to declare `language: en` and pass semantic judge
   review when the deterministic English smoke checks are used.
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
@@ -40,6 +44,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Maps unhappy paths, security/privacy, log redaction, performance budgets,
   data-integrity, recovery, and manual-intervention requirements into owned
   tickets with acceptance criteria and verification.
+- Maps each capability's actor/consumer, entrypoint/reachability, data
+  lifecycle, state transitions, side effects, permissions, final state,
+  acceptance, and verification into tickets or explicit N/A/deferral evidence.
 - Maps user-facing and client-consumed work into tickets for reachable access,
   screens/surfaces, user flows, UI states, accessibility/responsiveness, design
   source reuse, framework/component-library reuse, reusable components/modules,
@@ -47,7 +54,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Preserves source requirement IDs and maps production readiness,
   release/rollback, operations, dependency, SBOM/provenance, vulnerability, and
   license responsibilities into tickets or explicit not-applicable dispositions.
-- Writes AFK tickets with scoped reads/writes, acceptance criteria, verification commands, and handoff notes.
+- Writes AFK tickets with scoped reads/writes, acceptance criteria, a numbered
+  action plan, exact files/directories, exact commands, expected proof, and
+  handoff notes.
 - Requires each ticket and wave to state its slice strategy so agents know
   whether they are delivering a vertical end-to-end increment or an approved
   horizontal exception.
@@ -56,8 +65,30 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires test-driven implementation order: tests are derived from approved
   specs, contracts/schemas, acceptance criteria, and unhappy-path definitions
   before business logic is planned or implemented.
+- Requires tickets to prevent spec drift by naming exact spec refs,
+  requirement IDs, contract anchors, acceptance rows, forbidden interpretations,
+  and final review against the ticket plus approved specs.
+- Requires approved readiness research for dependency and third-party choices,
+  then keeps tickets tied to those spec/readiness refs instead of choosing
+  versions or relying on model memory during planning.
+- Requires deterministic generation from spec definitions for types, classes,
+  interfaces, clients, validators, schemas, stubs, fixtures, docs, and generated
+  tests whenever available, with generation commands, outputs, compile/type
+  checks, and drift checks.
+- Requires strict typing whenever the language/toolchain supports it, and
+  blocks avoidable weak types, unchecked casts, stringly typed contracts, and
+  duplicate handwritten contract mirrors.
+- Requires modular code placement by the approved spec-defined file/folder
+  structure, nested structure when useful for cohesion, reuse of existing
+  modules/helpers/components/services, and no-duplication evidence.
 - Flags tickets that are too broad for autonomous agents and requires split
-  tickets or explicit phase gates when one ticket spans many domains/layers.
+  tickets when one ticket spans independently shippable behaviors, unrelated
+  layers, or generator/backend/frontend/release work without frozen
+  prerequisites.
+- Allows phase-gated broad tickets only for approved atomic work such as
+  migrations or generated package transactions, and requires blocking phase
+  gates with prerequisite artifacts, commands, and proof before later phases can
+  start.
 - Constrains parallel sidecar agents to read-only discovery or disjoint
   implementation slices with exact files, tests, acceptance criteria, central
   integration, and verification.
@@ -77,7 +108,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, generated-contract ownership, ticket readiness, decision ledgers, requirement and contract traceability, operational path coverage, acceptance test matrices, and concrete verification commands.
+The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, generated-contract ownership, ticket readiness, decision ledgers, requirement and contract traceability, spec-drift controls, generator/type plans, modularity/reuse plans, operational path coverage, acceptance test matrices, numbered action plans, review plans, and concrete verification commands.
 
 When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-readiness-review` for repair routing.
 
@@ -100,14 +131,23 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 10. Split over-broad tickets or add phase gates for generation, backend,
     auth/security, client generation, frontend, browser tests, and security
     verification.
-11. Write implementation-ready tickets with compact context digests.
-12. Record a plan-level self-audit.
-13. Update plan impact notes when specs changed.
-14. Verify registry, dependencies, unblocks links, scope, status, slice strategy,
+11. Require spec-drift controls, readiness research evidence refs,
+    generator-first type/interface/class artifact planning, strict typing,
+    test-first unhappy-path coverage, domain/topic structure,
+    reuse/no-duplication, and review against ticket plus specs.
+12. Split tickets until each active ticket has one bounded deliverable or an
+    approved phase-gated exception.
+13. Write implementation-ready tickets with compact context digests and
+    numbered action plans that state preflight, contract/codegen, test-first,
+    implementation, docs/status, and verification steps.
+14. Record a plan-level self-audit.
+15. Update plan impact notes when specs changed.
+16. Verify registry, dependencies, unblocks links, scope, status, slice strategy,
     test-first order, path coverage, frontend/client ownership,
     generated-contract ownership, generation-map coverage, strong boundary type
-    disposition, NFR ownership, test coverage, and ticket readiness.
-15. Run plan and wave checker scripts.
+    disposition, strict typing, modularity/reuse, review plan, NFR ownership,
+    test coverage, action-plan precision, and ticket readiness.
+17. Run plan and wave checker scripts.
 
 ## Output Files
 

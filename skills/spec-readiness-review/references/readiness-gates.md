@@ -2,11 +2,31 @@
 
 Approve only when every gate passes or is N/A with evidence.
 
+## Contents
+
+- Core Gates
+- Judge Loop
+- Coverage
+- Clean Rebuild Gate
+- Contract And Runtime Gate
+- Production Gate
+
 ## Core Gates
 
 - No ticket may decide behavior, interfaces, errors, data lifecycle, async,
   migrations, security/privacy, performance, observability, recovery, tests, or
   acceptance.
+- No ticket may decide general file/folder placement. Specs define the intended
+  domain/topic folder structure, ownership boundaries, shared/reusable module
+  placement, generated-artifact locations, and public entrypoint or operational
+  asset locations. Specs do not need to enumerate every implementation file.
+- No ticket may choose dependency versions or third-party implementation
+  guidance from model memory. Specs prefer current stable versions and cite
+  current primary docs, package/release metadata, or dated research evidence.
+  Older pins and nonstandard choices need explicit rationale.
+- No ticket may discover features, access paths, data flows, state transitions,
+  lifecycle rules, or operational outcomes. Specs define them end to end or
+  record explicit N/A evidence.
 - Checked prose is English: `language: en`.
 - Vague text, unresolved markers, contradictions, duplicate facts, and missing
   N/A evidence block approval.
@@ -17,11 +37,12 @@ Approve only when every gate passes or is N/A with evidence.
 
 ## Judge Loop
 
-Run once before planning handoff. For every business outcome, record entrypoint,
-actor/client or N/A, requirement IDs, spec refs, owner, contract refs or N/A,
-verification, and final state. Walk success, unhappy, recovery,
-frontend/client, interface, security/privacy, data-integrity, observability,
-performance, release, supply-chain, and testability paths.
+Run once before planning handoff. For every capability/business outcome, record
+actor, entrypoint, reachability path, preconditions, data touched, state
+transitions, side effects, permissions, contracts, observability, verification,
+owner, final state, and N/A evidence. Walk success, unhappy, recovery,
+frontend/client, interface, security/privacy, data lifecycle, data-integrity,
+observability, performance, release, supply-chain, and testability paths.
 
 Require `spec_judge_loop.status: passed`, `run_timing: approval_only`,
 reviewed flows/paths/refs, uncertainty, finding counts, judge metadata, and
@@ -31,11 +52,28 @@ reviewed flows/paths/refs, uncertainty, finding counts, judge metadata, and
 
 - Requirements, flows, contracts, and NFRs are singular, owned, traceable, and
   verifiable.
+- `02-capabilities/capability-inventory.md` lists every user-facing,
+  admin-facing, API/CLI/SDK-facing, integration-facing, worker/job, data
+  lifecycle, and operational capability or records why a category is N/A.
 - `03-flows/e2e-coverage.md` maps outcomes to entrypoints, clients/consumers,
   UI/API state, service path, contracts, persistence, async/external deps,
   failures, recovery/final state, and verification.
+- Every capability has an end-to-end definition chain: actor/consumer,
+  trigger/entrypoint, access/reachability, preconditions, contracts, data,
+  states, side effects, permissions, errors, recovery, observability,
+  acceptance, verification, owner, and final state.
 - Frontends, clients, SDKs, CLIs, integrations, adapters, UX states,
   accessibility/responsiveness, and design/component reuse are covered or N/A.
+- General file/folder structure is covered or N/A: domain/topic folders,
+  nested structure expectations, generated outputs, shared/reusable modules,
+  public entrypoints, migrations, runbooks, and ownership boundaries.
+- `spec-checklists.md`, relevant high-level checklist indexes, and relevant
+  detailed topic checklist files have been walked. Every relevant topic is
+  `covered` or `not_applicable` with evidence; any `gap` blocks approval.
+- Dependency, database, framework, cloud, and third-party solution choices have
+  current-doc evidence. Database schemas, indexes, and query/performance
+  guidance come from official docs or approved research, not generic
+  "best practice" wording.
 - Shared facts live once. Diagrams are optional and must stay aligned.
 
 ## Clean Rebuild Gate
@@ -58,11 +96,11 @@ source contract defines an open JSON leaf.
 
 ## Contract And Runtime Gate
 
-Prefer standards: OpenAPI, GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC,
+Prefer current documented standards and ecosystem-native contracts: OpenAPI, GraphQL, AsyncAPI, JSON Schema, protobuf/gRPC,
 CloudEvents, Avro, Thrift, Smithy, OpenRPC/RAML, YANG, WSDL, schema registries,
 and ecosystem logging/errors/auth/observability conventions. Boundaries define
 owner, stability, version, validation, auth, errors, lifecycle, observability,
-tests, generators, and drift checks. Cross-language and async specs define
+tests, generators, drift checks, and current documentation refs. Cross-language and async specs define
 null/omitted/defaults, enum/precision/time/ID semantics, ordering,
 concurrency, cancellation, timeout, retry, idempotency, ack, backpressure, DLQ,
 transactions, locks, and worker behavior.
