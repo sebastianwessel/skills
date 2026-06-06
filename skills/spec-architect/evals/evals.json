@@ -30,6 +30,30 @@
       "prompt": "Approve these specs for planning after authoring them.",
       "expected_output": "Refuses self-approval and routes to spec-readiness-review for judge loop, deterministic checks, human approval evidence, and readiness report.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Create specs for a feature where implementation agents need backend, frontend, generated clients, migrations, and runbooks, but the request does not mention exact files.",
+      "expected_output": "Defines the general file/folder structure by domain/topic, ownership boundaries, nested structure expectations, generated-artifact locations, shared/reusable module placement, and public entrypoint or operational asset locations without enumerating every implementation file, then hands off to spec-readiness-review.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Create specs for account login, projects, and API keys where the request only describes the happy path.",
+      "expected_output": "Loads the checklist index plus relevant topic files, fills or records gaps for auth login/signup/recovery, permissions/roles, database indexes and constraints, credential and secret storage, generated contracts, unhappy-path tests, observability, release, and operations, then hands off to readiness review without self-approval.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Create specs for a project API using a Postgres ORM and hosted auth provider, but no dependency versions or docs are supplied.",
+      "expected_output": "Researches current stable versions and current primary docs/package metadata for the ORM, Postgres provider, and auth provider; uses docs for schema, indexes, query/performance guidance, security config, migrations, and operational limits; records rationale or blocks if evidence cannot be checked.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Create specs for a customer dashboard where the user mentions exports, profile data, notifications, and background sync, but does not describe how users reach each feature or how data states and retention work.",
+      "expected_output": "Creates a capability inventory and fills or records gaps for each capability's actor, entrypoint, reachability path, frontend states, contracts, data touched, state transitions, PII classification, retention, deletion/export, side effects, permissions, recovery, observability, acceptance, and verification before readiness review.",
+      "files": []
     }
   ]
 }

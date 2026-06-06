@@ -78,6 +78,54 @@
             "prompt": "Plan parallel agents for backend rebuild by asking one agent to refactor the backend, one to fix all drift, and one to generate everything.",
             "expected_output": "Rejects broad overlapping sidecar work and replaces it with read-only or disjoint scoped tasks with exact files, tests, acceptance criteria, central integration, and verification.",
             "files": []
+        },
+        {
+            "id": 14,
+            "prompt": "Review a ready ticket whose body says to wire up auth, follow existing patterns, handle errors, add tests, and verify it works, but it has no numbered action plan.",
+            "expected_output": "Rejects the ticket until it contains a numbered Action Plan with preflight reads, contract/codegen or N/A proof, test-first steps, exact files/directories, exact commands, expected failure/pass proof, implementation steps, verification, and handoff evidence.",
+            "files": []
+        },
+        {
+            "id": 15,
+            "prompt": "Plan one ticket that writes generated contracts, backend handlers, database migrations, frontend screens, browser tests, docs, and release runbooks for an SSO feature.",
+            "expected_output": "Splits the work into smaller dependency-ordered tickets, or marks an approved atomic exception with phase_gate_exception: true and blocking Phase Gate proof points before each later phase can start.",
+            "files": []
+        },
+        {
+            "id": 16,
+            "prompt": "Review a ticket that implements API request/response interfaces by hand even though OpenAPI and JSON Schema generators exist, uses TypeScript any for payloads, and has no drift check.",
+            "expected_output": "Rejects the ticket until it references approved readiness/spec evidence, uses deterministic spec-derived generation for types/interfaces/classes/clients/validators/tests, names generation and drift-check commands, enforces strict typing or approved N/A evidence, and blocks handwritten duplicate contract mirrors.",
+            "files": []
+        },
+        {
+            "id": 17,
+            "prompt": "Review a ticket that adds only happy-path tests, places new auth logic in a generic util folder, duplicates existing permission helpers, and marks done after local tests pass.",
+            "expected_output": "Rejects the ticket until it adds test-first unhappy/failure-path coverage from spec refs, defines domain/topic file placement, reuses existing helpers/modules, avoids duplicate logic, and requires final review against both ticket and approved specs before done.",
+            "files": []
+        },
+        {
+            "id": 18,
+            "prompt": "Create implementation tickets from approved specs whose file-structure section says auth code belongs under apps/api/src/domains/identity and generated clients under packages/api-client/generated, but the draft ticket puts new code in a generic utils folder.",
+            "expected_output": "Rejects or rewrites the ticket so Modularity And Reuse Plan follows the spec-defined file/folder structure, preserves ownership boundaries, names generated-artifact locations, and avoids generic misplaced folders.",
+            "files": []
+        },
+        {
+            "id": 19,
+            "prompt": "Create tickets from a readiness report that is status approved, but checklist_walk_gate is missing and no checklist topics were recorded.",
+            "expected_output": "Blocks ticket generation until readiness review records a passed checklist_walk_gate with checklist_walk topics, zero blocking findings, and evidence that relevant common topics are covered or N/A.",
+            "files": []
+        },
+        {
+            "id": 20,
+            "prompt": "Create tickets from a readiness report that lacks current_dependency_research_gate even though specs use a database driver and ORM.",
+            "expected_output": "Blocks ticket generation and routes to readiness review for current primary docs/package metadata/research evidence instead of asking tickets to choose dependency versions or infer third-party guidance.",
+            "files": []
+        },
+        {
+            "id": 21,
+            "prompt": "Create tickets from approved-looking specs where exports, notifications, and background sync are mentioned, but the readiness report lacks end_to_end_definition_gate and the tickets do not reference capability inventory rows, access paths, data lifecycle, state transitions, or final states.",
+            "expected_output": "Blocks ticket generation until readiness review passes end_to_end_definition_gate, then requires each ticket to include End-To-End Definition Coverage with capability inventory refs, actor/consumer, entrypoint/reachability, contracts, data touched, state transitions, side effects, permissions, errors, recovery, observability, acceptance, verification, owner, and final state or N/A evidence.",
+            "files": []
         }
     ]
 }

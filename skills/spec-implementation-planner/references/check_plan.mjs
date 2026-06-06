@@ -37,6 +37,10 @@ const list = (t, k) => {
 };
 const child = (t, p, k) => scalar(block(t, p), k);
 const childList = (t, p, k) => list(block(t, p), k);
+const section = (t, k) => {
+  const m = t.match(new RegExp(`(^|\\n)## ${k}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`));
+  return m ? m[2].trim() : "";
+};
 const hasList = (t, k) => t.includes(`${k}:\n  - `) || new RegExp(`${k}:\\s*\\[[^\\]]*\\]`).test(t);
 const same = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
 const overlap = (a, b) => {
@@ -44,6 +48,7 @@ const overlap = (a, b) => {
   return x && y && (x === y || x.startsWith(`${y}/`) || y.startsWith(`${x}/`));
 };
 const bad = /\b(decide|choose|determine|TBD|TODO|infer|fill gaps|use judgment|as appropriate|if needed|where possible)\b/i;
+const badAction = /\b(wire up|hook up|make it work|clean up|etc\.|and so on|handle all|integrate with existing|follow existing patterns|finish the feature)\b/i;
 const fake = /\b(use|add|create|implement|wire|return)\s+(a\s+)?(placeholder|fake|mock|stub|no-op|temporary)\b/i;
 const happy = /\b(happy path|success path|valid request|successful|success)\b/i;
 const unhappy = /\b(unhappy path|failure path|invalid|validation failure|denied|unauthorized|forbidden|timeout|retry|rollback|recovery|cancel|error)\b/i;
@@ -56,11 +61,38 @@ const testFirst = /\b(test-first|test driven|TDD|tests? before (business )?logic
 const acceptanceStatus = /\b(implemented|tested|verified by command|verified by browser|not applicable|N\/A|blocked|partial)\b/i;
 const preflightArtifacts = /\b(preflight|required generated artifacts?|prerequisite paths?|generation command|generated services?|generated clients?|not applicable|N\/A|blocked)\b/i;
 const finalComplete = /\b(full(y)? implemented|all spec requirements|no gaps|no unresolved implementation work|no unapproved (fake|mock|stub|placeholder)|full end-to-end alignment|end-to-end working solution)\b/i;
+const e2eDefinition = /\b(capability inventory|feature inventory|end-to-end definition|definition chain|actor|consumer|entrypoint|reachability|access path|data touched|state transition|side effects|permissions|final state)\b/i;
 const cleanRebuild = /\b(clean rebuild|contract-first rebuild|incremental patch|incremental refactor|old boundary|new boundary|compatibility fallback|stale alias|breaking change|not applicable|N\/A)\b/i;
 const generationMap = /\b(generation map|source contract|GraphQL|AsyncAPI|JSON Schema|error taxonomy|service manifest|database record|record ID|derived component|generated package|not applicable|N\/A)\b/i;
 const strongBoundary = /\b(strong boundary type|weak boundary type|closed contract|open JSON leaf|map\[string\]any|TypeScript any|TS any|type any|`any`|TypeScript unknown|TS unknown|type unknown|`unknown`|Record<string, unknown>|JSONValue|json\.RawMessage|additionalProperties|not applicable|N\/A)\b/i;
 const boundedParallel = /\b(read-only discovery|sidecar agent|disjoint write_scope|parallel write|bounded parallel|integrate centrally|not applicable|N\/A)\b/i;
+const strictTyping = /\b(strict typing|strong types?|source-derived types?|generated types?|compile check|type check|typecheck|tsc|mypy|pyright|go test|cargo check|no any|no unknown|no unchecked casts?|not applicable|N\/A)\b/i;
+const modularity = /\b(modular|module|domain|topic|bounded context|folder structure|directory structure|nested folders?|cohesion|separation of concerns|not applicable|N\/A)\b/i;
+const reuse = /\b(reuse|shared helper|shared module|existing module|existing helper|component reuse|service reuse|avoid duplicate|no duplicate|DRY|deduplicate|not applicable|N\/A)\b/i;
+const reviewAgainstSpecs = /\b(review|verify|audit|judge).{0,80}\b(spec|specs|spec_ref|ticket|acceptance matrix|requirements?)\b/i;
+const specDrift = /\b(spec drift|drift control|source spec|spec_ref|requirement ID|contract anchor|forbidden interpretation|approved spec|not applicable|N\/A)\b/i;
+const actionNumbered = /(^|\n)\s*\d+\.\s+\S/;
+const actionPreflight = /\b(preflight|baseline|dependency|readiness|read_scope|status)\b/i;
+const actionContract = /\b(contract|schema|IDL|codegen|generation|generated|drift check|not applicable|N\/A)\b/i;
+const actionTests = /\b(test-first|failing tests?|already-existing proof|acceptance tests?|contract tests?|E2E|unit tests?|unhappy-path tests?)\b/i;
+const actionImplement = /\b(implement|edit|update|create|remove|replace|migrate|generate|regenerate)\b/i;
+const actionVerify = /\b(verify|verification|proof|expected failure|expected pass|pass proof|blocked proof|partial proof)\b/i;
+const actionCommand = /\b(npm|pnpm|yarn|node|python3?|go|cargo|pytest|vitest|jest|npx|make|just|bun|deno|docker|kubectl|terraform|mvn|gradle|dotnet|ruff|eslint|tsc)\b|`[^`]*(test|check|build|lint|generate|codegen|compile|drift|verify)[^`]*`/i;
+const actionPath = /(^|[\s`])([./]?\w[\w.@-]*(\/[\w.@-][\w.@-]*)+|[\w.@-]+\.(ts|tsx|js|jsx|mjs|cjs|go|rs|py|rb|java|kt|cs|php|md|yaml|yml|json|toml|sql|graphql|proto|openapi|env))\b/i;
+const phaseGate = /\bphase gate:\b/i;
+const domainForScope = (scope) => {
+  const s = scope.toLowerCase();
+  if (/(^|\/)(frontend|client|ui|web|app|pages|components|routes|screens)(\/|$)/.test(s)) return "frontend";
+  if (/(^|\/)(backend|server|service|services|api|handlers|controllers|routes)(\/|$)/.test(s)) return "backend";
+  if (/(^|\/)(contract|contracts|schemas|schema|openapi|graphql|asyncapi|proto|idl|generator|generators|codegen)(\/|$)/.test(s)) return "contracts";
+  if (/(^|\/)(test|tests|e2e|integration|spec|__tests__)(\/|$)|\.(test|spec)\./.test(s)) return "tests";
+  if (/(^|\/)(docs|documentation|examples|runbooks)(\/|$)|\.md$/.test(s)) return "docs";
+  if (/(^|\/)(deploy|deployment|infra|ops|scripts|ci|\.github|docker|k8s)(\/|$)/.test(s)) return "ops";
+  if (/(^|\/)(db|database|migrations|models|entities|repositories)(\/|$)/.test(s)) return "data";
+  return "other";
+};
 const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
+const sliceTypes = ["vertical_slice", "foundation_exception", "refactor_exception", "remediation", "migration"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));
 const statusText = read(path.join(plans, "_status.yaml"));
@@ -71,6 +103,10 @@ if (plan && !/^status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.rea
 if (plan && !/human_approval:[\s\S]*?^\s+status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: human approval required`);
 if (plan && !/^language:\s*en\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: language: en required`);
 if (plan && !/semantic_judge_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: semantic_judge_gate.status must be passed`);
+if (plan && !/checklist_walk_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: checklist_walk_gate.status must be passed`);
+if (plan && !/end_to_end_definition_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: end_to_end_definition_gate.status must be passed`);
+if (plan && !/current_dependency_research_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: current_dependency_research_gate.status must be passed`);
+if (plan && !/checklist_walk:[\s\S]*?blocking_findings_count:\s*0\b/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: checklist_walk.blocking_findings_count must be 0`);
 ["_registry.yaml", "_status.yaml", "_dependencies.yaml", "_scope.yaml"].forEach((f) => plan && !exists(path.join(plans, f)) && fail(`plans/: missing ${f}`));
 if (/Wave 0|Spec and Contract Closure|build-blocking gaps/i.test(plan)) fail("implementation-plan.md: forbidden spec-closure wave");
 if (plan && !/\b(resume|resume_notes|last_verified|current_proof|partial)\b/i.test(statusText)) fail("_status.yaml: missing pause/resume tracking");
@@ -78,6 +114,7 @@ if (plan && !/Self-Audit/i.test(plan)) fail("implementation-plan.md: missing Sel
 if (plan && !/\b(assumptions|blockers|evidence)\b/i.test(plan)) fail("implementation-plan.md: Self-Audit lacks assumptions/blockers/evidence");
 if (plan && !/\b(requirement coverage|traceability|requirement IDs?|source requirements?)\b/i.test(plan)) fail("implementation-plan.md: missing requirement traceability coverage");
 if (plan && !/\b(path coverage|unhappy|failure path|operational path)\b/i.test(plan)) fail("implementation-plan.md: missing path coverage");
+if (plan && !e2eDefinition.test(plan)) fail("implementation-plan.md: missing capability inventory/end-to-end definition coverage");
 if (plan && !nfr.test(plan)) fail("implementation-plan.md: missing NFR/operations/supply-chain ownership");
 if (plan && !generated.test(plan)) fail("implementation-plan.md: missing generated contract/codegen ownership");
 if (plan && !frontend.test(plan)) fail("implementation-plan.md: missing frontend/client UX ownership or N/A evidence");
@@ -91,6 +128,10 @@ if (plan && !cleanRebuild.test(plan)) fail("implementation-plan.md: missing clea
 if (plan && !generationMap.test(plan)) fail("implementation-plan.md: missing generation map/source-contract coverage");
 if (plan && !strongBoundary.test(plan)) fail("implementation-plan.md: missing strong boundary type coverage");
 if (plan && !boundedParallel.test(plan)) fail("implementation-plan.md: missing bounded parallel-agent guidance or N/A evidence");
+if (plan && !strictTyping.test(plan)) fail("implementation-plan.md: missing strict typing/type-check ownership");
+if (plan && !modularity.test(plan)) fail("implementation-plan.md: missing modular domain/topic structure ownership");
+if (plan && !reuse.test(plan)) fail("implementation-plan.md: missing reuse/no-duplication ownership");
+if (plan && !reviewAgainstSpecs.test(plan)) fail("implementation-plan.md: missing review against specs/tickets");
 
 const depBlock = (id) => {
   const m = depsText.match(new RegExp(`\\n\\s{2}${id}:\\s*\\n([\\s\\S]*?)(?=\\n\\s{2}TICKET-\\d+:|\\n\\S|$)`));
@@ -105,10 +146,12 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   const id = scalar(front, "id");
   const status = scalar(front, "status");
   const active = !["blocked", "done", "skipped"].includes(status);
-  ["id", "wave", "status", "parallel_group", "depends_on", "blocked_by"].forEach((k) => !front.includes(`${k}:`) && fail(`${rel}: missing ${k}`));
+  ["id", "wave", "status", "parallel_group", "depends_on", "blocked_by", "slice_type", "phase_gate_exception"].forEach((k) => !front.includes(`${k}:`) && fail(`${rel}: missing ${k}`));
   if (status && !statuses.includes(status)) fail(`${rel}: invalid status ${status}`);
+  if (active && !sliceTypes.includes(scalar(front, "slice_type"))) fail(`${rel}: invalid slice_type`);
+  if (active && !/^(true|false)$/.test(scalar(front, "phase_gate_exception"))) fail(`${rel}: phase_gate_exception must be true or false`);
   ["spec_refs", "write_scope", "read_scope"].forEach((k) => !hasList(front, k) && fail(`${rel}: missing ${k}`));
-  ["Goal", "Context Digest", "Implementation Approach", "Slice Strategy", "Test-First Order", "Tasks", "Acceptance", "Operational Path Coverage", "Verification", "Non-goals", "Handoff"].forEach((s) => !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
+  ["Goal", "Context Digest", "Implementation Approach", "Action Plan", "Spec Drift Controls", "Generator And Type Plan", "Slice Strategy", "Test-First Order", "Modularity And Reuse Plan", "Tasks", "Acceptance", "End-To-End Definition Coverage", "Operational Path Coverage", "Review And Verification Plan", "Verification", "Non-goals", "Handoff"].forEach((s) => !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
   if (status !== "blocked" && child(front, "contract_readiness", "status") !== "ready") fail(`${rel}: contract_readiness.status must be ready`);
   if (status !== "blocked" && !childList(front, "contract_readiness", "required_contracts").length) fail(`${rel}: missing required_contracts`);
   if (childList(front, "contract_readiness", "missing_contracts").length) fail(`${rel}: missing_contracts must be empty`);
@@ -126,6 +169,7 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && !nfr.test(text)) fail(`${rel}: missing NFR disposition`);
   if (active && !generated.test(text)) fail(`${rel}: missing generated contract/codegen disposition`);
   if (active && !frontend.test(text)) fail(`${rel}: missing frontend/client UX or N/A disposition`);
+  if (active && !e2eDefinition.test(text)) fail(`${rel}: missing capability inventory/end-to-end definition disposition`);
   if (active && !slice.test(text)) fail(`${rel}: missing vertical slice strategy or horizontal exception`);
   if (active && !coverage.test(text)) fail(`${rel}: missing unit/E2E test or coverage disposition`);
   if (active && !testFirst.test(text)) fail(`${rel}: missing test-first order`);
@@ -134,8 +178,34 @@ for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${
   if (active && !cleanRebuild.test(text)) fail(`${rel}: missing clean rebuild/incremental strategy disposition`);
   if (active && !generationMap.test(text)) fail(`${rel}: missing generation map/source-contract disposition`);
   if (active && !strongBoundary.test(text)) fail(`${rel}: missing strong boundary type disposition`);
+  if (active && !strictTyping.test(text)) fail(`${rel}: missing strict typing/type-check disposition`);
+  if (active && !modularity.test(text)) fail(`${rel}: missing modular domain/topic structure disposition`);
+  if (active && !reuse.test(text)) fail(`${rel}: missing reuse/no-duplication disposition`);
+  if (active && !reviewAgainstSpecs.test(text)) fail(`${rel}: missing review against ticket/specs`);
+  if (active && !specDrift.test(section(text, "Spec Drift Controls"))) fail(`${rel}: Spec Drift Controls lacks source refs and drift guardrails`);
+  if (active && !generated.test(section(text, "Generator And Type Plan"))) fail(`${rel}: Generator And Type Plan lacks generator disposition`);
+  if (active && !strictTyping.test(section(text, "Generator And Type Plan"))) fail(`${rel}: Generator And Type Plan lacks strict typing/type-check proof`);
+  if (active && !modularity.test(section(text, "Modularity And Reuse Plan"))) fail(`${rel}: Modularity And Reuse Plan lacks domain/topic structure`);
+  if (active && !reuse.test(section(text, "Modularity And Reuse Plan"))) fail(`${rel}: Modularity And Reuse Plan lacks reuse/no-duplication proof`);
+  if (active && !reviewAgainstSpecs.test(section(text, "Review And Verification Plan"))) fail(`${rel}: Review And Verification Plan must compare ticket to specs`);
+  if (active && !e2eDefinition.test(section(text, "End-To-End Definition Coverage"))) fail(`${rel}: End-To-End Definition Coverage lacks capability/definition-chain refs`);
   if (active && scalar(front, "parallel_group") && !boundedParallel.test(text)) fail(`${rel}: parallel ticket lacks bounded sidecar/disjoint-scope guidance`);
   if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
+  const action = section(text, "Action Plan");
+  if (active && !actionNumbered.test(action)) fail(`${rel}: Action Plan must use numbered executable steps`);
+  if (active && !actionPreflight.test(action)) fail(`${rel}: Action Plan missing preflight/dependency step`);
+  if (active && !actionContract.test(action)) fail(`${rel}: Action Plan missing contract/codegen or N/A step`);
+  if (active && !actionTests.test(action)) fail(`${rel}: Action Plan missing test-first step`);
+  if (active && !unhappy.test(action)) fail(`${rel}: Action Plan missing unhappy/failure-path test step`);
+  if (active && !actionImplement.test(action)) fail(`${rel}: Action Plan missing implementation edit step`);
+  if (active && !actionVerify.test(action)) fail(`${rel}: Action Plan missing verification/proof step`);
+  if (active && !actionCommand.test(action)) fail(`${rel}: Action Plan missing exact commands`);
+  if (active && !actionPath.test(action)) fail(`${rel}: Action Plan missing exact files or directories`);
+  if (active && badAction.test(action)) fail(`${rel}: Action Plan uses vague implementation instructions`);
+  const writeDomains = new Set(list(front, "write_scope").map(domainForScope));
+  const multiLayer = writeDomains.size >= 4 || (writeDomains.has("contracts") && writeDomains.has("backend") && writeDomains.has("frontend"));
+  if (active && multiLayer && scalar(front, "phase_gate_exception") !== "true") fail(`${rel}: broad multi-layer ticket must be split or marked phase_gate_exception: true`);
+  if (active && scalar(front, "phase_gate_exception") === "true" && !phaseGate.test(action)) fail(`${rel}: phase-gated exception missing Phase Gate proof points`);
   for (const ref of list(front, "spec_refs")) {
     const target = ref.split("#")[0];
     if (target.startsWith(`${specsName}/`) && !exists(path.join(root, target))) fail(`${rel}: missing spec_ref ${ref}`);
@@ -152,6 +222,7 @@ for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).f
   if (wp && !/Parallelization|Parallel Work|Isolation/i.test(wp)) fail(`${d.name}/plan.md: missing isolation notes`);
   if (wp && !/Resume|Pause|Status/i.test(wp)) fail(`${d.name}/plan.md: missing status notes`);
   if (wp && !/Operational Path|Path Coverage|Unhappy|Failure/i.test(wp)) fail(`${d.name}/plan.md: missing path coverage`);
+  if (wp && !e2eDefinition.test(wp)) fail(`${d.name}/plan.md: missing capability inventory/end-to-end definition coverage`);
   if (wp && !/Security|Privacy|Performance|Resilience|Observability|Recovery|Data Integrity|Production|Release|Supply Chain|SBOM|Provenance|N\/A|Not Applicable/i.test(wp)) fail(`${d.name}/plan.md: missing NFR/operations/supply-chain coverage`);
   if (wp && !generated.test(wp)) fail(`${d.name}/plan.md: missing generated contract/codegen coverage`);
   if (wp && !frontend.test(wp)) fail(`${d.name}/plan.md: missing frontend/client UX coverage or N/A evidence`);
