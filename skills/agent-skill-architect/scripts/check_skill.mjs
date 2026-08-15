@@ -11,7 +11,7 @@ const read = (file) => fs.readFileSync(file, "utf8");
 
 const skillFile = path.join(root, "SKILL.md");
 const skillName = path.basename(root);
-const frontmatterPattern = /^---\n([\s\S]*?)\n---\n/;
+const frontmatterPattern = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/;
 const reserved = /\b(anthropic|claude|skill-creator|helper|tools|documents|data)\b/i;
 const vague = /\b(as appropriate|if needed|where possible|to be determined|TBD|TODO|best effort|handle errors|be secure)\b/i;
 
@@ -19,7 +19,7 @@ function parseFrontmatter(text) {
   const match = text.match(frontmatterPattern);
   if (!match) return null;
   const data = {};
-  for (const line of match[1].split("\n")) {
+  for (const line of match[1].split(/\r?\n/)) {
     const index = line.indexOf(":");
     if (index === -1) continue;
     const key = line.slice(0, index).trim();
