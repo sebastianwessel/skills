@@ -18,9 +18,12 @@ const rel = (file) => path.relative(plans, file).split(path.sep).join("/");
 const excluded = (file) => file === "plan-manifest.yaml" || /^(?:review|reviews|evidence|implementation-evidence)(?:\/|$)/.test(file);
 // The plan digest is embedded back into ticket frontmatter. Excluding only this
 // pointer prevents a digest cycle while preserving all implementation content.
-const canonical = (file, content) => file.endsWith(".md") && file.includes("/tickets/")
-  ? content.replace(/^plan_manifest_digest:\s*.*(?:\n|$)/m, "")
-  : content;
+const canonical = (file, content) => {
+  const normalized = content.replace(/\r\n?/g, "\n");
+  return file.endsWith(".md") && file.includes("/tickets/")
+    ? normalized.replace(/^plan_manifest_digest:\s*.*(?:\n|$)/m, "")
+    : normalized;
+};
 const manifestPath = path.join(plans, "plan-manifest.yaml");
 const specManifestPath = path.join(specs, "spec-manifest.yaml");
 if (!fs.existsSync(plans)) throw new Error(`missing plans root: ${plans}`);
@@ -33,12 +36,14 @@ const contentDigest = hash(artifacts.map((entry) => `${entry.path}\0${entry.sha2
 for (const artifact of artifacts.filter((entry) => entry.path.endsWith(".md") && entry.path.includes("/tickets/"))) {
   const file = path.join(plans, artifact.path);
   const source = fs.readFileSync(file, "utf8");
-  if (!source.startsWith("---\n")) throw new Error(`${artifact.path}: missing YAML frontmatter`);
-  const updated = /^plan_manifest_digest:/m.test(source)
-    ? source.replace(/^plan_manifest_digest:\s*.*$/m, `plan_manifest_digest: ${contentDigest}`)
-    : source.replace(/^(spec_manifest_digest:\s*.*)$/m, `$1\nplan_manifest_digest: ${contentDigest}`);
+  const normalized = source.replace(/\r\n?/g, "\n");
+  if (!normalized.startsWith("---\n")) throw new Error(`${artifact.path}: missing YAML frontmatter`);
+  const updated = /^plan_manifest_digest:/m.test(normalized)
+    ? normalized.replace(/^plan_manifest_digest:\s*.*$/m, `plan_manifest_digest: ${contentDigest}`)
+    : normalized.replace(/^(spec_manifest_digest:\s*.*)$/m, `$1\nplan_manifest_digest: ${contentDigest}`);
   if (!/^plan_manifest_digest:/m.test(updated)) throw new Error(`${artifact.path}: add spec_manifest_digest before generating plan manifest`);
-  if (updated !== source) fs.writeFileSync(file, updated);
+  const output = source.includes("\r\n") ? updated.replace(/\n/g, "\r\n") : updated;
+  if (output !== source) fs.writeFileSync(file, output);
 }
 const yaml = [
   "plan_manifest_version: 1",

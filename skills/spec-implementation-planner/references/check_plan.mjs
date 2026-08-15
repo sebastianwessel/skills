@@ -40,9 +40,12 @@ const walk = (dir) => exists(dir) ? fs.readdirSync(dir, { withFileTypes: true })
 }) : [];
 const planRelative = (file) => path.relative(plans, file).split(path.sep).join("/");
 const excludedPlanArtifact = (file) => file === "plan-manifest.yaml" || /^(?:review|reviews|evidence|implementation-evidence)(?:\/|$)/.test(file);
-const canonicalPlanText = (file, content) => file.endsWith(".md") && file.includes("/tickets/")
-  ? content.replace(/^plan_manifest_digest:\s*.*(?:\n|$)/m, "")
-  : content;
+const canonicalPlanText = (file, content) => {
+  const normalized = content.replace(/\r\n?/g, "\n");
+  return file.endsWith(".md") && file.includes("/tickets/")
+    ? normalized.replace(/^plan_manifest_digest:\s*.*(?:\n|$)/m, "")
+    : normalized;
+};
 
 function parseScalar(value, label, line) {
   if (!value) return "";
@@ -120,10 +123,11 @@ function parseYaml(text, label) {
 }
 
 function frontmatter(text, label) {
-  if (!text.startsWith("---\n")) throw new Error(`${label}: missing YAML frontmatter`);
-  const close = text.indexOf("\n---\n", 4);
+  const normalized = text.replace(/\r\n?/g, "\n");
+  if (!normalized.startsWith("---\n")) throw new Error(`${label}: missing YAML frontmatter`);
+  const close = normalized.indexOf("\n---\n", 4);
   if (close < 0) throw new Error(`${label}: unterminated YAML frontmatter`);
-  return { data: parseYaml(text.slice(4, close), label), body: text.slice(close + 5) };
+  return { data: parseYaml(normalized.slice(4, close), label), body: normalized.slice(close + 5) };
 }
 
 function section(body, name) {
