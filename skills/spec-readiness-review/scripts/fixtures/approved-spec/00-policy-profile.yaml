@@ -1,0 +1,7 @@
+policy_profile_version: 1
+allowed_default_refs: [POLICY-FIXTURE-D0-D1]
+profiles:
+  - policy_ref: POLICY-FIXTURE-D0-D1
+    name: fixture-mechanical-defaults
+    source_ref: 00-conventions.md
+    allowed_classes: [D0, D1]

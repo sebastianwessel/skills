@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "readiness-rejects-catalog-dangling-endpoint",
+      "checker": "skills/spec-readiness-review/scripts/check_specs.mjs",
+      "args": ["tests/fixtures/readiness/catalog-without-mappings"],
+      "expect": {
+        "exit_code": 1,
+        "output_includes": "representation-catalog.yaml.mappings.MAP-USER must link two distinct registered shapes"
+      }
+    },
+    {
+      "id": "planner-rejects-ticket-without-representation-reuse",
+      "checker": "skills/spec-implementation-planner/references/check_plan.mjs",
+      "args": ["tests/fixtures/plans/missing-representation-reuse"],
+      "expect": {
+        "exit_code": 1,
+        "output_includes": "missing representation_reuse"
+      }
+    },
+    {
+      "id": "planner-rejects-unregistered-representation-shape",
+      "checker": "skills/spec-implementation-planner/references/check_plan.mjs",
+      "args": ["tests/fixtures/plans/unregistered-representation-shape"],
+      "expect": {
+        "exit_code": 1,
+        "output_includes": "unregistered representation shape_ref identity.unknown"
+      }
+    }
+  ]
+}

@@ -28,6 +28,10 @@ Use this loop for one approved ticket.
   type/schema/contract checks; consumer tickets code against them unchanged.
 - Do not hand-write or fork generated shapes unless approved and generation is
   unavailable, unsafe, or out of scope.
+- Read the ticket's representation catalog refs before defining a data shape.
+  Reuse the approved generated/shared artifact or mapping. Do not create an
+  exported DTO, entity, schema, event, record, projection, or mapper without a
+  registered shape and mapping or approved new-shape decision.
 - If ticket tasks require generated services/resources/clients before handler
   edits, verify those paths exist or run approved generation. Stop if generation
   is unavailable; do not hand-write substitute skeletons.
@@ -78,6 +82,9 @@ behavior before new business logic is added.
   library components, and existing reusable modules before custom code.
 - Use precise types, cohesive files, speakable names, centralized documented
   constants, unit-bearing names, and inline docs for public APIs/enums/constants.
+- A layer-specific representation is valid only when its approved mapping
+  records the boundary purpose and field differences. Never create a renamed
+  semantic duplicate for local convenience.
 
 ## No False Completion
 
@@ -97,18 +104,20 @@ behavior before new business logic is added.
 
 ## Review-Judge Loop
 
-Before done, honestly check:
+Before claiming `implemented`, honestly check:
 
 - Scope, spec traceability, interfaces, generation, acceptance matrix, tests,
   test order, quality, integrity, operations, and UX/client behavior match the
   approved ticket/spec evidence.
 - Acceptance rows are implemented, tested, verified, N/A with spec evidence, or
-  blocked; any missing/blocked row means partial, not done.
+  blocked; any missing/blocked row means partial, not implemented.
 - Auth/tenancy tickets include negative tests for cross-tenant list/get-known-id,
   writes/deletes, owner-only commands, and missing/expired/revoked sessions
   before handler logic.
 - Assumptions, skipped checks, pre-existing failures, gaps, and risks are stated
   honestly.
+- New and changed representations/mappers match the catalog/ticket refs; any
+  unregistered one is a blocker, not a local refactor.
 
 Fix ticket-scope defects and re-run checks. For undefined or out-of-scope issues,
 stop with a blocker instead of inventing behavior.

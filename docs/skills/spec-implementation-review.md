@@ -34,6 +34,11 @@ The CLI and public skill directory are introduced in Vercel's
 - Rejects weak closed-boundary types, handwritten contract mirrors, stale
   aliases, compatibility wrappers, fallback synthesis, and storage-era shapes
   when specs selected a generated clean boundary without migration scope.
+- Rejects unregistered exported data representations, semantic duplicates, and
+  mappers whose catalogued mapping does not permit the implemented differences.
+- Expands review scope to consumers of changed public contracts, shared assets,
+  generated artifacts, and module boundaries; it requires compatibility,
+  migration, and affected-test evidence.
 - Flags tenant isolation false positives where middleware sets tenant context
   but resource adapters do not constrain reads/writes.
 - Flags monolithic composition drift when provider, persistence, security,
@@ -54,11 +59,17 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill reads the approved specs, implementation plan, wave plan, tickets, changed files, verification evidence, and prior review artifacts. It builds a path matrix, checks each path against specs and tests, then writes structured review artifacts under `plans/reviews/<wave-or-plan-id>/<review-id>/`.
+The skill verifies matching spec/plan/ticket digests, reads the
+implementation-evidence and consumer-impact set, then reads the approved specs,
+implementation plan, wave plan, tickets, changed files, verification evidence,
+and prior review artifacts. It builds a path matrix, checks each path against
+specs and tests, then writes structured review artifacts under
+`plans/reviews/<wave-or-plan-id>/<review-id>/`.
 
 ## Workflow
 
-1. Confirm approved specs, valid plan, wave scope, ticket status, and verification evidence.
+1. Confirm approved specs, matching digests, valid plan, impact scope, ticket
+   lifecycle state, and verification evidence.
 2. Build an end-to-end path matrix for every relevant entry point and failure mode.
 3. Review spec conformance, requirement traceability, generated artifacts,
    generation-map coverage, strong boundary types, interfaces, frontend/client
@@ -66,7 +77,8 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
    integrity, recovery, performance, production/release, supply-chain,
    robustness, maintainability, and docs.
 4. Persist `review.md`, `findings.yaml`, and `agent-feedback/<ticket-id>.md`.
-5. Update plan status metadata for partial tickets, blocked spec gaps, or blocked plan gaps when a tracker exists.
+5. Update plan status metadata for partial tickets, blocked spec gaps, blocked
+   plan gaps, or independently accepted work when a tracker exists.
 6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-readiness-review`.
 7. Return a decision: `pass`, `needs_fixes`, `blocked_spec_gap`, `blocked_plan_gap`, or `partial`.
 
@@ -77,6 +89,8 @@ The skill reads the approved specs, implementation plan, wave plan, tickets, cha
 | `skills/spec-implementation-review/SKILL.md` | Executable agent instructions and trigger metadata. |
 | `skills/spec-implementation-review/references/path-tracing.md` | End-to-end solution path review checklist. |
 | `skills/spec-implementation-review/references/review-gates.md` | Spec, generated-contract, interface, test, security, performance, robustness, and maintainability gates. |
+| `skills/spec-implementation-review/references/implementation-evidence.md` | Machine-readable changed-symbol, command-effect, architecture, and consumer-impact evidence. |
+| `skills/spec-implementation-review/scripts/check_implementation_evidence.mjs` | Deterministic implementation-evidence manifest checker. |
 | `skills/spec-implementation-review/references/findings-format.md` | Required persisted review artifact and feedback formats. |
 | `skills/spec-implementation-review/evals/evals.json` | Evaluation scenarios for the skill. |
 

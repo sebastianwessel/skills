@@ -1,0 +1,12 @@
+status: approved
+language: en
+human_approval:
+  status: approved
+open_decisions: []
+approval_evidence:
+  status: approved
+  approver_id: fixture
+  approved_at: 2026-01-01T00:00:00Z
+  approval_ref: tests/fixtures
+  manifest_digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+  scope_refs: [CAP-USER]

@@ -17,6 +17,7 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 - [Repository Layout](#repository-layout)
 - [Documentation Pattern](#documentation-pattern)
 - [Adding a Skill](#adding-a-skill)
+- [Verification](#verification)
 - [Maintainer Notes](#maintainer-notes)
 
 ## Skill Index
@@ -109,6 +110,18 @@ Each skill should have a concise human docs page with the same structure:
    ```bash
    python3 scripts/update-readme.py
    ```
+
+## Verification
+
+Run the non-mutating repository check before publishing skill changes:
+
+```bash
+node scripts/check-all.mjs
+```
+
+It validates skill packages, JavaScript syntax, eval manifests, local resource
+links, generated README state, and adversarial checker fixtures. The same
+command runs in GitHub Actions for pull requests and updates to `main`.
 
 ## Maintainer Notes
 

@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+/**
+ * Structural plan checker for the deliberately small YAML subset documented in
+ * planning-gates.md. It rejects YAML features that make a plan ambiguous to an
+ * implementation agent: anchors, aliases, multiline scalars, merge keys, and
+ * duplicate keys.
+ */
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -7,253 +14,403 @@ const plansName = process.argv[3] || "plans";
 const specsName = process.argv[4] || "specs";
 const plans = path.join(root, plansName);
 const specs = path.join(root, specsName);
-const out = [];
-const fail = (m) => out.push(m);
-const exists = (p) => fs.existsSync(p);
-const read = (p) => exists(p) ? fs.readFileSync(p, "utf8") : "";
-const walk = (d) => exists(d) ? fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => {
-  const p = path.join(d, e.name);
-  return e.isDirectory() ? walk(p) : [p];
+const problems = [];
+const fail = (message) => problems.push(message);
+const exists = (file) => fs.existsSync(file);
+const read = (file) => exists(file) ? fs.readFileSync(file, "utf8") : "";
+const hash = (content) => `sha256:${crypto.createHash("sha256").update(content).digest("hex")}`;
+const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const asList = (value) => Array.isArray(value) ? value : [];
+const asString = (value) => typeof value === "string" ? value : "";
+const ids = (values) => asList(values).map(String);
+const sorted = (values) => [...values].sort();
+const exactSet = (left, right) => left.length === right.length && left.every((item) => right.includes(item));
+const overlaps = (a, b) => {
+  const left = a.replace(/\/$/, "");
+  const right = b.replace(/\/$/, "");
+  return left && right && (left === right || left.startsWith(`${right}/`) || right.startsWith(`${left}/`));
+};
+const scopeContains = (scope, file) => {
+  const root = scope.replace(/\/$/, "");
+  return file === root || file.startsWith(`${root}/`);
+};
+const walk = (dir) => exists(dir) ? fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  const file = path.join(dir, entry.name);
+  return entry.isDirectory() ? walk(file) : [file];
 }) : [];
-const clean = (s = "") => s.replace(/^["']|["']$/g, "").replace(/\s+#.*$/, "").trim();
-const fm = (t) => t.startsWith("---\n") ? t.split("---\n")[1] || "" : "";
-const scalar = (t, k) => clean((t.split("\n").find((l) => l.startsWith(`${k}:`)) || "").split(":").slice(1).join(":"));
-const block = (t, k) => {
-  const m = t.match(new RegExp(`(^|\\n)${k}:\\n([\\s\\S]*?)(?=\\n[A-Za-z_][\\w-]*:\\s|$)`));
-  return m ? m[2].replace(/^  /gm, "") : "";
-};
-const list = (t, k) => {
-  const lines = t.split("\n");
-  const i = lines.findIndex((l) => l.startsWith(`${k}:`));
-  if (i < 0) return [];
-  const v = lines[i].split(":").slice(1).join(":").trim();
-  if (v.startsWith("[") && v.endsWith("]")) return v.slice(1, -1).split(",").map(clean).filter(Boolean);
-  const xs = [];
-  for (const line of lines.slice(i + 1)) {
-    if (/^\S/.test(line) && !line.trim().startsWith("- ")) break;
-    if (line.trim().startsWith("- ")) xs.push(clean(line.trim().slice(2)));
+const planRelative = (file) => path.relative(plans, file).split(path.sep).join("/");
+const excludedPlanArtifact = (file) => file === "plan-manifest.yaml" || /^(?:review|reviews|evidence|implementation-evidence)(?:\/|$)/.test(file);
+const canonicalPlanText = (file, content) => file.endsWith(".md") && file.includes("/tickets/")
+  ? content.replace(/^plan_manifest_digest:\s*.*(?:\n|$)/m, "")
+  : content;
+
+function parseScalar(value, label, line) {
+  if (!value) return "";
+  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) return value.slice(1, -1);
+  if (/^(true|false)$/i.test(value)) return value.toLowerCase() === "true";
+  if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+  if (value === "null" || value === "~") return null;
+  if (value.startsWith("[") && value.endsWith("]")) {
+    const inner = value.slice(1, -1).trim();
+    if (!inner) return [];
+    return inner.split(",").map((item) => parseScalar(item.trim(), label, line));
   }
-  return xs;
-};
-const child = (t, p, k) => scalar(block(t, p), k);
-const childList = (t, p, k) => list(block(t, p), k);
-const section = (t, k) => {
-  const m = t.match(new RegExp(`(^|\\n)## ${k}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`));
-  return m ? m[2].trim() : "";
-};
-const hasList = (t, k) => t.includes(`${k}:\n  - `) || new RegExp(`${k}:\\s*\\[[^\\]]*\\]`).test(t);
-const same = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
-const overlap = (a, b) => {
-  const x = a.replace(/\/$/, ""), y = b.replace(/\/$/, "");
-  return x && y && (x === y || x.startsWith(`${y}/`) || y.startsWith(`${x}/`));
-};
-const bad = /\b(decide|choose|determine|TBD|TODO|infer|fill gaps|use judgment|as appropriate|if needed|where possible)\b/i;
-const badAction = /\b(wire up|hook up|make it work|clean up|etc\.|and so on|handle all|integrate with existing|follow existing patterns|finish the feature)\b/i;
-const fake = /\b(use|add|create|implement|wire|return)\s+(a\s+)?(placeholder|fake|mock|stub|no-op|temporary)\b/i;
-const happy = /\b(happy path|success path|valid request|successful|success)\b/i;
-const unhappy = /\b(unhappy path|failure path|invalid|validation failure|denied|unauthorized|forbidden|timeout|retry|rollback|recovery|cancel|error)\b/i;
-const nfr = /\b(security|privacy|performance|resilience|observability|logging|log level|redaction|data integrity|recovery|production|release|supply chain|SBOM|provenance|not applicable|N\/A|deferred by spec)\b/i;
-const generated = /\b(generated_contracts|deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated server|generated stubs?|generated validators?|generated tests?|contract tests?|drift check|not applicable|N\/A|unavailable|unsafe|out of scope)\b/i;
-const frontend = /\b(frontend|client|UI|UX|screen|surface|user flow|access path|navigation|loading|empty|error state|success state|permission state|accessibility|responsive|design system|design\.md|style reuse|shared style|component library|framework component|reusable component|not applicable|N\/A|out of scope)\b/i;
-const slice = /\b(vertical slice|slice strategy|end-to-end increment|end-to-end outcome|horizontal exception|foundation exception|refactor exception|unblocks|next vertical slice)\b/i;
-const coverage = /\b(unit tests?|end-to-end tests?|E2E tests?|code coverage|coverage threshold|80%|eighty percent|not applicable|N\/A|approved threshold)\b/i;
-const testFirst = /\b(test-first|test driven|TDD|tests? before (business )?logic|failing tests?|contract tests?|acceptance tests?|unhappy-path tests?|public-interface tests?|generated tests?)\b/i;
-const acceptanceStatus = /\b(implemented|tested|verified by command|verified by browser|not applicable|N\/A|blocked|partial)\b/i;
-const preflightArtifacts = /\b(preflight|required generated artifacts?|prerequisite paths?|generation command|generated services?|generated clients?|not applicable|N\/A|blocked)\b/i;
-const finalComplete = /\b(full(y)? implemented|all spec requirements|no gaps|no unresolved implementation work|no unapproved (fake|mock|stub|placeholder)|full end-to-end alignment|end-to-end working solution)\b/i;
-const e2eDefinition = /\b(capability inventory|feature inventory|end-to-end definition|definition chain|actor|consumer|entrypoint|reachability|access path|data touched|state transition|side effects|permissions|final state)\b/i;
-const cleanRebuild = /\b(clean rebuild|contract-first rebuild|incremental patch|incremental refactor|old boundary|new boundary|compatibility fallback|stale alias|breaking change|not applicable|N\/A)\b/i;
-const generationMap = /\b(generation map|source contract|GraphQL|AsyncAPI|JSON Schema|error taxonomy|service manifest|database record|record ID|derived component|generated package|not applicable|N\/A)\b/i;
-const strongBoundary = /\b(strong boundary type|weak boundary type|closed contract|open JSON leaf|map\[string\]any|TypeScript any|TS any|type any|`any`|TypeScript unknown|TS unknown|type unknown|`unknown`|Record<string, unknown>|JSONValue|json\.RawMessage|additionalProperties|not applicable|N\/A)\b/i;
-const boundedParallel = /\b(read-only discovery|sidecar agent|disjoint write_scope|parallel write|bounded parallel|integrate centrally|not applicable|N\/A)\b/i;
-const strictTyping = /\b(strict typing|strong types?|source-derived types?|generated types?|compile check|type check|typecheck|tsc|mypy|pyright|go test|cargo check|no any|no unknown|no unchecked casts?|not applicable|N\/A)\b/i;
-const modularity = /\b(modular|module|domain|topic|bounded context|folder structure|directory structure|nested folders?|cohesion|separation of concerns|not applicable|N\/A)\b/i;
-const reuse = /\b(reuse|shared helper|shared module|existing module|existing helper|component reuse|service reuse|avoid duplicate|no duplicate|DRY|deduplicate|not applicable|N\/A)\b/i;
-const reviewAgainstSpecs = /\b(review|verify|audit|judge).{0,80}\b(spec|specs|spec_ref|ticket|acceptance matrix|requirements?)\b/i;
-const specDrift = /\b(spec drift|drift control|source spec|spec_ref|requirement ID|contract anchor|forbidden interpretation|approved spec|not applicable|N\/A)\b/i;
-const actionNumbered = /(^|\n)\s*\d+\.\s+\S/;
-const actionPreflight = /\b(preflight|baseline|dependency|readiness|read_scope|status)\b/i;
-const actionContract = /\b(contract|schema|IDL|codegen|generation|generated|drift check|not applicable|N\/A)\b/i;
-const actionTests = /\b(test-first|failing tests?|already-existing proof|acceptance tests?|contract tests?|E2E|unit tests?|unhappy-path tests?)\b/i;
-const actionImplement = /\b(implement|edit|update|create|remove|replace|migrate|generate|regenerate)\b/i;
-const actionVerify = /\b(verify|verification|proof|expected failure|expected pass|pass proof|blocked proof|partial proof)\b/i;
-const actionCommand = /\b(npm|pnpm|yarn|node|python3?|go|cargo|pytest|vitest|jest|npx|make|just|bun|deno|docker|kubectl|terraform|mvn|gradle|dotnet|ruff|eslint|tsc)\b|`[^`]*(test|check|build|lint|generate|codegen|compile|drift|verify)[^`]*`/i;
-const actionPath = /(^|[\s`])([./]?\w[\w.@-]*(\/[\w.@-][\w.@-]*)+|[\w.@-]+\.(ts|tsx|js|jsx|mjs|cjs|go|rs|py|rb|java|kt|cs|php|md|yaml|yml|json|toml|sql|graphql|proto|openapi|env))\b/i;
-const phaseGate = /\bphase gate:\b/i;
-const domainForScope = (scope) => {
-  const s = scope.toLowerCase();
-  if (/(^|\/)(frontend|client|ui|web|app|pages|components|routes|screens)(\/|$)/.test(s)) return "frontend";
-  if (/(^|\/)(backend|server|service|services|api|handlers|controllers|routes)(\/|$)/.test(s)) return "backend";
-  if (/(^|\/)(contract|contracts|schemas|schema|openapi|graphql|asyncapi|proto|idl|generator|generators|codegen)(\/|$)/.test(s)) return "contracts";
-  if (/(^|\/)(test|tests|e2e|integration|spec|__tests__)(\/|$)|\.(test|spec)\./.test(s)) return "tests";
-  if (/(^|\/)(docs|documentation|examples|runbooks)(\/|$)|\.md$/.test(s)) return "docs";
-  if (/(^|\/)(deploy|deployment|infra|ops|scripts|ci|\.github|docker|k8s)(\/|$)/.test(s)) return "ops";
-  if (/(^|\/)(db|database|migrations|models|entities|repositories)(\/|$)/.test(s)) return "data";
-  return "other";
-};
-const statuses = ["planned", "ready", "in_progress", "partial", "blocked", "done", "skipped"];
-const sliceTypes = ["vertical_slice", "foundation_exception", "refactor_exception", "remediation", "migration"];
+  if (value.startsWith("{")) throw new Error(`${label}:${line}: flow mappings are not allowed`);
+  if (/[|>]/.test(value.slice(0, 1))) throw new Error(`${label}:${line}: multiline scalars are not allowed`);
+  return value.replace(/\s+#.*$/, "").trim();
+}
+
+/** Parse mappings/lists with two-space indentation and no YAML implicit magic. */
+function parseYaml(text, label) {
+  const tokens = [];
+  for (const [index, raw] of text.replace(/\r/g, "").split("\n").entries()) {
+    const line = index + 1;
+    if (!raw.trim() || /^\s*#/.test(raw)) continue;
+    if (/\t/.test(raw)) throw new Error(`${label}:${line}: tabs are not allowed`);
+    const match = raw.match(/^( *)(.*)$/);
+    if (match[1].length % 2) throw new Error(`${label}:${line}: indentation must use two-space units`);
+    if (/(^|\s)[&*][\w-]+|^<<:/.test(match[2])) throw new Error(`${label}:${line}: anchors, aliases, and merges are not allowed`);
+    tokens.push({ indent: match[1].length, content: match[2], line });
+  }
+  let cursor = 0;
+  const parseBlock = (indent) => {
+    if (cursor >= tokens.length || tokens[cursor].indent < indent) return undefined;
+    if (tokens[cursor].indent !== indent) throw new Error(`${label}:${tokens[cursor].line}: unexpected indentation`);
+    const listMode = tokens[cursor].content.startsWith("-");
+    const result = listMode ? [] : {};
+    const keys = new Set();
+    while (cursor < tokens.length && tokens[cursor].indent === indent) {
+      const token = tokens[cursor++];
+      if (listMode) {
+        if (!token.content.startsWith("- ")) throw new Error(`${label}:${token.line}: list item required`);
+        const rest = token.content.slice(2).trim();
+        if (!rest) {
+          if (cursor >= tokens.length || tokens[cursor].indent <= indent) throw new Error(`${label}:${token.line}: empty list item`);
+          result.push(parseBlock(tokens[cursor].indent));
+          continue;
+        }
+        const first = rest.match(/^([A-Za-z][A-Za-z0-9_-]*):(?:\s*(.*))?$/);
+        if (!first) { result.push(parseScalar(rest, label, token.line)); continue; }
+        const item = {};
+        item[first[1]] = first[2] ? parseScalar(first[2], label, token.line) : (cursor < tokens.length && tokens[cursor].indent > indent ? parseBlock(tokens[cursor].indent) : null);
+        while (cursor < tokens.length && tokens[cursor].indent > indent) {
+          if (tokens[cursor].indent !== indent + 2) throw new Error(`${label}:${tokens[cursor].line}: list map fields must be indented two spaces`);
+          const next = tokens[cursor++];
+          const mapping = next.content.match(/^([A-Za-z][A-Za-z0-9_-]*):(?:\s*(.*))?$/);
+          if (!mapping) throw new Error(`${label}:${next.line}: mapping field required`);
+          if (Object.hasOwn(item, mapping[1])) throw new Error(`${label}:${next.line}: duplicate key ${mapping[1]}`);
+          item[mapping[1]] = mapping[2] ? parseScalar(mapping[2], label, next.line) : (cursor < tokens.length && tokens[cursor].indent > next.indent ? parseBlock(tokens[cursor].indent) : null);
+        }
+        result.push(item);
+      } else {
+        if (token.content.startsWith("-")) throw new Error(`${label}:${token.line}: mapping field required`);
+        const mapping = token.content.match(/^([A-Za-z][A-Za-z0-9_-]*):(?:\s*(.*))?$/);
+        if (!mapping) throw new Error(`${label}:${token.line}: invalid mapping field`);
+        if (keys.has(mapping[1])) throw new Error(`${label}:${token.line}: duplicate key ${mapping[1]}`);
+        keys.add(mapping[1]);
+        result[mapping[1]] = mapping[2] ? parseScalar(mapping[2], label, token.line) : (cursor < tokens.length && tokens[cursor].indent > indent ? parseBlock(tokens[cursor].indent) : null);
+      }
+    }
+    return result;
+  };
+  if (!tokens.length) return {};
+  const parsed = parseBlock(0);
+  if (cursor !== tokens.length) throw new Error(`${label}:${tokens[cursor].line}: trailing invalid YAML`);
+  return parsed;
+}
+
+function frontmatter(text, label) {
+  if (!text.startsWith("---\n")) throw new Error(`${label}: missing YAML frontmatter`);
+  const close = text.indexOf("\n---\n", 4);
+  if (close < 0) throw new Error(`${label}: unterminated YAML frontmatter`);
+  return { data: parseYaml(text.slice(4, close), label), body: text.slice(close + 5) };
+}
+
+function section(body, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = body.match(new RegExp(`(^|\\n)## ${escaped}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`));
+  return match ? match[2].trim() : "";
+}
+
+function requiredObject(value, label) {
+  if (!isObject(value)) fail(`${label}: expected mapping`);
+  return isObject(value) ? value : {};
+}
+
+function requiredList(value, label, { empty = false } = {}) {
+  if (!Array.isArray(value)) { fail(`${label}: expected list`); return []; }
+  if (!empty && value.length === 0) fail(`${label}: must not be empty`);
+  return value;
+}
+
+function requireFields(object, fields, label) {
+  for (const field of fields) if (!Object.hasOwn(object, field)) fail(`${label}: missing ${field}`);
+}
+
+function noUnknownFields(object, allowed, label) {
+  for (const key of Object.keys(object)) if (!allowed.includes(key)) fail(`${label}: unknown field ${key}`);
+}
+
+function validRef(ref, label, { requiredAnchor = false } = {}) {
+  if (typeof ref !== "string" || !ref.trim()) { fail(`${label}: invalid reference`); return false; }
+  const [target, anchor] = ref.split("#", 2);
+  if (!target.startsWith(`${specsName}/`)) { fail(`${label}: must start with ${specsName}/`); return false; }
+  const absolute = path.join(root, target);
+  if (!exists(absolute)) { fail(`${label}: missing ${ref}`); return false; }
+  if (requiredAnchor && !anchor) { fail(`${label}: anchor required for ${ref}`); return false; }
+  if (anchor && !read(absolute).includes(anchor)) { fail(`${label}: missing anchor ${ref}`); return false; }
+  return true;
+}
+
+function uniqueIds(items, label) {
+  const found = new Set();
+  for (const item of items) {
+    const id = asString(isObject(item) ? item.id : "");
+    if (!id) { fail(`${label}: item missing id`); continue; }
+    if (found.has(id)) fail(`${label}: duplicate id ${id}`);
+    found.add(id);
+  }
+  return found;
+}
+
+const lifecycle = ["planned", "ready", "in_progress", "partial", "blocked", "implemented", "review_pending", "accepted", "skipped"];
+const executableLifecycle = new Set(["ready", "in_progress"]);
+const sliceTypes = new Set(["vertical_slice", "foundation_exception", "refactor_exception", "remediation", "migration"]);
+const unsafeCommand = /[;&|`$()<>]|^\s*(?:sh|bash|zsh|fish|cmd|powershell)\b|^\s*[A-Za-z_][A-Za-z0-9_]*=|\b(?:curl|wget|ssh|scp)\b|\bgit\s+(?:clone|fetch|pull|push)\b|\b(?:npm|pnpm|yarn)\s+(?:install|add|upgrade)\b|\b(?:pip|pip3)\s+install\b|\bgo\s+get\b|\bcargo\s+(?:install|add)\b/i;
+const requiredSections = ["Goal", "Context Digest", "Implementation Approach", "Decision Ledger", "Action Plan", "Requirements Traceability", "Contract Traceability", "Spec Drift Controls", "Generator And Type Plan", "Test-First Order", "Modularity And Reuse Plan", "Representation Reuse Plan", "Slice Strategy", "Tasks", "Acceptance", "Acceptance Test Matrix", "End-To-End Definition Coverage", "Operational Path Coverage", "Review And Verification Plan", "Verification", "Non-goals", "Handoff"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));
-const statusText = read(path.join(plans, "_status.yaml"));
-const depsText = read(path.join(plans, "_dependencies.yaml"));
 const specReady = read(path.join(specs, ".readiness-report.yaml"));
+const specManifest = read(path.join(specs, "spec-manifest.yaml"));
+const planManifestText = read(path.join(plans, "plan-manifest.yaml"));
 if (!plan) fail("plans/: missing implementation-plan.md");
-if (plan && !/^status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: status must be approved`);
-if (plan && !/human_approval:[\s\S]*?^\s+status:\s*approved\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: human approval required`);
-if (plan && !/^language:\s*en\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: language: en required`);
-if (plan && !/semantic_judge_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: semantic_judge_gate.status must be passed`);
-if (plan && !/checklist_walk_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: checklist_walk_gate.status must be passed`);
-if (plan && !/end_to_end_definition_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: end_to_end_definition_gate.status must be passed`);
-if (plan && !/current_dependency_research_gate:\s*\n\s+status:\s*passed\s*$/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: current_dependency_research_gate.status must be passed`);
-if (plan && !/checklist_walk:[\s\S]*?blocking_findings_count:\s*0\b/m.test(specReady)) fail(`${specsName}/.readiness-report.yaml: checklist_walk.blocking_findings_count must be 0`);
-["_registry.yaml", "_status.yaml", "_dependencies.yaml", "_scope.yaml"].forEach((f) => plan && !exists(path.join(plans, f)) && fail(`plans/: missing ${f}`));
-if (/Wave 0|Spec and Contract Closure|build-blocking gaps/i.test(plan)) fail("implementation-plan.md: forbidden spec-closure wave");
-if (plan && !/\b(resume|resume_notes|last_verified|current_proof|partial)\b/i.test(statusText)) fail("_status.yaml: missing pause/resume tracking");
-if (plan && !/Self-Audit/i.test(plan)) fail("implementation-plan.md: missing Self-Audit");
-if (plan && !/\b(assumptions|blockers|evidence)\b/i.test(plan)) fail("implementation-plan.md: Self-Audit lacks assumptions/blockers/evidence");
-if (plan && !/\b(requirement coverage|traceability|requirement IDs?|source requirements?)\b/i.test(plan)) fail("implementation-plan.md: missing requirement traceability coverage");
-if (plan && !/\b(path coverage|unhappy|failure path|operational path)\b/i.test(plan)) fail("implementation-plan.md: missing path coverage");
-if (plan && !e2eDefinition.test(plan)) fail("implementation-plan.md: missing capability inventory/end-to-end definition coverage");
-if (plan && !nfr.test(plan)) fail("implementation-plan.md: missing NFR/operations/supply-chain ownership");
-if (plan && !generated.test(plan)) fail("implementation-plan.md: missing generated contract/codegen ownership");
-if (plan && !frontend.test(plan)) fail("implementation-plan.md: missing frontend/client UX ownership or N/A evidence");
-if (plan && !slice.test(plan)) fail("implementation-plan.md: missing vertical slice strategy or horizontal exception");
-if (plan && !coverage.test(plan)) fail("implementation-plan.md: missing unit/E2E test and coverage ownership");
-if (plan && !testFirst.test(plan)) fail("implementation-plan.md: missing test-first implementation order");
-if (plan && !acceptanceStatus.test(plan)) fail("implementation-plan.md: missing acceptance matrix status ownership");
-if (plan && !preflightArtifacts.test(plan)) fail("implementation-plan.md: missing preflight/generated artifact ownership");
-if (plan && !finalComplete.test(plan)) fail("implementation-plan.md: missing final completion/no-gap expectation");
-if (plan && !cleanRebuild.test(plan)) fail("implementation-plan.md: missing clean rebuild vs incremental decision");
-if (plan && !generationMap.test(plan)) fail("implementation-plan.md: missing generation map/source-contract coverage");
-if (plan && !strongBoundary.test(plan)) fail("implementation-plan.md: missing strong boundary type coverage");
-if (plan && !boundedParallel.test(plan)) fail("implementation-plan.md: missing bounded parallel-agent guidance or N/A evidence");
-if (plan && !strictTyping.test(plan)) fail("implementation-plan.md: missing strict typing/type-check ownership");
-if (plan && !modularity.test(plan)) fail("implementation-plan.md: missing modular domain/topic structure ownership");
-if (plan && !reuse.test(plan)) fail("implementation-plan.md: missing reuse/no-duplication ownership");
-if (plan && !reviewAgainstSpecs.test(plan)) fail("implementation-plan.md: missing review against specs/tickets");
+for (const file of ["_registry.yaml", "_status.yaml", "_dependencies.yaml", "_scope.yaml"]) if (plan && !exists(path.join(plans, file))) fail(`plans/: missing ${file}`);
+let readiness = {}, manifest = {}, planManifest = {};
+try { readiness = parseYaml(specReady, `${specsName}/.readiness-report.yaml`); }
+catch (error) { fail(error.message); }
+try { manifest = parseYaml(specManifest, `${specsName}/spec-manifest.yaml`); }
+catch (error) { fail(error.message); }
+try { planManifest = parseYaml(planManifestText, `${plansName}/plan-manifest.yaml`); }
+catch (error) { fail(error.message); }
+const manifestDigest = asString(manifest.content_digest);
+const planManifestDigest = asString(planManifest.content_digest);
+const approvalEvidence = isObject(readiness.approval_evidence) ? readiness.approval_evidence : {};
+if (plan && readiness.status !== "approved") fail(`${specsName}/.readiness-report.yaml: status must be approved`);
+if (plan && readiness.human_approval?.status !== "approved") fail(`${specsName}/.readiness-report.yaml: human approval required`);
+if (plan && manifest.spec_manifest_version !== 1) fail(`${specsName}/spec-manifest.yaml: spec_manifest_version must be 1`);
+if (plan && !Array.isArray(manifest.artifacts)) fail(`${specsName}/spec-manifest.yaml: artifacts must be a list`);
+if (plan && !/^sha256:[a-f0-9]{64}$/.test(manifestDigest)) fail(`${specsName}/spec-manifest.yaml: content_digest must be a sha256 digest`);
+if (plan && approvalEvidence.status !== "approved") fail(`${specsName}/.readiness-report.yaml: approval_evidence.status must be approved`);
+if (plan && approvalEvidence.manifest_digest !== manifestDigest) fail(`${specsName}/.readiness-report.yaml: approval_evidence.manifest_digest must equal spec-manifest.yaml.content_digest`);
+if (plan && planManifest.plan_manifest_version !== 1) fail(`${plansName}/plan-manifest.yaml: plan_manifest_version must be 1`);
+if (plan && !/^sha256:[a-f0-9]{64}$/.test(planManifestDigest)) fail(`${plansName}/plan-manifest.yaml: content_digest must be a sha256 digest`);
+if (plan && planManifest.source_spec_manifest_digest !== manifestDigest) fail(`${plansName}/plan-manifest.yaml: source_spec_manifest_digest must equal spec-manifest.yaml.content_digest`);
+const planProvenance = isObject(planManifest.provenance) ? planManifest.provenance : {};
+if (plan && (!asString(planProvenance.generated_at) || Number.isNaN(Date.parse(planProvenance.generated_at)) || planProvenance.generator !== "plan-manifest/v1")) fail(`${plansName}/plan-manifest.yaml: provenance requires ISO generated_at and generator: plan-manifest/v1`);
+const planArtifacts = walk(plans).map((file) => ({ file, path: planRelative(file) })).filter((entry) => !excludedPlanArtifact(entry.path)).sort((left, right) => left.path.localeCompare(right.path));
+const suppliedPlanArtifacts = new Map();
+for (const artifact of asList(planManifest.artifacts)) {
+  if (!isObject(artifact) || !asString(artifact.path) || !/^sha256:[a-f0-9]{64}$/.test(asString(artifact.sha256))) { fail(`${plansName}/plan-manifest.yaml: artifacts require path and sha256`); continue; }
+  if (suppliedPlanArtifacts.has(artifact.path)) fail(`${plansName}/plan-manifest.yaml: duplicate artifact ${artifact.path}`);
+  suppliedPlanArtifacts.set(artifact.path, artifact.sha256);
+}
+if (plan && !exactSet(sorted(planArtifacts.map((artifact) => artifact.path)), sorted([...suppliedPlanArtifacts.keys()]))) fail(`${plansName}/plan-manifest.yaml: artifacts must exactly cover canonical plan files`);
+const expectedPlanRecords = [];
+for (const artifact of planArtifacts) {
+  const digest = hash(canonicalPlanText(artifact.path, read(artifact.file)));
+  if (suppliedPlanArtifacts.get(artifact.path) !== digest) fail(`${plansName}/plan-manifest.yaml: artifact digest differs for ${artifact.path}`);
+  expectedPlanRecords.push(`${artifact.path}\0${digest}\n`);
+}
+if (plan && planManifestDigest !== hash(expectedPlanRecords.join(""))) fail(`${plansName}/plan-manifest.yaml: content_digest does not match canonical plan artifacts`);
+if (plan && /Wave 0|Spec and Contract Closure|build-blocking gaps/i.test(plan)) fail("implementation-plan.md: forbidden spec-closure wave");
+if (plan && !section(plan, "Self-Audit")) fail("implementation-plan.md: missing Self-Audit");
 
-const depBlock = (id) => {
-  const m = depsText.match(new RegExp(`\\n\\s{2}${id}:\\s*\\n([\\s\\S]*?)(?=\\n\\s{2}TICKET-\\d+:|\\n\\S|$)`));
-  return m ? m[1].replace(/^ {4}/gm, "") : "";
-};
+let registry = {}, statusIndex = {}, dependencyIndex = {}, scopeIndex = {};
+for (const [file, assign] of [["_registry.yaml", (value) => { registry = value; }], ["_status.yaml", (value) => { statusIndex = value; }], ["_dependencies.yaml", (value) => { dependencyIndex = value; }], ["_scope.yaml", (value) => { scopeIndex = value; }]]) {
+  const absolute = path.join(plans, file);
+  if (!exists(absolute)) continue;
+  try { assign(parseYaml(read(absolute), `plans/${file}`)); }
+  catch (error) { fail(error.message); }
+}
+registry = requiredObject(registry.tickets, "_registry.yaml.tickets");
+statusIndex = requiredObject(statusIndex.tickets, "_status.yaml.tickets");
+dependencyIndex = requiredObject(dependencyIndex.tickets, "_dependencies.yaml.tickets");
+scopeIndex = requiredObject(scopeIndex.tickets, "_scope.yaml.tickets");
+
 const tickets = new Map();
-const groups = new Map();
-for (const file of walk(plans).filter((p) => p.endsWith(".md") && p.includes(`${path.sep}tickets${path.sep}`))) {
-  const rel = path.relative(plans, file);
-  const text = read(file);
-  const front = fm(text);
-  const id = scalar(front, "id");
-  const status = scalar(front, "status");
-  const active = !["blocked", "done", "skipped"].includes(status);
-  ["id", "wave", "status", "parallel_group", "depends_on", "blocked_by", "slice_type", "phase_gate_exception"].forEach((k) => !front.includes(`${k}:`) && fail(`${rel}: missing ${k}`));
-  if (status && !statuses.includes(status)) fail(`${rel}: invalid status ${status}`);
-  if (active && !sliceTypes.includes(scalar(front, "slice_type"))) fail(`${rel}: invalid slice_type`);
-  if (active && !/^(true|false)$/.test(scalar(front, "phase_gate_exception"))) fail(`${rel}: phase_gate_exception must be true or false`);
-  ["spec_refs", "write_scope", "read_scope"].forEach((k) => !hasList(front, k) && fail(`${rel}: missing ${k}`));
-  ["Goal", "Context Digest", "Implementation Approach", "Action Plan", "Spec Drift Controls", "Generator And Type Plan", "Slice Strategy", "Test-First Order", "Modularity And Reuse Plan", "Tasks", "Acceptance", "End-To-End Definition Coverage", "Operational Path Coverage", "Review And Verification Plan", "Verification", "Non-goals", "Handoff"].forEach((s) => !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
-  if (status !== "blocked" && child(front, "contract_readiness", "status") !== "ready") fail(`${rel}: contract_readiness.status must be ready`);
-  if (status !== "blocked" && !childList(front, "contract_readiness", "required_contracts").length) fail(`${rel}: missing required_contracts`);
-  if (childList(front, "contract_readiness", "missing_contracts").length) fail(`${rel}: missing_contracts must be empty`);
-  if (active && !front.includes("generated_contracts:")) fail(`${rel}: missing generated_contracts`);
-  if (active && !generated.test(block(front, "generated_contracts"))) fail(`${rel}: generated_contracts lacks generation/test/drift disposition`);
-  if (active && child(front, "ticket_readiness", "status") !== "implementation_ready") fail(`${rel}: ticket_readiness.status must be implementation_ready`);
-  if (active && childList(front, "ticket_readiness", "open_decisions").length) fail(`${rel}: open_decisions must be empty`);
-  if (active && childList(front, "ticket_readiness", "ambiguous_phrases").length) fail(`${rel}: ambiguous_phrases must be empty`);
-  ["Decision Ledger", "Requirements Traceability", "Contract Traceability", "Acceptance Test Matrix"].forEach((s) => active && !text.includes(`## ${s}`) && fail(`${rel}: missing ${s}`));
-  if (active && bad.test(text)) fail(`${rel}: drift-prone decision language`);
-  if (active && fake.test(text) && !/\b(test fixture|fake provider|mock provider|test double|contract test)\b/i.test(text)) fail(`${rel}: fake/mock implementation shortcut`);
-  if (/ask (the )?human|ask user|read (all|the full|entire) specs/i.test(text)) fail(`${rel}: asks for clarification or too much context`);
-  if (active && !happy.test(text)) fail(`${rel}: missing happy/success path coverage`);
-  if (active && !unhappy.test(text)) fail(`${rel}: missing unhappy/failure path coverage`);
-  if (active && !nfr.test(text)) fail(`${rel}: missing NFR disposition`);
-  if (active && !generated.test(text)) fail(`${rel}: missing generated contract/codegen disposition`);
-  if (active && !frontend.test(text)) fail(`${rel}: missing frontend/client UX or N/A disposition`);
-  if (active && !e2eDefinition.test(text)) fail(`${rel}: missing capability inventory/end-to-end definition disposition`);
-  if (active && !slice.test(text)) fail(`${rel}: missing vertical slice strategy or horizontal exception`);
-  if (active && !coverage.test(text)) fail(`${rel}: missing unit/E2E test or coverage disposition`);
-  if (active && !testFirst.test(text)) fail(`${rel}: missing test-first order`);
-  if (active && !acceptanceStatus.test(text)) fail(`${rel}: missing acceptance matrix row status disposition`);
-  if (active && !preflightArtifacts.test(text)) fail(`${rel}: missing generated artifact/preflight disposition`);
-  if (active && !cleanRebuild.test(text)) fail(`${rel}: missing clean rebuild/incremental strategy disposition`);
-  if (active && !generationMap.test(text)) fail(`${rel}: missing generation map/source-contract disposition`);
-  if (active && !strongBoundary.test(text)) fail(`${rel}: missing strong boundary type disposition`);
-  if (active && !strictTyping.test(text)) fail(`${rel}: missing strict typing/type-check disposition`);
-  if (active && !modularity.test(text)) fail(`${rel}: missing modular domain/topic structure disposition`);
-  if (active && !reuse.test(text)) fail(`${rel}: missing reuse/no-duplication disposition`);
-  if (active && !reviewAgainstSpecs.test(text)) fail(`${rel}: missing review against ticket/specs`);
-  if (active && !specDrift.test(section(text, "Spec Drift Controls"))) fail(`${rel}: Spec Drift Controls lacks source refs and drift guardrails`);
-  if (active && !generated.test(section(text, "Generator And Type Plan"))) fail(`${rel}: Generator And Type Plan lacks generator disposition`);
-  if (active && !strictTyping.test(section(text, "Generator And Type Plan"))) fail(`${rel}: Generator And Type Plan lacks strict typing/type-check proof`);
-  if (active && !modularity.test(section(text, "Modularity And Reuse Plan"))) fail(`${rel}: Modularity And Reuse Plan lacks domain/topic structure`);
-  if (active && !reuse.test(section(text, "Modularity And Reuse Plan"))) fail(`${rel}: Modularity And Reuse Plan lacks reuse/no-duplication proof`);
-  if (active && !reviewAgainstSpecs.test(section(text, "Review And Verification Plan"))) fail(`${rel}: Review And Verification Plan must compare ticket to specs`);
-  if (active && !e2eDefinition.test(section(text, "End-To-End Definition Coverage"))) fail(`${rel}: End-To-End Definition Coverage lacks capability/definition-chain refs`);
-  if (active && scalar(front, "parallel_group") && !boundedParallel.test(text)) fail(`${rel}: parallel ticket lacks bounded sidecar/disjoint-scope guidance`);
-  if (active && !/\b(requirement|acceptance).{0,80}\b(id|trace|source|spec_ref|verification)\b/i.test(text)) fail(`${rel}: missing requirement traceability`);
-  const action = section(text, "Action Plan");
-  if (active && !actionNumbered.test(action)) fail(`${rel}: Action Plan must use numbered executable steps`);
-  if (active && !actionPreflight.test(action)) fail(`${rel}: Action Plan missing preflight/dependency step`);
-  if (active && !actionContract.test(action)) fail(`${rel}: Action Plan missing contract/codegen or N/A step`);
-  if (active && !actionTests.test(action)) fail(`${rel}: Action Plan missing test-first step`);
-  if (active && !unhappy.test(action)) fail(`${rel}: Action Plan missing unhappy/failure-path test step`);
-  if (active && !actionImplement.test(action)) fail(`${rel}: Action Plan missing implementation edit step`);
-  if (active && !actionVerify.test(action)) fail(`${rel}: Action Plan missing verification/proof step`);
-  if (active && !actionCommand.test(action)) fail(`${rel}: Action Plan missing exact commands`);
-  if (active && !actionPath.test(action)) fail(`${rel}: Action Plan missing exact files or directories`);
-  if (active && badAction.test(action)) fail(`${rel}: Action Plan uses vague implementation instructions`);
-  const writeDomains = new Set(list(front, "write_scope").map(domainForScope));
-  const multiLayer = writeDomains.size >= 4 || (writeDomains.has("contracts") && writeDomains.has("backend") && writeDomains.has("frontend"));
-  if (active && multiLayer && scalar(front, "phase_gate_exception") !== "true") fail(`${rel}: broad multi-layer ticket must be split or marked phase_gate_exception: true`);
-  if (active && scalar(front, "phase_gate_exception") === "true" && !phaseGate.test(action)) fail(`${rel}: phase-gated exception missing Phase Gate proof points`);
-  for (const ref of list(front, "spec_refs")) {
-    const target = ref.split("#")[0];
-    if (target.startsWith(`${specsName}/`) && !exists(path.join(root, target))) fail(`${rel}: missing spec_ref ${ref}`);
+const parallelGroups = new Map();
+const catalogs = new Map();
+for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.includes(`${path.sep}tickets${path.sep}`))) {
+  const relative = path.relative(plans, file);
+  let data, body;
+  try { ({ data, body } = frontmatter(read(file), relative)); }
+  catch (error) { fail(error.message); continue; }
+  const fields = ["id", "title", "wave", "lifecycle", "spec_manifest_digest", "plan_manifest_digest", "parallel_group", "depends_on", "blocked_by", "spec_refs", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
+  requireFields(data, fields, relative);
+  noUnknownFields(data, fields, relative);
+  const id = asString(data.id);
+  const state = asString(data.lifecycle);
+  const active = executableLifecycle.has(state);
+  if (!/^TICKET-\d{3,}$/.test(id)) fail(`${relative}: id must be TICKET-NNN`);
+  if (!lifecycle.includes(state)) fail(`${relative}: invalid lifecycle ${state}`);
+  if (data.spec_manifest_digest !== manifestDigest) fail(`${relative}: spec_manifest_digest must equal spec-manifest.yaml.content_digest`);
+  if (data.plan_manifest_digest !== planManifestDigest) fail(`${relative}: plan_manifest_digest must equal plan-manifest.yaml.content_digest`);
+  if (!sliceTypes.has(data.slice_type)) fail(`${relative}: invalid slice_type ${data.slice_type}`);
+  if (typeof data.phase_gate_exception !== "boolean") fail(`${relative}: phase_gate_exception must be boolean`);
+  if (active && data.phase_gate_exception && !/Phase Gate:/i.test(section(body, "Action Plan"))) fail(`${relative}: phase_gate_exception requires explicit Phase Gate proof points in Action Plan`);
+  if (!Number.isInteger(data.wave) || data.wave < 1) fail(`${relative}: wave must be a positive integer`);
+  if (tickets.has(id)) fail(`${relative}: duplicate ticket id ${id}`);
+  for (const name of requiredSections) if (!section(body, name)) fail(`${relative}: missing or empty ${name}`);
+  const refs = requiredList(data.spec_refs, `${relative}.spec_refs`);
+  for (const ref of refs) validRef(ref, `${relative}.spec_refs`, { requiredAnchor: true });
+  const writes = requiredList(data.write_scope, `${relative}.write_scope`);
+  const reads = requiredList(data.read_scope, `${relative}.read_scope`);
+  for (const scope of [...writes, ...reads]) if (typeof scope !== "string" || !scope || path.isAbsolute(scope) || scope.includes("..")) fail(`${relative}: unsafe scope ${scope}`);
+  const contract = requiredObject(data.contract_readiness, `${relative}.contract_readiness`);
+  requireFields(contract, ["status", "required_contracts", "missing_contracts"], `${relative}.contract_readiness`);
+  if (active && contract.status !== "ready") fail(`${relative}: contract_readiness.status must be ready`);
+  if (active) requiredList(contract.required_contracts, `${relative}.contract_readiness.required_contracts`);
+  if (requiredList(contract.missing_contracts, `${relative}.contract_readiness.missing_contracts`, { empty: true }).length) fail(`${relative}: missing_contracts must be empty`);
+  const readiness = requiredObject(data.ticket_readiness, `${relative}.ticket_readiness`);
+  requireFields(readiness, ["status", "open_decisions", "ambiguous_phrases"], `${relative}.ticket_readiness`);
+  if (active && readiness.status !== "implementation_ready") fail(`${relative}: ticket_readiness.status must be implementation_ready`);
+  if (requiredList(readiness.open_decisions, `${relative}.ticket_readiness.open_decisions`, { empty: true }).length) fail(`${relative}: open_decisions must be empty`);
+  if (requiredList(readiness.ambiguous_phrases, `${relative}.ticket_readiness.ambiguous_phrases`, { empty: true }).length) fail(`${relative}: ambiguous_phrases must be empty`);
+  const autonomy = requiredObject(data.autonomy, `${relative}.autonomy`);
+  requireFields(autonomy, ["allowed_classes", "convention_refs", "approved_decision_refs", "escalation"], `${relative}.autonomy`);
+  const allowed = requiredList(autonomy.allowed_classes, `${relative}.autonomy.allowed_classes`);
+  if (active && (!allowed.includes("D0") || allowed.some((value) => !["D0", "D1"].includes(value)))) fail(`${relative}: executable tickets allow only D0 and optional D1 autonomy`);
+  if (allowed.includes("D1") && !requiredList(autonomy.convention_refs, `${relative}.autonomy.convention_refs`).length) fail(`${relative}: D1 requires convention_refs`);
+  if (autonomy.escalation !== "blocker") fail(`${relative}: autonomy.escalation must be blocker`);
+  for (const ref of requiredList(autonomy.convention_refs, `${relative}.autonomy.convention_refs`, { empty: true })) validRef(ref, `${relative}.autonomy.convention_refs`, { requiredAnchor: true });
+  for (const ref of requiredList(autonomy.approved_decision_refs, `${relative}.autonomy.approved_decision_refs`, { empty: true })) validRef(ref, `${relative}.autonomy.approved_decision_refs`, { requiredAnchor: true });
+  const commands = requiredObject(data.verification_commands, `${relative}.verification_commands`);
+  if (active && !Object.keys(commands).length) fail(`${relative}: verification_commands must not be empty`);
+  for (const [commandId, command] of Object.entries(commands)) {
+    if (!/^CMD-[A-Z0-9_-]+$/.test(commandId)) fail(`${relative}: verification command ID must be CMD-* (${commandId})`);
+    const metadata = requiredObject(command, `${relative}.verification_commands.${commandId}`);
+    requireFields(metadata, ["command", "purpose", "expected", "network", "writes", "secrets"], `${relative}.verification_commands.${commandId}`);
+    if (!asString(metadata.command) || unsafeCommand.test(asString(metadata.command))) fail(`${relative}: unsafe command metadata ${commandId}`);
+    if (!["pass", "fail_before_implementation", "record_only"].includes(metadata.expected)) fail(`${relative}: invalid expected outcome for ${commandId}`);
+    if (metadata.network !== "forbidden") fail(`${relative}: ${commandId} must forbid network; external verification needs a separate approved ticket`);
+    if (!["read_only", "workspace_only"].includes(metadata.writes)) fail(`${relative}: invalid writes policy for ${commandId}`);
+    if (metadata.secrets !== "forbidden") fail(`${relative}: ${commandId} must forbid secrets`);
   }
-  const group = scalar(front, "parallel_group");
-  if (group) groups.set(group, [...(groups.get(group) || []), { rel, scopes: list(front, "write_scope") }]);
-  if (id) tickets.set(id, { rel, deps: list(front, "depends_on"), blocked: list(front, "blocked_by"), wave: Number(scalar(front, "wave")) || 0 });
+  const actionSteps = requiredList(data.action_steps, `${relative}.action_steps`);
+  const actionIds = uniqueIds(actionSteps, `${relative}.action_steps`);
+  const actionKinds = new Set();
+  const actionKindOrder = [];
+  for (const step of actionSteps) {
+    const item = requiredObject(step, `${relative}.action_steps`);
+    requireFields(item, ["id", "kind", "files", "command_refs", "acceptance_refs", "expected_proof"], `${relative}.action_steps.${item.id || "?"}`);
+    if (!["preflight", "contract", "test", "implement", "verify", "handoff"].includes(item.kind)) fail(`${relative}: action step ${item.id} has invalid kind`);
+    actionKinds.add(item.kind);
+    actionKindOrder.push(item.kind);
+    const files = requiredList(item.files, `${relative}.action_steps.${item.id}.files`, { empty: item.kind === "handoff" });
+    for (const actionFile of files) {
+      if (typeof actionFile !== "string" || !actionFile || path.isAbsolute(actionFile) || actionFile.includes("..")) fail(`${relative}: unsafe action file ${actionFile}`);
+      const allowedScopes = item.kind === "implement" ? writes : [...writes, ...reads];
+      if (!allowedScopes.some((scope) => scopeContains(scope, actionFile))) fail(`${relative}: action step ${item.id} file outside allowed scope ${actionFile}`);
+    }
+    for (const commandRef of requiredList(item.command_refs, `${relative}.action_steps.${item.id}.command_refs`, { empty: item.kind === "implement" || item.kind === "handoff" })) if (!Object.hasOwn(commands, commandRef)) fail(`${relative}: action step ${item.id} references missing command ${commandRef}`);
+  }
+  for (const kind of ["preflight", "contract", "test", "implement", "verify", "handoff"]) if (active && !actionKinds.has(kind)) fail(`${relative}: action_steps missing ${kind}`);
+  if (active) {
+    const before = (left, right) => actionKindOrder.indexOf(left) < actionKindOrder.indexOf(right);
+    for (const [left, right] of [["preflight", "contract"], ["contract", "test"], ["test", "implement"], ["implement", "verify"], ["verify", "handoff"]]) if (!before(left, right)) fail(`${relative}: action_steps must place ${left} before ${right}`);
+  }
+  const acceptance = requiredList(data.acceptance, `${relative}.acceptance`);
+  const acceptanceIds = uniqueIds(acceptance, `${relative}.acceptance`);
+  for (const row of acceptance) {
+    const item = requiredObject(row, `${relative}.acceptance`);
+    requireFields(item, ["id", "requirement_refs", "test_refs", "command_refs", "expected_outcome", "lifecycle"], `${relative}.acceptance.${item.id || "?"}`);
+    if (!asString(item.expected_outcome)) fail(`${relative}: acceptance ${item.id} missing expected_outcome`);
+    if (!lifecycle.includes(item.lifecycle)) fail(`${relative}: acceptance ${item.id} invalid lifecycle`);
+    if (active && ["implemented", "review_pending", "accepted"].includes(item.lifecycle)) fail(`${relative}: active ticket cannot pre-mark acceptance ${item.id} as ${item.lifecycle}`);
+    for (const ref of requiredList(item.requirement_refs, `${relative}.acceptance.${item.id}.requirement_refs`)) validRef(ref, `${relative}.acceptance.${item.id}.requirement_refs`, { requiredAnchor: true });
+    requiredList(item.test_refs, `${relative}.acceptance.${item.id}.test_refs`);
+    for (const commandRef of requiredList(item.command_refs, `${relative}.acceptance.${item.id}.command_refs`)) if (!Object.hasOwn(commands, commandRef)) fail(`${relative}: acceptance ${item.id} references missing command ${commandRef}`);
+  }
+  const coveredAcceptance = new Set(actionSteps.flatMap((step) => ids(step.acceptance_refs)));
+  for (const acceptanceId of acceptanceIds) if (!coveredAcceptance.has(acceptanceId)) fail(`${relative}: acceptance ${acceptanceId} is not covered by an action step`);
+  for (const acceptanceId of coveredAcceptance) if (!acceptanceIds.has(acceptanceId)) fail(`${relative}: action step references unknown acceptance ${acceptanceId}`);
+  const representation = requiredObject(data.representation_reuse, `${relative}.representation_reuse`);
+  requireFields(representation, ["status"], `${relative}.representation_reuse`);
+  if (!["ready", "not_applicable"].includes(representation.status)) fail(`${relative}: invalid representation_reuse.status`);
+  if (representation.status === "not_applicable") {
+    requireFields(representation, ["rationale", "scope_refs"], `${relative}.representation_reuse`);
+    if (!asString(representation.rationale) || !requiredList(representation.scope_refs, `${relative}.representation_reuse.scope_refs`).length) fail(`${relative}: not_applicable representation reuse needs scoped rationale and refs`);
+    for (const ref of asList(representation.scope_refs)) validRef(ref, `${relative}.representation_reuse.scope_refs`, { requiredAnchor: true });
+  } else {
+    requireFields(representation, ["catalog_ref", "shape_refs", "mapping_refs", "new_shape_decision"], `${relative}.representation_reuse`);
+    const catalogRef = asString(representation.catalog_ref);
+    if (!catalogRef.startsWith(`${specsName}/`) || !exists(path.join(root, catalogRef))) fail(`${relative}: missing representation catalog ${catalogRef}`);
+    let catalog = {};
+    if (catalogRef && exists(path.join(root, catalogRef))) {
+      try {
+        if (!catalogs.has(catalogRef)) catalogs.set(catalogRef, parseYaml(read(path.join(root, catalogRef)), catalogRef));
+        catalog = catalogs.get(catalogRef);
+      } catch (error) { fail(error.message); }
+    }
+    const shapeIds = new Set(asList(catalog.shapes).map((shape) => asString(shape.shape_id)));
+    const mappingIds = new Set(asList(catalog.mappings).map((mapping) => asString(mapping.mapping_id)));
+    for (const shapeId of requiredList(representation.shape_refs, `${relative}.representation_reuse.shape_refs`)) if (!shapeIds.has(shapeId)) fail(`${relative}: unregistered representation shape_ref ${shapeId}`);
+    for (const mappingId of requiredList(representation.mapping_refs, `${relative}.representation_reuse.mapping_refs`, { empty: true })) if (!mappingIds.has(mappingId)) fail(`${relative}: unregistered representation mapping_ref ${mappingId}`);
+    if (!asString(representation.new_shape_decision)) fail(`${relative}: representation_reuse.new_shape_decision required`);
+  }
+  const generated = requiredObject(data.generated_contracts, `${relative}.generated_contracts`);
+  requireFields(generated, ["status", "source_refs", "command_refs", "drift_command_refs"], `${relative}.generated_contracts`);
+  for (const commandRef of [...asList(generated.command_refs), ...asList(generated.drift_command_refs)]) if (!Object.hasOwn(commands, commandRef)) fail(`${relative}: generated_contracts references missing command ${commandRef}`);
+  const group = asString(data.parallel_group);
+  if (group) parallelGroups.set(group, [...(parallelGroups.get(group) || []), { id, relative, writes }]);
+  tickets.set(id, { id, relative, data, state, wave: data.wave, deps: ids(data.depends_on), blockers: ids(data.blocked_by), writes, reads, actionIds });
 }
 
-for (const d of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).filter((e) => e.isDirectory() && /^wave_\d+_/.test(e.name)) : []) {
-  const wp = read(path.join(plans, d.name, "plan.md"));
-  if (!wp) fail(`${d.name}: missing plan.md`);
-  ["End-to-End Outcome", "Implementation Order", "Slice Strategy"].forEach((s) => wp && !new RegExp(s, "i").test(wp) && fail(`${d.name}/plan.md: missing ${s}`));
-  if (wp && !/Parallelization|Parallel Work|Isolation/i.test(wp)) fail(`${d.name}/plan.md: missing isolation notes`);
-  if (wp && !/Resume|Pause|Status/i.test(wp)) fail(`${d.name}/plan.md: missing status notes`);
-  if (wp && !/Operational Path|Path Coverage|Unhappy|Failure/i.test(wp)) fail(`${d.name}/plan.md: missing path coverage`);
-  if (wp && !e2eDefinition.test(wp)) fail(`${d.name}/plan.md: missing capability inventory/end-to-end definition coverage`);
-  if (wp && !/Security|Privacy|Performance|Resilience|Observability|Recovery|Data Integrity|Production|Release|Supply Chain|SBOM|Provenance|N\/A|Not Applicable/i.test(wp)) fail(`${d.name}/plan.md: missing NFR/operations/supply-chain coverage`);
-  if (wp && !generated.test(wp)) fail(`${d.name}/plan.md: missing generated contract/codegen coverage`);
-  if (wp && !frontend.test(wp)) fail(`${d.name}/plan.md: missing frontend/client UX coverage or N/A evidence`);
-  if (wp && !slice.test(wp)) fail(`${d.name}/plan.md: missing vertical slice strategy or horizontal exception`);
-  if (wp && !coverage.test(wp)) fail(`${d.name}/plan.md: missing unit/E2E test or coverage ownership`);
-  if (wp && !testFirst.test(wp)) fail(`${d.name}/plan.md: missing test-first implementation order`);
-  if (wp && !cleanRebuild.test(wp)) fail(`${d.name}/plan.md: missing clean rebuild/incremental strategy`);
-  if (wp && !generationMap.test(wp)) fail(`${d.name}/plan.md: missing generation map/source-contract coverage`);
-  if (wp && !strongBoundary.test(wp)) fail(`${d.name}/plan.md: missing strong boundary type coverage`);
-  if (wp && !boundedParallel.test(wp)) fail(`${d.name}/plan.md: missing bounded parallel-agent guidance or N/A evidence`);
-  if (!exists(path.join(plans, d.name, "tickets"))) fail(`${d.name}: missing tickets/`);
-}
-for (const [id, t] of tickets) {
-  const db = depBlock(id);
-  if (!db) fail(`_dependencies.yaml: missing ${id}`);
-  if (db && !same(list(db, "depends_on").sort(), t.deps.slice().sort())) fail(`_dependencies.yaml: ${id}.depends_on differs`);
-  if (db && !same(list(db, "blocked_by").sort(), t.blocked.slice().sort())) fail(`_dependencies.yaml: ${id}.blocked_by differs`);
-  for (const dep of t.deps) {
-    if (!tickets.has(dep)) fail(`${t.rel}: missing dependency ${dep}`);
-    if (tickets.get(dep)?.wave > t.wave) fail(`${t.rel}: depends on later-wave ${dep}`);
-    if (!list(depBlock(dep), "unblocks").includes(id)) fail(`_dependencies.yaml: ${dep}.unblocks missing ${id}`);
+const ticketIds = [...tickets.keys()];
+for (const [name, index] of [["_registry.yaml", registry], ["_status.yaml", statusIndex], ["_dependencies.yaml", dependencyIndex], ["_scope.yaml", scopeIndex]]) if (!exactSet(sorted(Object.keys(index)), sorted(ticketIds))) fail(`${name}: ticket IDs must exactly reconcile with ticket files`);
+for (const ticket of tickets.values()) {
+  const registryRow = requiredObject(registry[ticket.id], `_registry.yaml.${ticket.id}`);
+  requireFields(registryRow, ["path", "wave", "lifecycle"], `_registry.yaml.${ticket.id}`);
+  if (registryRow.path !== ticket.relative || registryRow.wave !== ticket.wave || registryRow.lifecycle !== ticket.state) fail(`_registry.yaml.${ticket.id}: path/wave/lifecycle differs from ticket`);
+  const statusRow = requiredObject(statusIndex[ticket.id], `_status.yaml.${ticket.id}`);
+  requireFields(statusRow, ["lifecycle", "current_proof", "resume_notes", "affected_spec_refs"], `_status.yaml.${ticket.id}`);
+  if (statusRow.lifecycle !== ticket.state) fail(`_status.yaml.${ticket.id}: lifecycle differs from ticket`);
+  if (!["blocked", "partial"].includes(ticket.state) && !asString(statusRow.current_proof)) fail(`_status.yaml.${ticket.id}: current_proof required`);
+  for (const ref of requiredList(statusRow.affected_spec_refs, `_status.yaml.${ticket.id}.affected_spec_refs`, { empty: true })) validRef(ref, `_status.yaml.${ticket.id}.affected_spec_refs`, { requiredAnchor: true });
+  const dependencyRow = requiredObject(dependencyIndex[ticket.id], `_dependencies.yaml.${ticket.id}`);
+  requireFields(dependencyRow, ["depends_on", "blocked_by", "unblocks"], `_dependencies.yaml.${ticket.id}`);
+  if (!exactSet(sorted(ids(dependencyRow.depends_on)), sorted(ticket.deps))) fail(`_dependencies.yaml.${ticket.id}: depends_on differs from ticket`);
+  if (!exactSet(sorted(ids(dependencyRow.blocked_by)), sorted(ticket.blockers))) fail(`_dependencies.yaml.${ticket.id}: blocked_by differs from ticket`);
+  const scopeRow = requiredObject(scopeIndex[ticket.id], `_scope.yaml.${ticket.id}`);
+  requireFields(scopeRow, ["write_scope", "read_scope"], `_scope.yaml.${ticket.id}`);
+  if (!exactSet(sorted(ids(scopeRow.write_scope)), sorted(ticket.writes)) || !exactSet(sorted(ids(scopeRow.read_scope)), sorted(ticket.reads))) fail(`_scope.yaml.${ticket.id}: scopes differ from ticket`);
+  for (const dependency of [...ticket.deps, ...ticket.blockers]) {
+    if (!tickets.has(dependency)) fail(`${ticket.relative}: unknown dependency ${dependency}`);
+    if (tickets.get(dependency)?.wave > ticket.wave) fail(`${ticket.relative}: depends on later-wave ${dependency}`);
   }
-  for (const b of t.blocked) if (!tickets.has(b)) fail(`${t.rel}: missing blocker ${b}`);
-}
-for (const [g, xs] of groups) for (let i = 0; i < xs.length; i++) for (const y of xs.slice(i + 1)) {
-  if (xs[i].scopes.some((a) => y.scopes.some((b) => overlap(a, b)))) fail(`${g}: ${xs[i].rel} overlaps ${y.rel}`);
+  for (const dependency of ticket.deps) if (!ids(dependencyIndex[dependency]?.unblocks).includes(ticket.id)) fail(`_dependencies.yaml.${dependency}.unblocks: missing ${ticket.id}`);
 }
 
-if (out.length) {
+const visiting = new Set();
+const visited = new Set();
+const visit = (id, chain = []) => {
+  if (visiting.has(id)) { fail(`_dependencies.yaml: cycle ${[...chain, id].join(" -> ")}`); return; }
+  if (visited.has(id)) return;
+  visiting.add(id);
+  for (const dependency of tickets.get(id)?.deps || []) visit(dependency, [...chain, id]);
+  visiting.delete(id); visited.add(id);
+};
+for (const id of ticketIds) visit(id);
+for (const [group, members] of parallelGroups) for (let index = 0; index < members.length; index++) for (const other of members.slice(index + 1)) if (members[index].writes.some((left) => other.writes.some((right) => overlaps(left, right)))) fail(`${group}: ${members[index].relative} overlaps ${other.relative}`);
+for (const wave of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).filter((entry) => entry.isDirectory() && /^wave_\d+_/.test(entry.name)) : []) {
+  const wavePlan = read(path.join(plans, wave.name, "plan.md"));
+  if (!wavePlan) fail(`${wave.name}: missing plan.md`);
+  for (const heading of ["End-to-End Outcome", "Implementation Order", "Slice Strategy", "Isolation", "Status", "Operational Path Coverage"]) if (!section(wavePlan, heading)) fail(`${wave.name}/plan.md: missing ${heading}`);
+}
+
+if (problems.length) {
   console.log("plan lint failed");
-  out.forEach((p) => console.log(`- ${p}`));
+  for (const problem of problems) console.log(`- ${problem}`);
   process.exit(1);
 }
 console.log("plan lint ok");

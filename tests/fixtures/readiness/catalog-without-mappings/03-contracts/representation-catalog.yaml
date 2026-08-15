@@ -1,0 +1,23 @@
+catalog_version: 1
+applicability:
+  status: applicable
+  scope_refs: [CAP-USER]
+shapes:
+  - shape_id: identity.user
+    representation_class: domain
+    canonical_source: specs/03-contracts/user.schema.json#User
+    owner: identity
+    stability: internal
+    open_policy: closed
+    allowed_consumers: [identity]
+    source_contract_refs: [CONTRACT-USER]
+    mapping_refs: [MAP-USER]
+mappings:
+  - mapping_id: MAP-USER
+    from_shape: identity.user
+    to_shape: identity.unknown
+    direction: domain_to_boundary
+    allowed_differences: [field rename]
+    redaction_or_loss_policy: no loss
+    field_operations: [copy all fields]
+    verification: [contract test]

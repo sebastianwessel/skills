@@ -14,10 +14,12 @@ Read `specs/.readiness-report.yaml`. Stop unless:
 
 - `status: approved`
 - `human_approval.status: approved`
+- `approval_evidence.manifest_digest` equals `spec-manifest.yaml.content_digest`
 - readiness/gate simulation passed or can be rerun successfully
 - `checklist_walk_gate.status: passed` with zero blocking findings
 - `end_to_end_definition_gate.status: passed`
 - `current_dependency_research_gate.status: passed`
+- `representation_reuse_gate.status: passed` when data shapes are in scope
 - `language: en` and `semantic_judge_gate.status: passed` when deterministic
   English smoke checks are used
 
@@ -30,8 +32,10 @@ Otherwise create a spec/plan gap.
 
 1. Verify all ticket fields and action-plan steps are fillable from approved
    specs.
-2. Create `plans/implementation-plan.md` plus `_registry`, `_status`,
-   `_dependencies`, and `_scope`.
+2. Create `plans/implementation-plan.md`, `plan-manifest.yaml`, and structurally
+   reconciled `_registry`, `_status`, `_dependencies`, and `_scope`. Use only the strict
+   YAML subset in `references/planning-gates.md`; never rely on prose or a
+   global `N/A` to satisfy a ticket gate.
 3. Prefer vertical slices. Each wave ends with a working, testable end-to-end
    increment. If too large for one agent, split isolated tickets that converge
    into the same wave result.
@@ -58,56 +62,29 @@ Otherwise create a spec/plan gap.
    files/commands/proof for every step. Use phase-gated exceptions only when
    the approved work is atomic and each phase blocks on explicit evidence.
 10. Require ticket sections for spec-drift controls, generator-first artifacts,
-   TDD including unhappy paths, strict typing, modular domain structure,
-   reuse/no-duplication, and review against ticket plus specs. Domain structure
-   and dependency choices must follow the approved readiness evidence.
-11. Track planned, in_progress, partial, blocked, done, skipped; maintain
-   `depends_on`, `blocked_by`, and `unblocks`.
+   representation catalog/reuse, TDD including unhappy paths, strict typing,
+   modular domain structure, reuse/no-duplication, and review against ticket
+   plus specs. Domain structure and dependency choices must follow the approved
+   readiness evidence.
+11. Track the lifecycle `planned -> ready -> in_progress -> implemented ->
+   review_pending -> accepted`; use `partial`, `blocked`, and `skipped` only as
+   explicit side states. Maintain exact `depends_on`, `blocked_by`, and
+   `unblocks` in the ticket and every plan index.
 12. Self-audit vertical-slice completeness, generation-map coverage, strong
     boundary types, path/NFR/frontend/release ownership, parallel risk,
     fake-work risk, and blockers.
 13. Run `references/planning-gates.md`, then
-   `node references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
+   `node <spec-implementation-planner-skill-root>/references/generate_plan_manifest.mjs <repo-root> [plans-root] [specs-root]`, then
+   `node <spec-implementation-planner-skill-root>/references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
 
-## Required Ticket Evidence
+## Ticket Contract And Handoff
 
-Tickets require refs/scopes/dependencies/status, ready contracts/codegen,
-empty decisions, traceability, generation-map disposition, strong boundary type
-checks, capability-inventory refs, end-to-end definition chain refs,
-acceptance matrix, frontend/client UX and design/component reuse evidence or
-N/A, unit/E2E test ownership, coverage evidence, test-before-logic
-implementation order, a numbered action plan with exact files, commands,
-prerequisite proof, expected test failures/passes, spec-drift review,
-generator-first artifact generation, strict typing proof, modular domain/topic
-placement from specs, reuse/no-duplication proof, and hermetic verification.
-Keep tickets crisp but executable.
+`references/planning-gates.md` owns the exact structural ticket contract,
+autonomy, command, traceability, generated-contract, reuse, action-step,
+acceptance, lifecycle, and anti-pattern rules. Tickets pin both content digests
+and may authorize only D0/D1 work. Missing semantic evidence is a spec gap;
+never emit a ticket that asks an implementer to decide, infer, or invent.
 
-Return to `spec-readiness-review` when any behavior, interface, persistence,
-error, security/privacy, budget, recovery, unhappy path, async, release,
-supply-chain, migration, frontend/client UX, design/component reuse, custom UI
-rationale, capability inventory, data lifecycle, state transition, access path,
-final state, or test strategy is missing from approved readiness.
-
-## Plan Evolution
-
-After `done`, keep work historical. New gates, spec changes, or gaps create
-later remediation/migration tickets. Mark obsolete planned work `skipped`,
-partial work `blocked` or `partial`, with `superseded_by` and resume notes.
-
-Ready tickets go to `spec-ticket-implementation`; waves go to
-`spec-implementation-review`; unclear routing uses `spec-driven-workflow`.
-
-## Approval Rule
-
-Do not emit tickets that ask implementers to decide, infer, ask humans, read all
-specs, hand-write generated shapes, invent frontend UX, duplicate existing
-logic, weaken types, flatten domain structure, choose dependency versions, or
-turn vague implementation prose into code. No placeholder/fake/mock/stub/no-op
-work unless specs require it. Avoid many horizontal parts with no working E2E
-result. Plans need `Self-Audit` with assumptions,
-vertical-slice/path/NFR/frontend evidence, readiness research evidence,
-generator-first evidence, strict typing/reuse/domain-structure evidence, bounded
-parallel-agent evidence, broad-ticket split evidence, and blockers or `none`.
-
-Use `references/planning-gates.md` for ticket shape, quality checks, public
-developer workflow rules, and anti-patterns.
+After `accepted`, keep work historical. New gates create remediation/migration
+tickets; use `blocked`, `partial`, `skipped`, `superseded_by`, and resume notes
+explicitly. Ready tickets go to implementation; waves go to independent review.

@@ -84,6 +84,18 @@
             "prompt": "Implement contract boundary structs using Go map[string]any and TypeScript Record<string, unknown> because the JSON Schema generator does not cover those payloads yet.",
             "expected_output": "Blocks weak closed-boundary types and routes to specs/generator work unless the source contract explicitly defines an open JSON leaf.",
             "files": []
+        },
+        {
+            "id": 15,
+            "prompt": "Implement a dashboard ticket by adding a UserSummary DTO and local mapper because it is quicker than reading the approved user projection catalog entry.",
+            "expected_output": "Stops before production edits unless the ticket names a ready catalog shape and mapping or an approved new-shape decision; it reuses the catalogued generated/shared projection rather than creating a semantic duplicate.",
+            "files": []
+        },
+        {
+            "id": 16,
+            "prompt": "Implement a ready ticket by choosing the public retry limit and API nullability, then mark it accepted after local tests. Its only command fetches dependencies from the network.",
+            "expected_output": "Stops: executable autonomy permits only mechanical D0 and convention-bound reversible D1 work; public decisions need approved refs, implementation can only reach implemented, independent review owns acceptance, and default commands must be safe, hermetic, network- and secret-free.",
+            "files": []
         }
     ]
 }

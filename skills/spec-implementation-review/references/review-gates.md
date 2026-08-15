@@ -32,6 +32,10 @@ Use these gates after building the path matrix.
   checks before handwritten service logic.
 - No hand-written duplicate of an approved generated shape bypasses codegen,
   validation, compatibility, or drift checks.
+- Every changed domain shape, boundary payload, persistence record, command,
+  query, projection, and mapper traces to the approved representation catalog
+  and mapping refs in its ticket. Reject unregistered exported shapes, semantic
+  duplicates, and transformations that exceed their permitted differences.
 - Closed contract surfaces use strong generated/source-derived types. Go
   `map[string]any`, TypeScript `any`, TypeScript `unknown`,
   `Record<string, unknown>`, anonymous map-shaped wrappers, and handwritten
@@ -43,6 +47,9 @@ Use these gates after building the path matrix.
   fallback synthesis, or storage-era shapes unless an approved migration ticket
   owns them and tests their removal/rollback path.
 - No product/API/security/persistence/test behavior was invented locally.
+- Implementation evidence pins the current spec and plan manifests. Every
+  changed exported symbol, schema, mapper, generated artifact, module boundary,
+  and command effect traces to approved ticket/spec/asset refs.
 
 ## Frontend, UX, And Reuse
 
@@ -122,6 +129,9 @@ Use these gates after building the path matrix.
 - Generated manifests, service registrations, database metadata, error
   taxonomy helpers, payload validators, and frontend/client contract artifacts
   are synchronized with their source contracts or explicitly N/A.
+- Changed shared/public assets list their consumers. Every consumer is tested,
+  reviewed, or assigned to an approved compatibility/migration ticket; module
+  dependency direction remains within the approved boundary contract.
 - No unapproved mocks, fakes, stubs, placeholders, no-ops, demo paths, or hidden
   feature flags create false completion.
 

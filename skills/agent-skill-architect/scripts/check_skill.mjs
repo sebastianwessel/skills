@@ -103,9 +103,32 @@ if (!fs.existsSync(evalFile)) {
     const evals = Array.isArray(data.evals) ? data.evals : [];
     if (data.skill_name !== skillName) fail("evals/evals.json skill_name must match skill name");
     if (evals.length < 3) warn("Use at least 3 realistic eval prompts");
+    const ids = new Set();
     for (const [index, item] of evals.entries()) {
-      if (!item.prompt) fail(`Eval ${index} missing prompt`);
-      if (!item.expected_output) fail(`Eval ${index} missing expected_output`);
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        fail(`Eval ${index} must be an object`);
+        continue;
+      }
+      if (!(typeof item.id === "number" || typeof item.id === "string") || item.id === "") {
+        fail(`Eval ${index} missing scalar id`);
+      } else if (ids.has(String(item.id))) {
+        fail(`Eval ${index} duplicates id ${item.id}`);
+      } else {
+        ids.add(String(item.id));
+      }
+      if (typeof item.prompt !== "string" || !item.prompt.trim()) fail(`Eval ${index} missing prompt`);
+      if (typeof item.expected_output !== "string" || !item.expected_output.trim()) fail(`Eval ${index} missing expected_output`);
+      if (item.files !== undefined && (!Array.isArray(item.files) || item.files.some((file) => typeof file !== "string"))) {
+        fail(`Eval ${index} files must be an array of strings`);
+      }
+      if (item.fixture !== undefined && (
+        typeof item.fixture !== "object" || item.fixture === null || Array.isArray(item.fixture)
+        || typeof item.fixture.case_id !== "string" || !item.fixture.case_id
+      )) fail(`Eval ${index} fixture must contain case_id`);
+      if (item.assertions !== undefined && (!Array.isArray(item.assertions) || !item.assertions.length
+        || item.assertions.some((assertion) => typeof assertion !== "string" || !assertion.trim()))) {
+        fail(`Eval ${index} assertions must be a non-empty array of strings`);
+      }
     }
   } catch (error) {
     fail(`Invalid evals/evals.json: ${error.message}`);

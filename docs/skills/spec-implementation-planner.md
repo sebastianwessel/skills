@@ -30,7 +30,7 @@ The CLI and public skill directory are introduced in Vercel's
   tickets, next vertical slice, and test evidence.
 - Records implementation order plus `depends_on`, `blocked_by`, and `unblocks`
   relationships so agents know which tickets can start, which are blocked, and
-  what becomes available when a ticket is done.
+  what becomes available when a ticket reaches its declared accepted prerequisite.
 - Starts with shared contract/interface foundation work when parallel agents
   need stable boundaries, generated types, validators, clients, stubs,
   fixtures, or contract-test scaffolds, then isolates backend, frontend,
@@ -60,8 +60,8 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires each ticket and wave to state its slice strategy so agents know
   whether they are delivering a vertical end-to-end increment or an approved
   horizontal exception.
-- Requires unit tests, end-to-end tests, and a default 80% code coverage target
-  unless approved specs or project standards define another threshold.
+- Requires unit tests, end-to-end tests, and a coverage threshold from an
+  approved policy profile or explicit spec evidence; it never invents one.
 - Requires test-driven implementation order: tests are derived from approved
   specs, contracts/schemas, acceptance criteria, and unhappy-path definitions
   before business logic is planned or implemented.
@@ -81,6 +81,13 @@ The CLI and public skill directory are introduced in Vercel's
 - Requires modular code placement by the approved spec-defined file/folder
   structure, nested structure when useful for cohesion, reuse of existing
   modules/helpers/components/services, and no-duplication evidence.
+- Requires each data-shape ticket to name representation-catalog and mapping
+  refs, generated/shared artifacts to reuse, and any approved new-shape decision
+  before implementation agents can add exported DTOs, entities, schemas, events,
+  records, projections, or mappers.
+- Requires tickets to pin the approved spec-manifest digest, declare D0/D1-only
+  autonomy, cite reusable assets/module boundaries, and describe safe hermetic
+  verification command effects before implementation.
 - Flags tickets that are too broad for autonomous agents and requires split
   tickets when one ticket spans independently shippable behaviors, unrelated
   layers, or generator/backend/frontend/release work without frozen
@@ -96,7 +103,9 @@ The CLI and public skill directory are introduced in Vercel's
   interfaces, invent frontend look and feel, duplicate styles/components, or
   resolve missing specs.
 - Rejects placeholder, mock, fake, stub, or no-op implementation shortcuts unless the specs explicitly require test fixtures or fake providers.
-- Tracks planned, in-progress, partial, blocked, done, and skipped work so plans can pause and resume.
+- Tracks `planned → ready → in_progress → implemented → review_pending →
+  accepted`, plus explicit blocked/partial/skipped states. Only independent
+  review accepts work.
 - Syncs changed specs into indexes, impact notes, dependencies, status, and
   follow-up tickets while preserving completed ticket history.
 - Requires a plan-level self-audit that names weak assumptions, readiness
@@ -114,7 +123,8 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 
 ## Workflow
 
-1. Read the approved spec readiness report.
+1. Read the approved spec readiness report and confirm its approval evidence
+   matches `spec-manifest.yaml`.
 2. Simulate the planned ticket areas from specs.
 3. Create the plan root and indexes.
 4. Group work into vertical-slice waves with end-to-end outcomes and isolation notes.
@@ -154,6 +164,7 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 | Path | Purpose |
 | --- | --- |
 | `plans/implementation-plan.md` | Top-level implementation plan. |
+| `plans/plan-manifest.yaml` | Content-bound digest of canonical plan artifacts. |
 | `plans/_registry.yaml` | Ticket registry and file index. |
 | `plans/_status.yaml` | Ticket status tracking. |
 | `plans/_dependencies.yaml` | Ticket dependency graph. |
@@ -168,6 +179,7 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 | `skills/spec-implementation-planner/SKILL.md` | Executable agent instructions and trigger metadata. |
 | `skills/spec-implementation-planner/references/planning-gates.md` | Ticket shape, plan quality, public workflow, and verification gates. |
 | `skills/spec-implementation-planner/references/check_plan.mjs` | Deterministic plan consistency checker. |
+| `skills/spec-implementation-planner/references/generate_plan_manifest.mjs` | Rebuilds the canonical plan manifest and ticket digest pins. |
 | `skills/spec-implementation-planner/evals/evals.json` | Evaluation scenarios for the skill. |
 
 ## Validation And Safety
@@ -175,8 +187,9 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 Run the checkers after creating or changing a plan:
 
 ```bash
-node skills/spec-implementation-planner/references/check_plan.mjs .
+node <spec-implementation-planner-skill-root>/references/generate_plan_manifest.mjs .
+node <spec-implementation-planner-skill-root>/references/check_plan.mjs .
 ```
 
-Passing checks mean the plan is mechanically coherent. They do not replace
+Passing checks mean the plan is structurally coherent. They do not replace
 `spec-readiness-review` approval or semantic review.

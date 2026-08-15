@@ -28,6 +28,12 @@ npx skills add sebastianwessel/skills
   expectations, generated-artifact locations, shared/reusable module placement,
   and public entrypoint or operational asset locations. It does not need to
   enumerate every implementation file.
+- Performs bounded read-only discovery before target design and records the
+  reusable implementation surface: canonical symbols, owners, public
+  entrypoints, consumers, extension rules, and dependency direction.
+- Defines decision authority, scoped applicability/N/A records, and a versioned
+  policy profile. Agents may infer only private mechanical details that policy
+  explicitly permits.
 - Walks the checklist index and relevant topic checklist files, filling gaps or
   recording N/A evidence for topics such as auth, data, secrets, APIs, tests,
   UX, operations, release, and supply chain.
@@ -38,6 +44,10 @@ npx skills add sebastianwessel/skills
   semantics, NFRs, and public contracts so specs link instead of repeating.
 - Defines best-fit machine-readable contract/IDL/schema artifacts when
   interfaces exist.
+- Defines a representation catalog for in-scope domain, boundary, persistence,
+  command, query, and projection shapes. It records canonical ownership and
+  explicit mappings, so equivalent shapes are reused while legitimate layer
+  representations remain deliberately separate.
 - Defines patch/refactor versus contract-first clean-rebuild strategy,
   generation-map needs, strong boundary type policy, handwritten boundaries, and
   compatibility/migration stance for contract-heavy work.
@@ -50,40 +60,45 @@ npx skills add sebastianwessel/skills
 
 ## How It Works
 
-The skill drafts autonomously where defaults are safe. It asks humans only for
-missing business intent, compliance or security boundaries, irreversible
-architecture choices, public contract semantics, material side effects, or
-contradictions.
+The skill drafts autonomously only where approved policy permits a private,
+reversible mechanical choice. It asks humans for missing business intent,
+compliance or security boundaries, irreversible architecture choices, public
+contract semantics, material side effects, or contradictions.
 
 ## Workflow
 
-1. Generate or update layered specs from business/user intent to technical
+1. Discover existing reusable modules, schemas, contracts, policies, and public
+   symbols at a recorded repository revision.
+2. Create/update decision, policy, applicability, reuse, and module-boundary
+   records before assigning target structures or new abstractions.
+3. Generate or update layered specs from business/user intent to technical
    detail.
-2. Create or update the capability inventory, including user-facing,
+4. Create or update the capability inventory, including user-facing,
    admin/support, API/CLI/SDK, integration/webhook, worker/job, data lifecycle,
    and operational capabilities or explicit N/A categories.
-3. Define repository topology and the general file/folder structure by
+5. Define repository topology and the general file/folder structure by
    domain/topic, including ownership boundaries, reusable packages, components,
    modules, services, generated artifacts, public entrypoints, migrations, and
    runbooks.
-4. Research current primary docs/package metadata for dependencies and
+6. Research current primary docs/package metadata for dependencies and
    third-party solutions, including database schema/query/index guidance.
-5. Walk the checklist index plus relevant topic files and record covered, N/A,
+7. Walk the checklist index plus relevant topic files and record covered, N/A,
    or gap evidence.
-6. Normalize requirements into traceable, verifiable statements.
-7. Define source-of-truth contracts and link human specs to them.
-8. Define frontend/client access, UX states, accessibility, design reuse, and
+8. Normalize requirements into traceable, verifiable statements.
+9. Define source-of-truth contracts and link human specs to them.
+10. Define frontend/client access, UX states, accessibility, design reuse, and
    component reuse or N/A evidence.
-9. Define data lifecycle, classification, PII handling, retention,
+11. Define data lifecycle, classification, PII handling, retention,
    deletion/export, unhappy paths, runtime semantics, security/privacy,
    observability, data integrity, recovery, performance, production, release,
    and supply chain.
-10. For contract-heavy boundaries, define clean-rebuild strategy, generation map,
+12. For contract-heavy boundaries, define clean-rebuild strategy, generation map,
    strong boundary type policy, generated outputs/checks, and handwritten
    remainder.
-11. Sync registries/provenance and prune stale duplicates.
-12. Self-audit assumptions, gaps, contradictions, and skipped evidence.
-13. Hand off to `spec-readiness-review` for semantic review, deterministic
+13. Sync registries/provenance, calculate the spec-manifest digest, and prune
+    stale duplicates.
+14. Self-audit assumptions, gaps, contradictions, and skipped evidence.
+15. Hand off to `spec-readiness-review` for semantic review, deterministic
     checks, readiness report, and approval.
 
 ## Modes

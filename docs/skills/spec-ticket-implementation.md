@@ -15,11 +15,14 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## What It Does
 
-- Confirms specs are approved before editing.
+- Confirms the ticket's pinned spec-manifest digest matches current approved
+  readiness before editing.
 - Runs configured spec and plan checkers.
 - Reads only ticket `spec_refs` and `read_scope`.
 - Writes only files listed by `write_scope`.
 - Stops on missing behavior, missing contracts, unresolved decisions, blocked dependencies, or insufficient scope.
+- Allows only D0 mechanical work and D1 policy-constrained private/reversible
+  choices; all new D2/D3 choices are blockers.
 - Stops when a full-slice ticket can only be partially implemented and routes to
   the planner for a split before production edits.
 - Implements approved interfaces/contracts first when they are in scope, using
@@ -37,6 +40,9 @@ The CLI and public skill directory are introduced in Vercel's
   and drift checks are in place.
 - Blocks weak closed-boundary types unless the source contract explicitly
   defines an open JSON leaf.
+- Blocks an unregistered exported DTO, entity, schema, event, record,
+  projection, or mapper. Implementers reuse approved catalogued shapes and
+  mappings, or stop for an approved new-shape decision.
 - Requires every acceptance matrix row to be implemented, tested, verified, N/A
   with spec evidence, or blocked; blocked rows make the ticket partial.
 - Requires happy-path and unhappy-path tests, proper error handling, logging through project conventions, and no unapproved mocks or fake implementations.
@@ -49,7 +55,9 @@ The CLI and public skill directory are introduced in Vercel's
 - Preserves requirement traceability plus production/release, configuration,
   dependency, SBOM/provenance, vulnerability, and license expectations when in
   scope.
-- Runs a ticket-level implementation-review-judge loop before marking work done.
+- Records an implementation-evidence manifest with changed symbols, approved
+  asset/module refs, command effects, and consumer impact before independent
+  review. It may mark work `implemented` or `review_pending`, never `accepted`.
 - Keeps default verification hermetic and separates opt-in external integration checks.
 
 ## How It Works
@@ -61,7 +69,8 @@ The skill starts with preflight checks, maps approved requirement IDs, generated
 1. Confirm approved specs and valid plan readiness.
 2. Run baseline verification.
 3. Parse ticket frontmatter and readiness fields.
-4. Confirm dependencies are done or merged.
+4. Confirm dependencies are accepted, unless a ticket names an approved lower
+   prerequisite and its exact evidence.
 5. Read project conventions and scoped specs only.
 6. Confirm frontend/client UX, design-source reuse, and component reuse
    expectations or explicit N/A evidence when relevant.
@@ -78,7 +87,8 @@ The skill starts with preflight checks, maps approved requirement IDs, generated
 12. Modify only `write_scope`.
 13. Run ticket, project, contract, and drift verification.
 14. Run the implementation-review-judge loop.
-15. Record files changed and completion evidence.
+15. Record files changed, symbols, command effects, consumer impact, and
+    implementation evidence; hand off for independent review.
 
 ## Included Files
 

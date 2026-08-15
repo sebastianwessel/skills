@@ -23,6 +23,10 @@ The CLI and public skill directory are introduced in Vercel's
   implementation review, route feedback.
 - Blocks planning until specs pass readiness review and blocks implementation
   until tickets are ready.
+- Pins approval, planning, tickets, implementation evidence, and review to the
+  same immutable spec revision; a relevant change routes work backward.
+- Uses `planned → ready → in_progress → implemented → review_pending → accepted`.
+  Only independent review can set `accepted`.
 - Forces a patch/refactor versus contract-first clean-rebuild decision before
   agents edit contract-heavy boundaries with stale aliases, fallback synthesis,
   handwritten mirrors, or drifting protocol/language/storage surfaces.
@@ -35,13 +39,14 @@ The CLI and public skill directory are introduced in Vercel's
 ## How It Works
 
 The skill starts by identifying current artifacts: specs, readiness report,
-plans, ticket status, implementation diff, and review findings. It then selects
-the current stage and applies the corresponding gate from
+plans, ticket status, implementation diff, review findings, pinned digests, and
+decision/policy authority. It then selects the current stage and applies the corresponding gate from
 `references/process-checklist.md`.
 
 ## Workflow
 
-1. Orient: find current artifacts, stage, and clean-rebuild boundary decision.
+1. Orient: find current artifacts, digest/policy authority, stage, and
+   clean-rebuild boundary decision.
 2. Specify: use `spec-architect` until canonical specs are ready for review.
 3. Readiness review: use `spec-readiness-review` until specs are approved.
 4. Plan: use `spec-implementation-planner` for waves, tickets, dependencies,
@@ -50,9 +55,10 @@ the current stage and applies the corresponding gate from
 5. Implement: use `spec-ticket-implementation` for one ready ticket at a time.
 6. Review: use `spec-implementation-review` for wave, partial-wave, merge, or
    release acceptance.
-7. Route feedback to the owning skill and repeat until no blocking findings
-   remain.
-8. Self-audit stage choice, gate evidence, owner routing, skipped checks, and
+7. Route missing normative content to the architect, stale/failed evidence to
+   readiness, and implementation/plan defects to their owning stage.
+8. Repeat until no blocking findings remain.
+9. Self-audit stage choice, gate evidence, owner routing, skipped checks, and
    residual uncertainty.
 
 ## Included Files

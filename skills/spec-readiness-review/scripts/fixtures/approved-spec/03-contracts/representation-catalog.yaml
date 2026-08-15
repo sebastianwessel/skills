@@ -1,0 +1,32 @@
+catalog_version: 1
+applicability:
+  status: applicable
+  scope_refs: [CAP-FIXTURE-001]
+shapes:
+  - shape_id: identity.user
+    representation_class: domain
+    canonical_source: 03-contracts/user.schema.json#User
+    owner: identity-domain
+    stability: versioned
+    open_policy: closed
+    allowed_consumers: [identity-service]
+    source_contract_refs: [CONTRACT-USER-001]
+    mapping_refs: [MAP-USER-READ]
+  - shape_id: identity.user-read
+    representation_class: boundary
+    canonical_source: 03-contracts/user.schema.json#User
+    owner: identity-api
+    stability: versioned
+    open_policy: closed
+    allowed_consumers: [identity-api]
+    source_contract_refs: [CONTRACT-USER-READ-001]
+    mapping_refs: [MAP-USER-READ]
+mappings:
+  - mapping_id: MAP-USER-READ
+    from_shape: identity.user
+    to_shape: identity.user-read
+    direction: domain_to_boundary
+    allowed_differences: [omit_internal_status]
+    redaction_or_loss_policy: internal status is never exposed
+    field_operations: [internal_status:omit]
+    verification: [tests/user-read.contract.test]
