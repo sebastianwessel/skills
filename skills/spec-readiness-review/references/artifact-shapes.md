@@ -14,7 +14,8 @@
 - `specs/.readiness-report.yaml`, `spec-manifest.yaml`, `_registry.yaml`,
   `_provenance.yaml`
 - `00-applicability.yaml`, `00-decision-authority.yaml`,
-  `00-policy-profile.yaml`, `00-reuse-inventory.yaml`, `00-module-boundaries.yaml`
+  `00-policy-profile.yaml`, `00-reuse-inventory.yaml`, `00-module-boundaries.yaml`,
+  `00-traceability.yaml`
 - `00-vision.md`, `00-stack.md`, `00-conventions.md`,
   `00-architecture-overview.md`, `00-file-structure.md`, `glossary.md`
 - `01-domains/`, `02-capabilities/`, `03-contracts/`, `03-flows/`
@@ -174,6 +175,38 @@ profile/source for each reference. Defaults are limited to D0/D1 mechanics
 explicitly allowed by that profile. Framework conventions, architecture style,
 observability, release/operations, security, data, external dependencies, and
 public behavior are never inferred merely because they are common.
+
+`00-traceability.yaml` is the compact source of truth for coverage. It links
+requirements to capabilities, success/failure paths, contracts, acceptance, and
+verification. Markdown explains rationale; it does not duplicate this graph.
+
+```yaml
+traceability_version: 1
+requirements:
+  - requirement_id: REQ-IDENTITY-001
+    capability_ids: [CAP-IDENTITY-USER]
+    path_ids: [PATH-IDENTITY-USER-SUCCESS, PATH-IDENTITY-USER-INVALID]
+    acceptance_ids: [ACCEPT-IDENTITY-USER]
+capabilities:
+  - capability_id: CAP-IDENTITY-USER
+    requirement_ids: [REQ-IDENTITY-001]
+    path_ids: [PATH-IDENTITY-USER-SUCCESS, PATH-IDENTITY-USER-INVALID]
+paths:
+  - path_id: PATH-IDENTITY-USER-SUCCESS
+    capability_ids: [CAP-IDENTITY-USER]
+    requirement_ids: [REQ-IDENTITY-001]
+    kind: success
+    contract_refs: [CONTRACT-USER-001]
+    acceptance_ids: [ACCEPT-IDENTITY-USER]
+acceptance:
+  - acceptance_id: ACCEPT-IDENTITY-USER
+    requirement_ids: [REQ-IDENTITY-001]
+    path_ids: [PATH-IDENTITY-USER-SUCCESS]
+    verification_refs: [tests/contracts/user.test.ts]
+```
+
+Every ID and edge is exact and resolvable. In-scope failure paths cannot be
+silently omitted because an unrelated file mentions tests or verification.
 
 ## Inference Policy
 

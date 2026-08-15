@@ -42,7 +42,8 @@ records every allowed mapping.
 3. Run the approval-time spec judge loop from `references/readiness-gates.md`.
 4. Verify the capability inventory and end-to-end definition chain across
    feature, UX/client, API, data lifecycle, state transition, async, and ops
-   paths.
+   paths. Validate the reciprocal `00-traceability.yaml` graph from
+   requirement through capability and path to testable acceptance.
 5. Walk relevant checklist indexes and topic files; record `covered`,
    `not_applicable`, or `gap` evidence and block on any relevant gap.
 6. Verify dependency and third-party solution specs use current stable versions

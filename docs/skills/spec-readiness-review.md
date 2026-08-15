@@ -21,14 +21,16 @@ npx skills add sebastianwessel/skills
   while readiness approval, provenance, and judge evidence must name that exact
   digest.
 - Requires structured applicability/N/A, decision-authority, policy-profile,
-  reuse-inventory, and module-boundary artifacts before approval.
+  reuse-inventory, module-boundary, and reciprocal traceability artifacts before
+  approval.
 - Repairs explicit spec gaps and reruns readiness checks.
 - Blocks planning when behavior, contracts, failures, security, recovery,
   release, tests, generation mapping, or strong boundary type policy is missing.
 - Blocks planning when in-scope data representations lack a catalogued canonical
   owner, allowed mapping, or proof that an intentionally different projection or
   persistence record is not a semantic duplicate.
-- Blocks planning when specs lack a capability inventory or end-to-end
+- Blocks planning when specs lack a capability inventory, a relational graph
+  from requirement through capability and path to testable acceptance, or end-to-end
   definition chains for UX/client, API, data lifecycle, state transition,
   async/integration, operational, acceptance, and verification paths.
 - Blocks planning when specs omit the general file/folder structure by

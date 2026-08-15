@@ -52,7 +52,10 @@ Otherwise create a spec/plan gap.
 7. Plan test-driven order: derive unit, contract, integration, and E2E tests
    from specs/contracts/acceptance/unhappy paths before business logic tickets
    implement the behavior those tests prove.
-8. Map capability inventory rows and end-to-end definition chains into tickets:
+8. Map the approved `00-traceability.yaml` requirement, capability, path, and
+   acceptance IDs into tickets and local testable acceptance rows; collectively
+   cover every non-N/A source ID. Map capability inventory rows and end-to-end
+   definition chains into tickets:
    actor/consumer, entrypoint/reachability, contracts, data lifecycle, states,
    side effects, permissions, recovery, observability, acceptance,
    verification, NFRs, operations, supply chain, frontend/client UX,

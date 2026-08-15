@@ -8,7 +8,7 @@ approval_evidence:
   approver_id: fixture-owner
   approved_at: 2026-08-15T12:05:00Z
   approval_ref: FIXTURE-APPROVAL-001
-  manifest_digest: sha256:ea0fb331c294bff5ee4f0dc3cfaffab73415175f16d3901ad3d2004074416cec
+  manifest_digest: sha256:fc5010d0f14b2edb55e48902f9cb9fe33bb0d196ec674756ed4fb02203571423
   scope_refs: [CAP-FIXTURE-001]
 gates:
   no_drift_gate: {status: passed}

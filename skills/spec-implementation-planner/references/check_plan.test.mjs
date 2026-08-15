@@ -24,6 +24,11 @@ parallel_group: ""
 depends_on: ${dependsOn}
 blocked_by: []
 spec_refs: [specs/scope.md#REQ-001]
+traceability:
+  requirement_ids: [REQ-001]
+  capability_ids: [CAP-001]
+  path_ids: [PATH-001]
+  acceptance_ids: [ACCEPT-001]
 write_scope: [packages/identity/src]
 read_scope: [packages/contracts/src/user.ts]
 contract_readiness:
@@ -97,6 +102,7 @@ action_steps:
     expected_proof: evidence recorded
 acceptance:
   - id: ACC-001
+    traceability_acceptance_ids: [ACCEPT-001]
     requirement_refs: [specs/scope.md#REQ-001]
     test_refs: [packages/identity/src/user.test.ts#creates_user]
     command_refs: [CMD-UNIT]
@@ -121,12 +127,19 @@ try {
   write("specs/spec-manifest.yaml", "spec_manifest_version: 1\ncontent_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nartifacts: []\n");
   write("specs/scope.md", "# Scope\nREQ-001\n");
   write("specs/contracts.md", "# Contracts\nCON-USER\n");
+  write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
   write("plans/implementation-plan.md", "# Plan\n\n## Self-Audit\nEvidence.\n");
   write("plans/wave_01_identity/plan.md", "## End-to-End Outcome\nWorks.\n\n## Implementation Order\nOrdered.\n\n## Slice Strategy\nVertical.\n\n## Isolation\nIsolated.\n\n## Status\nReady.\n\n## Operational Path Coverage\nCovered.\n");
   write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
   indexes();
   execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
   assert.equal(run().ok, true, "valid structural plan should pass");
+
+  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket().replace("capability_ids: [CAP-001]", "capability_ids: [CAP-UNKNOWN]"));
+  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  assert.match(run().output, /unknown traceability capability_ids ID CAP-UNKNOWN/, "unknown traceability IDs must fail");
+  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
+  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
 
   write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket().replace("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"));
   assert.match(run().output, /spec_manifest_digest must equal/, "stale ticket digest must fail");

@@ -1,5 +1,5 @@
 spec_manifest_version: 1
-content_digest: sha256:ea0fb331c294bff5ee4f0dc3cfaffab73415175f16d3901ad3d2004074416cec
+content_digest: sha256:fc5010d0f14b2edb55e48902f9cb9fe33bb0d196ec674756ed4fb02203571423
 artifacts:
   - path: 00-applicability.yaml
     sha256: sha256:7daf1fc473bb9f18585d5b3ff91a22de0c77b1f880f0d877ca1c7aa0a8d95c71
@@ -19,6 +19,8 @@ artifacts:
     sha256: sha256:1a01e76a0f27ee96430f0d90d2e5cbdf364d6a784af85fee30a8acf0337b4848
   - path: 00-stack.md
     sha256: sha256:7d22e72cfe8f892dde63882a28d4ccc28fc27d5348183508cc13b1c52e09b073
+  - path: 00-traceability.yaml
+    sha256: sha256:faafbfcf3354daa5c986795feb8cc4b974146c2d446edce7162c937dbeb88e3e
   - path: 00-vision.md
     sha256: sha256:55e52bab8909fccd54187a0417e64f5c640af8f1b1f719e749f0b929262f469c
   - path: 02-capabilities/capability-inventory.md
@@ -35,5 +37,5 @@ artifacts:
     sha256: sha256:fcc6fcbcc26ad22744312d2180c709d4dd9844034fcfb76c4b3365da3846e5c1
 provenance:
   source_revision: fixture-revision
-  generated_at: 2026-08-15T09:25:41.796Z
+  generated_at: 2026-08-15T09:36:38.078Z
   generator: spec-manifest/v1

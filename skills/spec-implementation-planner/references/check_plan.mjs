@@ -182,13 +182,16 @@ const requiredSections = ["Goal", "Context Digest", "Implementation Approach", "
 const plan = read(path.join(plans, "implementation-plan.md"));
 const specReady = read(path.join(specs, ".readiness-report.yaml"));
 const specManifest = read(path.join(specs, "spec-manifest.yaml"));
+const traceabilityText = read(path.join(specs, "00-traceability.yaml"));
 const planManifestText = read(path.join(plans, "plan-manifest.yaml"));
 if (!plan) fail("plans/: missing implementation-plan.md");
 for (const file of ["_registry.yaml", "_status.yaml", "_dependencies.yaml", "_scope.yaml"]) if (plan && !exists(path.join(plans, file))) fail(`plans/: missing ${file}`);
-let readiness = {}, manifest = {}, planManifest = {};
+let readiness = {}, manifest = {}, traceability = {}, planManifest = {};
 try { readiness = parseYaml(specReady, `${specsName}/.readiness-report.yaml`); }
 catch (error) { fail(error.message); }
 try { manifest = parseYaml(specManifest, `${specsName}/spec-manifest.yaml`); }
+catch (error) { fail(error.message); }
+try { traceability = parseYaml(traceabilityText, `${specsName}/00-traceability.yaml`); }
 catch (error) { fail(error.message); }
 try { planManifest = parseYaml(planManifestText, `${plansName}/plan-manifest.yaml`); }
 catch (error) { fail(error.message); }
@@ -202,6 +205,20 @@ if (plan && !Array.isArray(manifest.artifacts)) fail(`${specsName}/spec-manifest
 if (plan && !/^sha256:[a-f0-9]{64}$/.test(manifestDigest)) fail(`${specsName}/spec-manifest.yaml: content_digest must be a sha256 digest`);
 if (plan && approvalEvidence.status !== "approved") fail(`${specsName}/.readiness-report.yaml: approval_evidence.status must be approved`);
 if (plan && approvalEvidence.manifest_digest !== manifestDigest) fail(`${specsName}/.readiness-report.yaml: approval_evidence.manifest_digest must equal spec-manifest.yaml.content_digest`);
+if (plan && !exists(path.join(specs, "00-traceability.yaml"))) fail(`${specsName}/: missing 00-traceability.yaml`);
+if (plan && traceability.traceability_version !== 1) fail(`${specsName}/00-traceability.yaml: traceability_version must be 1`);
+const traceabilityIds = {};
+for (const [plural, idField] of [["requirements", "requirement_id"], ["capabilities", "capability_id"], ["paths", "path_id"], ["acceptance", "acceptance_id"]]) {
+  const seen = new Set();
+  const rows = requiredList(traceability[plural], `${specsName}/00-traceability.yaml.${plural}`);
+  for (const row of rows) {
+    const id = asString(isObject(row) ? row[idField] : "");
+    if (!id) fail(`${specsName}/00-traceability.yaml.${plural}: item missing ${idField}`);
+    else if (seen.has(id)) fail(`${specsName}/00-traceability.yaml.${plural}: duplicate ${idField} ${id}`);
+    else seen.add(id);
+  }
+  traceabilityIds[plural] = seen;
+}
 if (plan && planManifest.plan_manifest_version !== 1) fail(`${plansName}/plan-manifest.yaml: plan_manifest_version must be 1`);
 if (plan && !/^sha256:[a-f0-9]{64}$/.test(planManifestDigest)) fail(`${plansName}/plan-manifest.yaml: content_digest must be a sha256 digest`);
 if (plan && planManifest.source_spec_manifest_digest !== manifestDigest) fail(`${plansName}/plan-manifest.yaml: source_spec_manifest_digest must equal spec-manifest.yaml.content_digest`);
@@ -245,7 +262,7 @@ for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.inc
   let data, body;
   try { ({ data, body } = frontmatter(read(file), relative)); }
   catch (error) { fail(error.message); continue; }
-  const fields = ["id", "title", "wave", "lifecycle", "spec_manifest_digest", "plan_manifest_digest", "parallel_group", "depends_on", "blocked_by", "spec_refs", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
+  const fields = ["id", "title", "wave", "lifecycle", "spec_manifest_digest", "plan_manifest_digest", "parallel_group", "depends_on", "blocked_by", "spec_refs", "traceability", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
   requireFields(data, fields, relative);
   noUnknownFields(data, fields, relative);
   const id = asString(data.id);
@@ -263,6 +280,20 @@ for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.inc
   for (const name of requiredSections) if (!section(body, name)) fail(`${relative}: missing or empty ${name}`);
   const refs = requiredList(data.spec_refs, `${relative}.spec_refs`);
   for (const ref of refs) validRef(ref, `${relative}.spec_refs`, { requiredAnchor: true });
+  const trace = requiredObject(data.traceability, `${relative}.traceability`);
+  requireFields(trace, ["requirement_ids", "capability_ids", "path_ids", "acceptance_ids"], `${relative}.traceability`);
+  const ticketTraceability = {};
+  for (const [field, source] of [["requirement_ids", "requirements"], ["capability_ids", "capabilities"], ["path_ids", "paths"], ["acceptance_ids", "acceptance"]]) {
+    const values = requiredList(trace[field], `${relative}.traceability.${field}`, { empty: state === "skipped" });
+    const seen = new Set();
+    for (const value of values) {
+      const id = asString(value);
+      if (!id || !traceabilityIds[source].has(id)) fail(`${relative}: unknown traceability ${field} ID ${id || "<empty>"}`);
+      else if (seen.has(id)) fail(`${relative}: duplicate traceability ${field} ID ${id}`);
+      else seen.add(id);
+    }
+    ticketTraceability[field] = seen;
+  }
   const writes = requiredList(data.write_scope, `${relative}.write_scope`);
   const reads = requiredList(data.read_scope, `${relative}.read_scope`);
   for (const scope of [...writes, ...reads]) if (typeof scope !== "string" || !scope || path.isAbsolute(scope) || scope.includes("..")) fail(`${relative}: unsafe scope ${scope}`);
@@ -321,19 +352,25 @@ for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.inc
   }
   const acceptance = requiredList(data.acceptance, `${relative}.acceptance`);
   const acceptanceIds = uniqueIds(acceptance, `${relative}.acceptance`);
+  const localTraceabilityAcceptance = new Set();
   for (const row of acceptance) {
     const item = requiredObject(row, `${relative}.acceptance`);
-    requireFields(item, ["id", "requirement_refs", "test_refs", "command_refs", "expected_outcome", "lifecycle"], `${relative}.acceptance.${item.id || "?"}`);
+    requireFields(item, ["id", "traceability_acceptance_ids", "requirement_refs", "test_refs", "command_refs", "expected_outcome", "lifecycle"], `${relative}.acceptance.${item.id || "?"}`);
     if (!asString(item.expected_outcome)) fail(`${relative}: acceptance ${item.id} missing expected_outcome`);
     if (!lifecycle.includes(item.lifecycle)) fail(`${relative}: acceptance ${item.id} invalid lifecycle`);
     if (active && ["implemented", "review_pending", "accepted"].includes(item.lifecycle)) fail(`${relative}: active ticket cannot pre-mark acceptance ${item.id} as ${item.lifecycle}`);
     for (const ref of requiredList(item.requirement_refs, `${relative}.acceptance.${item.id}.requirement_refs`)) validRef(ref, `${relative}.acceptance.${item.id}.requirement_refs`, { requiredAnchor: true });
+    for (const traceId of requiredList(item.traceability_acceptance_ids, `${relative}.acceptance.${item.id}.traceability_acceptance_ids`)) {
+      if (!ticketTraceability.acceptance_ids.has(traceId)) fail(`${relative}: acceptance ${item.id} references traceability acceptance outside ticket ${traceId}`);
+      else localTraceabilityAcceptance.add(traceId);
+    }
     requiredList(item.test_refs, `${relative}.acceptance.${item.id}.test_refs`);
     for (const commandRef of requiredList(item.command_refs, `${relative}.acceptance.${item.id}.command_refs`)) if (!Object.hasOwn(commands, commandRef)) fail(`${relative}: acceptance ${item.id} references missing command ${commandRef}`);
   }
   const coveredAcceptance = new Set(actionSteps.flatMap((step) => ids(step.acceptance_refs)));
   for (const acceptanceId of acceptanceIds) if (!coveredAcceptance.has(acceptanceId)) fail(`${relative}: acceptance ${acceptanceId} is not covered by an action step`);
   for (const acceptanceId of coveredAcceptance) if (!acceptanceIds.has(acceptanceId)) fail(`${relative}: action step references unknown acceptance ${acceptanceId}`);
+  if (state !== "skipped" && !exactSet(sorted([...localTraceabilityAcceptance]), sorted([...ticketTraceability.acceptance_ids]))) fail(`${relative}: local acceptance rows must exactly cover traceability.acceptance_ids`);
   const representation = requiredObject(data.representation_reuse, `${relative}.representation_reuse`);
   requireFields(representation, ["status"], `${relative}.representation_reuse`);
   if (!["ready", "not_applicable"].includes(representation.status)) fail(`${relative}: invalid representation_reuse.status`);
@@ -363,10 +400,14 @@ for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.inc
   for (const commandRef of [...asList(generated.command_refs), ...asList(generated.drift_command_refs)]) if (!Object.hasOwn(commands, commandRef)) fail(`${relative}: generated_contracts references missing command ${commandRef}`);
   const group = asString(data.parallel_group);
   if (group) parallelGroups.set(group, [...(parallelGroups.get(group) || []), { id, relative, writes }]);
-  tickets.set(id, { id, relative, data, state, wave: data.wave, deps: ids(data.depends_on), blockers: ids(data.blocked_by), writes, reads, actionIds });
+  tickets.set(id, { id, relative, data, state, wave: data.wave, deps: ids(data.depends_on), blockers: ids(data.blocked_by), writes, reads, actionIds, traceability: ticketTraceability });
 }
 
 const ticketIds = [...tickets.keys()];
+for (const [field, source] of [["requirement_ids", "requirements"], ["capability_ids", "capabilities"], ["path_ids", "paths"], ["acceptance_ids", "acceptance"]]) {
+  const covered = new Set([...tickets.values()].filter((ticket) => ticket.state !== "skipped").flatMap((ticket) => [...ticket.traceability[field]]));
+  for (const id of traceabilityIds[source]) if (!covered.has(id)) fail(`${specsName}/00-traceability.yaml: ${source} ID ${id} is not covered by a non-skipped ticket`);
+}
 for (const [name, index] of [["_registry.yaml", registry], ["_status.yaml", statusIndex], ["_dependencies.yaml", dependencyIndex], ["_scope.yaml", scopeIndex]]) if (!exactSet(sorted(Object.keys(index)), sorted(ticketIds))) fail(`${name}: ticket IDs must exactly reconcile with ticket files`);
 for (const ticket of tickets.values()) {
   const registryRow = requiredObject(registry[ticket.id], `_registry.yaml.${ticket.id}`);

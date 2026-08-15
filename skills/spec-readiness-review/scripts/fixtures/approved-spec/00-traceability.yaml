@@ -1,0 +1,28 @@
+traceability_version: 1
+requirements:
+  - requirement_id: REQ-FIXTURE-001
+    capability_ids: [CAP-FIXTURE-001]
+    path_ids: [PATH-FIXTURE-SUCCESS, PATH-FIXTURE-INVALID]
+    acceptance_ids: [ACCEPT-FIXTURE-001]
+capabilities:
+  - capability_id: CAP-FIXTURE-001
+    requirement_ids: [REQ-FIXTURE-001]
+    path_ids: [PATH-FIXTURE-SUCCESS, PATH-FIXTURE-INVALID]
+paths:
+  - path_id: PATH-FIXTURE-SUCCESS
+    capability_ids: [CAP-FIXTURE-001]
+    requirement_ids: [REQ-FIXTURE-001]
+    kind: success
+    contract_refs: [CONTRACT-USER-001]
+    acceptance_ids: [ACCEPT-FIXTURE-001]
+  - path_id: PATH-FIXTURE-INVALID
+    capability_ids: [CAP-FIXTURE-001]
+    requirement_ids: [REQ-FIXTURE-001]
+    kind: validation_failure
+    contract_refs: [CONTRACT-USER-001]
+    acceptance_ids: [ACCEPT-FIXTURE-001]
+acceptance:
+  - acceptance_id: ACCEPT-FIXTURE-001
+    requirement_ids: [REQ-FIXTURE-001]
+    path_ids: [PATH-FIXTURE-SUCCESS, PATH-FIXTURE-INVALID]
+    verification_refs: [tests/contracts/user.test.ts]

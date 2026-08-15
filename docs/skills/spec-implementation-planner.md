@@ -117,7 +117,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, generated-contract ownership, ticket readiness, decision ledgers, requirement and contract traceability, spec-drift controls, generator/type plans, modularity/reuse plans, operational path coverage, acceptance test matrices, numbered action plans, review plans, and concrete verification commands.
+The skill verifies that every planned ticket can be filled from approved specs before it emits executable work. It checks for contract readiness, generated-contract ownership, ticket readiness, decision ledgers, structured requirement/capability/path/acceptance traceability, spec-drift controls, generator/type plans, modularity/reuse plans, operational path coverage, acceptance test matrices, numbered action plans, review plans, and concrete verification commands.
 
 When a gap appears, it writes a blocked readiness note instead of creating implementation work. Missing product behavior, architecture decisions, API shapes, persistence semantics, failure behavior, or test strategy return to `spec-readiness-review` for repair routing.
 
@@ -136,28 +136,31 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
    ownership when relevant.
 8. Assign unit, contract/generated, integration, end-to-end, and coverage
    verification ownership.
-9. Put test-definition and generated-test tasks before business-logic tasks for
+9. Map every approved `00-traceability.yaml` requirement, capability, path,
+   and acceptance ID to a non-skipped ticket; bind each canonical acceptance ID
+   to a ticket-local test and command-backed acceptance row.
+10. Put test-definition and generated-test tasks before business-logic tasks for
    the behavior they prove.
-10. Split over-broad tickets or add phase gates for generation, backend,
+11. Split over-broad tickets or add phase gates for generation, backend,
     auth/security, client generation, frontend, browser tests, and security
     verification.
-11. Require spec-drift controls, readiness research evidence refs,
+12. Require spec-drift controls, readiness research evidence refs,
     generator-first type/interface/class artifact planning, strict typing,
     test-first unhappy-path coverage, domain/topic structure,
     reuse/no-duplication, and review against ticket plus specs.
-12. Split tickets until each active ticket has one bounded deliverable or an
+13. Split tickets until each active ticket has one bounded deliverable or an
     approved phase-gated exception.
-13. Write implementation-ready tickets with compact context digests and
+14. Write implementation-ready tickets with compact context digests and
     numbered action plans that state preflight, contract/codegen, test-first,
     implementation, docs/status, and verification steps.
-14. Record a plan-level self-audit.
-15. Update plan impact notes when specs changed.
-16. Verify registry, dependencies, unblocks links, scope, status, slice strategy,
+15. Record a plan-level self-audit.
+16. Update plan impact notes when specs changed.
+17. Verify registry, dependencies, unblocks links, scope, status, slice strategy,
     test-first order, path coverage, frontend/client ownership,
     generated-contract ownership, generation-map coverage, strong boundary type
     disposition, strict typing, modularity/reuse, review plan, NFR ownership,
     test coverage, action-plan precision, and ticket readiness.
-17. Run plan and wave checker scripts.
+18. Run plan and wave checker scripts.
 
 ## Output Files
 

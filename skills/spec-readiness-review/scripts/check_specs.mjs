@@ -176,6 +176,59 @@ function validateArtifactContracts() {
   }
 }
 
+function validateTraceability(registry) {
+  const file = "00-traceability.yaml";
+  const trace = structured(file);
+  if (!trace || trace.traceability_version !== 1) { fail(`${file}.traceability_version must be 1`); return; }
+  const groups = [["requirements", "requirement_id"], ["capabilities", "capability_id"], ["paths", "path_id"], ["acceptance", "acceptance_id"]];
+  const indexes = new Map();
+  for (const [group, idField] of groups) {
+    const records = trace[group];
+    if (!Array.isArray(records) || !records.length) { fail(`${file}.${group} must be a non-empty list`); indexes.set(group, new Map()); continue; }
+    const values = new Map();
+    for (const item of records) {
+      const id = item?.[idField];
+      if (!item || typeof item !== "object" || Array.isArray(item) || !isId(id) || values.has(id)) fail(`${file}.${group} needs unique ${idField} values`);
+      else values.set(id, item);
+    }
+    indexes.set(group, values);
+  }
+  const requirements = indexes.get("requirements"), capabilities = indexes.get("capabilities"), paths = indexes.get("paths"), acceptance = indexes.get("acceptance");
+  const refs = (values, target, label) => {
+    if (!isStringList(values, 1)) { fail(`${label} must be a non-empty ID list`); return; }
+    for (const id of values) if (!target.has(id)) fail(`${label} has unknown ID: ${id}`);
+  };
+  for (const [id, item] of requirements) {
+    refs(item.capability_ids, capabilities, `${file}.requirements.${id}.capability_ids`);
+    refs(item.path_ids, paths, `${file}.requirements.${id}.path_ids`);
+    refs(item.acceptance_ids, acceptance, `${file}.requirements.${id}.acceptance_ids`);
+    for (const capabilityId of item.capability_ids || []) if (capabilities.get(capabilityId) && !capabilities.get(capabilityId).requirement_ids?.includes(id)) fail(`${file}: ${id} is not reciprocal with capability ${capabilityId}`);
+    for (const pathId of item.path_ids || []) if (paths.get(pathId) && !paths.get(pathId).requirement_ids?.includes(id)) fail(`${file}: ${id} is not reciprocal with path ${pathId}`);
+    for (const acceptanceId of item.acceptance_ids || []) if (acceptance.get(acceptanceId) && !acceptance.get(acceptanceId).requirement_ids?.includes(id)) fail(`${file}: ${id} is not reciprocal with acceptance ${acceptanceId}`);
+  }
+  for (const [id, item] of capabilities) {
+    refs(item.requirement_ids, requirements, `${file}.capabilities.${id}.requirement_ids`);
+    refs(item.path_ids, paths, `${file}.capabilities.${id}.path_ids`);
+    for (const pathId of item.path_ids || []) if (paths.get(pathId) && !paths.get(pathId).capability_ids?.includes(id)) fail(`${file}: ${id} is not reciprocal with path ${pathId}`);
+  }
+  const registryIds = new Set(yamlStrings(registry));
+  const pathKinds = new Set(["success", "validation_failure", "authorization_denial", "not_found", "conflict", "downstream_failure", "timeout", "cancellation", "recovery", "migration", "other"]);
+  for (const [id, item] of paths) {
+    refs(item.capability_ids, capabilities, `${file}.paths.${id}.capability_ids`);
+    refs(item.requirement_ids, requirements, `${file}.paths.${id}.requirement_ids`);
+    refs(item.acceptance_ids, acceptance, `${file}.paths.${id}.acceptance_ids`);
+    if (!pathKinds.has(item.kind)) fail(`${file}.paths.${id}.kind is invalid`);
+    if (!isStringList(item.contract_refs, 1)) fail(`${file}.paths.${id}.contract_refs must be a non-empty ID list`);
+    for (const ref of item.contract_refs || []) if (!registryIds.has(ref)) fail(`${file}.paths.${id}.contract_refs has unregistered ref: ${ref}`);
+    for (const acceptanceId of item.acceptance_ids || []) if (acceptance.get(acceptanceId) && !acceptance.get(acceptanceId).path_ids?.includes(id)) fail(`${file}: ${id} is not reciprocal with acceptance ${acceptanceId}`);
+  }
+  for (const [id, item] of acceptance) {
+    refs(item.requirement_ids, requirements, `${file}.acceptance.${id}.requirement_ids`);
+    refs(item.path_ids, paths, `${file}.acceptance.${id}.path_ids`);
+    if (!isStringList(item.verification_refs, 1)) fail(`${file}.acceptance.${id}.verification_refs must be non-empty`);
+  }
+}
+
 function validateCatalog(registry) {
   const file = "03-contracts/representation-catalog.yaml";
   const catalog = structured(file);
@@ -284,6 +337,7 @@ else {
   validateReadinessReport(report, manifest);
   if (approved) {
     validateArtifactContracts();
+    validateTraceability(structured("_registry.yaml"));
     const representationScope = /\b(domain model|domain data|entity|DTO|data shape|storage shape|database record|persistence record|API payload|request payload|response payload|event payload|command|query|projection|view model)\b/i.test(text);
     const catalog = "03-contracts/representation-catalog.yaml";
     if ((representationScope || exists(catalog)) && !exists(catalog)) fail(`Missing representation catalog: ${catalog}`);

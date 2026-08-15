@@ -65,6 +65,7 @@ phase that remains blocked until the proof exists.
 Frontmatter: `id`, `title`, `wave`, `lifecycle`, `spec_manifest_digest`,
 `plan_manifest_digest`, `parallel_group`, `depends_on`,
 `blocked_by`, `spec_refs`, `write_scope`, `read_scope`, `contract_readiness`,
+`traceability`,
 `generated_contracts`, `ticket_readiness`, `slice_type`,
 `phase_gate_exception`, `representation_reuse`, `autonomy`,
 `verification_commands`, `action_steps`, `acceptance`.
@@ -181,8 +182,11 @@ checks need their own approved ticket and caller-controlled environment.
 Body sections explain the work; frontmatter carries the checkable handoff.
 Every active ticket needs one `preflight`, `contract`, `test`, `implement`,
 `verify`, and `handoff` action step. Every acceptance row links exact
-requirement anchors, test refs, command IDs, expected outcome, and lifecycle;
-each row must be owned by an action step.
+requirement anchors, test refs, command IDs, expected outcome, lifecycle, and
+one or more canonical `traceability_acceptance_ids`; each row must be owned by
+an action step. `traceability` maps the ticket to IDs in the approved
+`specs/00-traceability.yaml`. Across non-skipped tickets, every approved
+requirement, capability, path, and acceptance ID must be covered.
 
 ```yaml
 action_steps:
@@ -194,11 +198,17 @@ action_steps:
     expected_proof: test fails before implementation and passes after
 acceptance:
   - id: ACC-USER-01
+    traceability_acceptance_ids: [ACCEPT-USER-01]
     requirement_refs: [specs/01-scope.md#REQ-USER-01]
     test_refs: [packages/identity/src/user.test.ts#creates_user]
     command_refs: [CMD-UNIT]
     expected_outcome: creates a valid user through the public interface
     lifecycle: planned
+traceability:
+  requirement_ids: [REQ-USER-01]
+  capability_ids: [CAP-USER-01]
+  path_ids: [PATH-USER-CREATE]
+  acceptance_ids: [ACCEPT-USER-01]
 ```
 
 For tickets that touch data shapes, frontmatter uses this structure:

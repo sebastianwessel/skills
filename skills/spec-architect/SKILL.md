@@ -28,9 +28,11 @@ planning. Do not approve your own specs.
    boundary inventory with the inspected revision and public symbols.
 4. Create/update decision, policy-profile, and applicability records. Block on
    a normative choice without an approved authority.
-5. Create or update `02-capabilities/capability-inventory.md`; enumerate
-   user-facing, admin/support, API/CLI/SDK, integration/webhook, worker/job,
-   data lifecycle, and operational capabilities or N/A categories.
+5. Create or update `02-capabilities/capability-inventory.md` and
+   `00-traceability.yaml`; enumerate user-facing, admin/support, API/CLI/SDK,
+   integration/webhook, worker/job, data lifecycle, and operational
+   capabilities or N/A categories. Bind each requirement, capability, path,
+   and acceptance criterion by stable reciprocal IDs.
 6. Update layered specs and complete E2E success/failure/recovery paths across
    frontends, clients, consumers, integrations, or N/A.
 7. Define frontend/client access, UX/design reuse, or N/A.

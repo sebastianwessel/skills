@@ -52,7 +52,8 @@ npx skills add sebastianwessel/skills
   generation-map needs, strong boundary type policy, handwritten boundaries, and
   compatibility/migration stance for contract-heavy work.
 - Records requirement IDs, source/rationale, verification method, ownership,
-  priority/risk where relevant, and acceptance traceability.
+  priority/risk where relevant, and a reciprocal `00-traceability.yaml` graph
+  from requirements through capabilities and paths to testable acceptance.
 - Self-audits assumptions, open decisions, N/A evidence, contradictions, and
   readiness-review blockers.
 - Hands authored specs to `spec-readiness-review`; it does not approve its own
