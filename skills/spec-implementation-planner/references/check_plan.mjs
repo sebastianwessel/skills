@@ -258,7 +258,7 @@ const tickets = new Map();
 const parallelGroups = new Map();
 const catalogs = new Map();
 for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.includes(`${path.sep}tickets${path.sep}`))) {
-  const relative = path.relative(plans, file);
+  const relative = path.relative(plans, file).split(path.sep).join("/");
   let data, body;
   try { ({ data, body } = frontmatter(read(file), relative)); }
   catch (error) { fail(error.message); continue; }
