@@ -135,6 +135,10 @@ try {
   execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
   assert.equal(run().ok, true, "valid structural plan should pass");
 
+  write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\n  - capability_id: CAP-002\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
+  assert.match(run().output, /capabilities ID CAP-002 is not covered by a non-skipped ticket/, "every approved traceability ID must be planned");
+  write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
+
   write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket().replace("capability_ids: [CAP-001]", "capability_ids: [CAP-UNKNOWN]"));
   execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
   assert.match(run().output, /unknown traceability capability_ids ID CAP-UNKNOWN/, "unknown traceability IDs must fail");

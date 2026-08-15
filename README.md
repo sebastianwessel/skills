@@ -119,9 +119,11 @@ Run the non-mutating repository check before publishing skill changes:
 node scripts/check-all.mjs
 ```
 
-It validates skill packages, JavaScript syntax, eval manifests, local resource
-links, generated README state, and adversarial checker fixtures. The same
-command runs in GitHub Actions for pull requests and updates to `main`.
+It validates skill packages, JavaScript syntax, checker tests, eval manifests,
+local resource links, generated README state, and adversarial checker fixtures.
+GitHub Actions runs the same checks independently on Linux and Windows so each
+failed category is immediately visible. Run a single category locally with,
+for example, `node scripts/check-all.mjs tests`.
 
 ## Maintainer Notes
 

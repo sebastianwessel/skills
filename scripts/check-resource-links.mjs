@@ -7,18 +7,10 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { walkFiles } from "./shared-filesystem.mjs";
 
 const root = path.resolve(process.argv[2] || path.resolve(import.meta.dirname, ".."));
 const failures = [];
-const skip = new Set([".git", "node_modules", "__pycache__"]);
-
-function walk(dir) {
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    if (skip.has(entry.name)) return [];
-    const file = path.join(dir, entry.name);
-    return entry.isDirectory() ? walk(file) : [file];
-  });
-}
 
 function localTarget(raw) {
   const target = raw.trim().split("#", 1)[0];
@@ -26,7 +18,7 @@ function localTarget(raw) {
   return target.replace(/^<|>$/g, "");
 }
 
-for (const file of walk(root).filter((candidate) => candidate.endsWith(".md"))) {
+for (const file of walkFiles(root).filter((candidate) => candidate.endsWith(".md"))) {
   const text = fs.readFileSync(file, "utf8");
   const rel = path.relative(root, file);
   for (const match of text.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {

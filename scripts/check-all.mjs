@@ -3,18 +3,11 @@
 import childProcess from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { walkFiles } from "./shared-filesystem.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const failures = [];
-const skip = new Set([".git", "node_modules", "__pycache__"]);
-
-function walk(dir) {
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    if (skip.has(entry.name)) return [];
-    const file = path.join(dir, entry.name);
-    return entry.isDirectory() ? walk(file) : [file];
-  });
-}
+const requested = process.argv.slice(2);
 
 function run(label, command, args) {
   const result = childProcess.spawnSync(command, args, { cwd: root, encoding: "utf8" });
@@ -25,26 +18,40 @@ function run(label, command, args) {
   }
 }
 
-for (const file of walk(root).filter((candidate) => candidate.endsWith(".mjs")).sort()) {
-  run(`syntax ${path.relative(root, file)}`, process.execPath, ["--check", file]);
-}
-
-for (const file of walk(root).filter((candidate) => candidate.endsWith(".test.mjs")).sort()) {
-  run(`test ${path.relative(root, file)}`, process.execPath, [file]);
-}
-
 const checker = path.join(root, "skills", "agent-skill-architect", "scripts", "check_skill.mjs");
-for (const entry of fs.readdirSync(path.join(root, "skills"), { withFileTypes: true }).filter((item) => item.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
-  run(`skill ${entry.name}`, process.execPath, [checker, path.join(root, "skills", entry.name)]);
+const python = process.env.PYTHON || (process.platform === "win32" ? "python" : "python3");
+const checks = {
+  syntax() {
+    for (const file of walkFiles(root).filter((candidate) => candidate.endsWith(".mjs")).sort()) {
+      run(`syntax ${path.relative(root, file)}`, process.execPath, ["--check", file]);
+    }
+  },
+  tests() {
+    for (const file of walkFiles(root).filter((candidate) => candidate.endsWith(".test.mjs")).sort()) {
+      run(`test ${path.relative(root, file)}`, process.execPath, [file]);
+    }
+  },
+  skills() {
+    for (const entry of fs.readdirSync(path.join(root, "skills"), { withFileTypes: true }).filter((item) => item.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
+      run(`skill ${entry.name}`, process.execPath, [checker, path.join(root, "skills", entry.name)]);
+    }
+  },
+  evals() { run("eval manifests", process.execPath, [path.join(root, "scripts", "check-evals.mjs"), root]); },
+  links() { run("resource links", process.execPath, [path.join(root, "scripts", "check-resource-links.mjs"), root]); },
+  readme() { run("README generated state", python, [path.join(root, "scripts", "update-readme.py"), "--check"]); },
+  fixtures() { run("adversarial fixtures", process.execPath, [path.join(root, "scripts", "run-fixtures.mjs"), root]); },
+};
+const selected = requested.length ? requested : Object.keys(checks);
+for (const name of selected) {
+  if (!Object.hasOwn(checks, name)) {
+    failures.push(`unknown check ${name}; expected one of: ${Object.keys(checks).join(", ")}`);
+    continue;
+  }
+  checks[name]();
 }
-
-run("eval manifests", process.execPath, [path.join(root, "scripts", "check-evals.mjs"), root]);
-run("resource links", process.execPath, [path.join(root, "scripts", "check-resource-links.mjs"), root]);
-run("README generated state", "python3", [path.join(root, "scripts", "update-readme.py"), "--check"]);
-run("adversarial fixtures", process.execPath, [path.join(root, "scripts", "run-fixtures.mjs"), root]);
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`error: ${failure}`));
   process.exit(1);
 }
-console.log("all deterministic checks passed");
+console.log(`deterministic checks passed: ${selected.join(", ")}`);
