@@ -78,6 +78,18 @@
             "prompt": "Review a clean rebuild that keeps legacy aliases and fallback synthesis even though specs accepted breaking changes and selected a generated new boundary.",
             "expected_output": "Creates blocking SPEC_DRIFT or MAINTAINABILITY findings for stale compatibility paths without approved migration scope and requires removal or a spec-approved migration ticket with tests.",
             "files": []
+        },
+        {
+            "id": 14,
+            "prompt": "Review a wave that adds UserSummary, a hand-written mapper, and a new API response even though the approved catalog already maps identity.user to the dashboard projection.",
+            "expected_output": "Creates blocking representation-reuse/spec-drift findings for the unregistered semantic duplicate and mapper, cites the catalog/ticket refs, and requires reuse or a spec-approved new representation with mapping tests.",
+            "files": []
+        },
+        {
+            "id": 15,
+            "prompt": "Review a ticket that changed a shared public User schema and ran a networked migration command, but has no matching digest, consumer impact evidence, or approval reference for the external command.",
+            "expected_output": "Rejects the review until the implementation-evidence manifest pins approved digests, maps the changed schema to approved assets and consumers, records affected verification, and supplies an approved decision for the external command; the implementer cannot mark the ticket accepted.",
+            "files": []
         }
     ]
 }

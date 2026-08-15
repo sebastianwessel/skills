@@ -15,6 +15,13 @@ For each entry point or workflow, record:
 - Contract generation: source contract, generation map, generated artifact,
   generated test, compile check, drift check, strong boundary type evidence, and
   handwritten remainder or N/A.
+- Representation reuse: catalog `shape_id`, canonical source, owner,
+  representation class, mapping IDs/direction, permitted field differences, and
+  mapper/generated artifact used or N/A.
+- Shared-asset impact: changed public symbols, module/contract IDs, known
+  consumers, compatibility or migration rule, affected tests, and the evidence
+  that every consumer was reviewed, tested, or explicitly deferred by an
+  approved migration ticket.
 - Frontend/client surface: reachable access path, screen/surface, user flow,
   loading/empty/error/success/permission states, accessibility, responsiveness,
   design source, shared style reuse, framework/component-library reuse, and
@@ -42,6 +49,10 @@ Check these when relevant:
 - serialization/deserialization mismatch across languages or protocols
 - weak boundary type, handwritten contract mirror, stale alias, compatibility
   fallback, or storage-era shape crossing a clean generated boundary
+- unregistered DTO/entity/schema/event/record/projection, semantic duplicate,
+  or mapper whose output differs beyond its catalogued mapping
+- changed shared/public asset whose consumers, dependency direction, or
+  compatibility/migration behavior were not checked
 - frontend/client path: navigation/access, loading, empty, success, error,
   permission/denied, responsive/accessibility behavior, and design/component
   reuse

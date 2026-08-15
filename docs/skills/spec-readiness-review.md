@@ -17,11 +17,20 @@ npx skills add sebastianwessel/skills
 
 - Reviews specs after `spec-architect` authors or updates them.
 - Runs the approval-time judge loop and deterministic spec checker.
-- Owns `specs/.readiness-report.yaml` approval evidence.
+- Owns content-bound approval: `spec-manifest.yaml` hashes authoritative specs,
+  while readiness approval, provenance, and judge evidence must name that exact
+  digest.
+- Requires structured applicability/N/A, decision-authority, policy-profile,
+  reuse-inventory, module-boundary, and reciprocal traceability artifacts before
+  approval.
 - Repairs explicit spec gaps and reruns readiness checks.
 - Blocks planning when behavior, contracts, failures, security, recovery,
   release, tests, generation mapping, or strong boundary type policy is missing.
-- Blocks planning when specs lack a capability inventory or end-to-end
+- Blocks planning when in-scope data representations lack a catalogued canonical
+  owner, allowed mapping, or proof that an intentionally different projection or
+  persistence record is not a semantic duplicate.
+- Blocks planning when specs lack a capability inventory, a relational graph
+  from requirement through capability and path to testable acceptance, or end-to-end
   definition chains for UX/client, API, data lifecycle, state transition,
   async/integration, operational, acceptance, and verification paths.
 - Blocks planning when specs omit the general file/folder structure by
@@ -40,18 +49,22 @@ npx skills add sebastianwessel/skills
 ## How It Works
 
 The skill loads readiness gates and artifact-shape references only when review
-is requested. It uses `scripts/check_specs.mjs` for repeatable smoke checks and
-records semantic uncertainty instead of treating regex success as approval.
+is requested. It regenerates the spec manifest after every canonical-source
+change, uses `scripts/check_specs.mjs` for structural graph validation plus
+clearly labelled smoke checks, and records semantic uncertainty instead of
+treating keyword success as approval.
 
 ## Workflow
 
 1. Confirm spec scope and source artifacts.
 2. Run readiness gates, capability/end-to-end definition review, checklist
-   walk, current dependency research review, and semantic review.
-3. Run the deterministic spec checker.
+   walk, current dependency research review, representation-catalog review, and
+   semantic review.
+3. Regenerate the spec manifest and run the deterministic spec checker.
 4. Repair explicit gaps when requested, then rerun review.
-5. Write approved readiness only when all gates pass and human approval exists.
-6. Hand off approved specs to `spec-implementation-planner`.
+5. Write approved readiness only when all gates pass, approval evidence is
+   attributable and digest-bound, and human approval exists.
+6. Hand off digest-pinned approved specs to `spec-implementation-planner`.
 
 ## Included Files
 
@@ -60,8 +73,10 @@ records semantic uncertainty instead of treating regex success as approval.
 | `skills/spec-readiness-review/SKILL.md` | Executable review and approval instructions. |
 | `skills/spec-readiness-review/references/readiness-gates.md` | Approval gates and judge loop. |
 | `skills/spec-readiness-review/references/artifact-shapes.md` | Expected spec tree and readiness report fields. |
+| `skills/spec-readiness-review/references/representation-catalog.md` | Canonical shape ownership, mapping, and reuse requirements. |
 | `skills/spec-readiness-review/references/spec-checklists.md` | Root checklist index that routes to high-level indexes and topic-specific checklist files. |
 | `skills/spec-readiness-review/scripts/check_specs.mjs` | Deterministic spec-shape checker. |
+| `skills/spec-readiness-review/scripts/generate_spec_manifest.mjs` | Rebuilds the authoritative spec manifest and content digest. |
 | `skills/spec-readiness-review/evals/evals.json` | Evaluation scenarios for readiness review. |
 
 ## Validation And Safety
@@ -69,7 +84,8 @@ records semantic uncertainty instead of treating regex success as approval.
 Run the checker when a spec tree exists:
 
 ```bash
-node skills/spec-readiness-review/scripts/check_specs.mjs specs
+node <spec-readiness-review-skill-root>/scripts/generate_spec_manifest.mjs specs <source-revision>
+node <spec-readiness-review-skill-root>/scripts/check_specs.mjs specs
 ```
 
 A passing deterministic check is not semantic approval. Planning is allowed only

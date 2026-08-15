@@ -11,7 +11,7 @@ const read = (file) => fs.readFileSync(file, "utf8");
 
 const skillFile = path.join(root, "SKILL.md");
 const skillName = path.basename(root);
-const frontmatterPattern = /^---\n([\s\S]*?)\n---\n/;
+const frontmatterPattern = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/;
 const reserved = /\b(anthropic|claude|skill-creator|helper|tools|documents|data)\b/i;
 const vague = /\b(as appropriate|if needed|where possible|to be determined|TBD|TODO|best effort|handle errors|be secure)\b/i;
 
@@ -19,7 +19,7 @@ function parseFrontmatter(text) {
   const match = text.match(frontmatterPattern);
   if (!match) return null;
   const data = {};
-  for (const line of match[1].split("\n")) {
+  for (const line of match[1].split(/\r?\n/)) {
     const index = line.indexOf(":");
     if (index === -1) continue;
     const key = line.slice(0, index).trim();
@@ -103,9 +103,32 @@ if (!fs.existsSync(evalFile)) {
     const evals = Array.isArray(data.evals) ? data.evals : [];
     if (data.skill_name !== skillName) fail("evals/evals.json skill_name must match skill name");
     if (evals.length < 3) warn("Use at least 3 realistic eval prompts");
+    const ids = new Set();
     for (const [index, item] of evals.entries()) {
-      if (!item.prompt) fail(`Eval ${index} missing prompt`);
-      if (!item.expected_output) fail(`Eval ${index} missing expected_output`);
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        fail(`Eval ${index} must be an object`);
+        continue;
+      }
+      if (!(typeof item.id === "number" || typeof item.id === "string") || item.id === "") {
+        fail(`Eval ${index} missing scalar id`);
+      } else if (ids.has(String(item.id))) {
+        fail(`Eval ${index} duplicates id ${item.id}`);
+      } else {
+        ids.add(String(item.id));
+      }
+      if (typeof item.prompt !== "string" || !item.prompt.trim()) fail(`Eval ${index} missing prompt`);
+      if (typeof item.expected_output !== "string" || !item.expected_output.trim()) fail(`Eval ${index} missing expected_output`);
+      if (item.files !== undefined && (!Array.isArray(item.files) || item.files.some((file) => typeof file !== "string"))) {
+        fail(`Eval ${index} files must be an array of strings`);
+      }
+      if (item.fixture !== undefined && (
+        typeof item.fixture !== "object" || item.fixture === null || Array.isArray(item.fixture)
+        || typeof item.fixture.case_id !== "string" || !item.fixture.case_id
+      )) fail(`Eval ${index} fixture must contain case_id`);
+      if (item.assertions !== undefined && (!Array.isArray(item.assertions) || !item.assertions.length
+        || item.assertions.some((assertion) => typeof assertion !== "string" || !assertion.trim()))) {
+        fail(`Eval ${index} assertions must be a non-empty array of strings`);
+      }
     }
   } catch (error) {
     fail(`Invalid evals/evals.json: ${error.message}`);

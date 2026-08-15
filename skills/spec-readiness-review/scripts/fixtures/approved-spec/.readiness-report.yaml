@@ -1,0 +1,62 @@
+status: approved
+language: en
+open_decisions: []
+human_approval:
+  status: approved
+approval_evidence:
+  status: approved
+  approver_id: fixture-owner
+  approved_at: 2026-08-15T12:05:00Z
+  approval_ref: FIXTURE-APPROVAL-001
+  manifest_digest: sha256:fc5010d0f14b2edb55e48902f9cb9fe33bb0d196ec674756ed4fb02203571423
+  scope_refs: [CAP-FIXTURE-001]
+gates:
+  no_drift_gate: {status: passed}
+  ambiguity_gate: {status: passed}
+  semantic_alignment_gate: {status: passed}
+  spec_structure_gate: {status: passed}
+  visualization_gate: {status: passed}
+  requirements_quality_gate: {status: passed}
+  end_to_end_definition_gate: {status: passed}
+  file_structure_gate: {status: passed}
+  current_dependency_research_gate: {status: passed}
+  concise_spec_gate: {status: passed}
+  client_consumer_coverage_gate: {status: passed}
+  frontend_ux_integration_gate: {status: passed}
+  standards_first_gate: {status: passed}
+  machine_readable_contract_gate: {status: passed}
+  async_semantics_gate: {status: passed}
+  clean_rebuild_boundary_gate: {status: passed}
+  generation_map_gate: {status: passed}
+  strong_boundary_type_gate: {status: passed}
+  representation_reuse_gate: {status: passed}
+  interface_gate: {status: passed}
+  e2e_gate: {status: passed}
+  unhappy_path_gate: {status: passed}
+  security_privacy_gate: {status: passed}
+  observability_gate: {status: passed}
+  performance_resilience_gate: {status: passed}
+  data_integrity_recovery_gate: {status: passed}
+  production_readiness_gate: {status: passed}
+  supply_chain_gate: {status: passed}
+  wave_readiness: {status: passed}
+  migration_gate: {status: passed}
+  checklist_walk_gate: {status: passed}
+  contradiction_check: {status: passed}
+  spec_judge_loop: {status: passed}
+  semantic_judge_gate: {status: passed}
+  self_audit_gate: {status: passed}
+  gate_simulation: {status: passed}
+spec_judge_loop:
+  run_timing: approval_only
+  reviewed_flows: [FLOW-FIXTURE-001]
+  blocking_findings_count: 0
+checklist_walk:
+  topics:
+    fixture: covered
+  blocking_findings_count: 0
+semantic_judge_evidence:
+  status: passed
+  judge: fixture-judge/v1
+  reviewed_at: 2026-08-15T12:04:00Z
+  evidence_ref: reports/fixture-judge.yaml

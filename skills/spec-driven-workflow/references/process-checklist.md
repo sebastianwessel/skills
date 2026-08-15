@@ -12,21 +12,24 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 ## Stage Selection
 
 - No approved specs, changed requirements, spec contradiction, unclear behavior,
-  missing interface/UX/NFR/security/release/test definition:
+  missing interface/UX/NFR/security/release/test definition, decision authority,
+  policy profile, reuse inventory, or module boundary:
   use `spec-architect`.
 - Contract drift, stale aliases, compatibility fallbacks, handwritten mirrors,
   multiple protocol/language/storage surfaces, or unclear patch-vs-clean-rebuild
   strategy:
   use `spec-architect` for the clean-rebuild boundary decision and generation
   map before planning or coding.
-- Specs are authored or repaired but readiness is unapproved, stale, missing
+- Specs are authored or repaired but readiness is unapproved, stale, digest-mismatched, missing
   semantic judge evidence, missing human approval, or deterministic checks have
   not passed:
   use `spec-readiness-review`.
 - Approved readiness exists but no implementation plan, stale plan, missing wave
   order, missing dependencies, missing ticket scope, or no test-first order:
   use `spec-implementation-planner`.
-- One ticket is ready, dependencies are done, and scope is fixed:
+- One ticket is ready, its pinned spec/plan digests match, required dependencies
+  are accepted (or have an explicitly approved lower readiness requirement), and
+  scope is fixed:
   use `spec-ticket-implementation`.
 - A ticket set, wave, partial wave, release candidate, or merge candidate needs
   acceptance:
@@ -38,16 +41,19 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
    - Do: define business outcome, flows, interfaces/contracts, UX, happy and
      unhappy paths, NFRs, security/privacy, recovery, release, supply chain,
      tests, acceptance, clean-rebuild boundary decision, generation-map
-     ownership, and strong boundary type rules.
-   - Check: source/rationale and canonical spec refs exist, open authoring gaps
-     are recorded, and the set is ready for readiness review.
+     ownership, strong boundary type rules, decision authority, approved policy,
+     reuse inventory, and module/dependency contracts.
+   - Check: source/rationale and canonical spec refs exist; each N/A is scoped;
+     reusable assets/new abstractions and allowed dependencies are explicit;
+     open authoring gaps are recorded; and the set is ready for readiness review.
    - Next: readiness review.
 
 2. **Readiness Review Gate**
-   - Do: run approval-time spec judge loop, deterministic spec checker,
+   - Do: run approval-time spec judge loop, deterministic structured spec checker,
      semantic judge, human approval recording, readiness report, and explicit
      gap repair when requested.
-   - Check: readiness approved, human approval recorded, semantic judge passed,
+   - Check: readiness approved for the current spec manifest digest, human
+     approval is attributable, semantic judge passed,
      `spec_judge_loop.status: passed`, zero blocking judge findings, no open
      implementation decisions.
    - Next: planning.
@@ -57,7 +63,7 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
      tracking, contract/codegen foundations, generation-map/drift-check work,
      bounded parallel discovery or disjoint implementation, and test-first
      order.
-   - Check: every ready ticket has `Slice Strategy`, `Test-First Order`,
+   - Check: every ready ticket pins approved digests and has `Slice Strategy`, `Test-First Order`,
      acceptance matrix, traceability, scopes, dependencies, generated-contract
      evidence, generation-map disposition, closed-boundary type checks, coverage
      ownership, and verification.
@@ -69,7 +75,8 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
      logic inside `write_scope`.
    - Check: focused tests, contract drift checks, scoped project verification,
      generated artifacts compile, closed contract boundaries expose strong
-     generated types, changed-file tracking, and ticket review loop pass.
+     generated types, changed-file/symbol/dependency tracking, and ticket review
+     loop pass. Mark work `implemented` or `review_pending`, not accepted.
    - Next: continue tickets in the wave or review when the wave increment is
      ready.
 
@@ -78,7 +85,8 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
      including validation, auth, interfaces, persistence, async work,
      observability, recovery, frontend/client states, generated artifacts,
      boundary type strength, stale compatibility paths, and cleanup.
-   - Check: findings are persisted, routed, and closed; no blocking spec drift,
+   - Check: findings are persisted, routed, and closed; impacted consumers are
+     tested/reviewed; no blocking spec drift,
      path gap, test gap, security/privacy issue, false completion, or ownerless
      feedback remains.
    - Next: accept wave, implement routed fixes, replan, or repair specs.
@@ -87,20 +95,28 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
    - Do: verify all approved specs are implemented.
    - Check: full end-to-end solution works, no gaps, no unresolved
      implementation work, no unapproved mock/fake/stub/placeholder production
-     path, default 80% coverage unless overridden, and unit plus end-to-end
-     tests pass.
+     path, policy-profile coverage threshold, and unit plus end-to-end tests pass.
 
 ## Handoff Matrix
 
 | Finding | Route |
 | --- | --- |
-| Missing broad requirement, interface, UX, security, recovery, release, or test definition | `spec-architect` |
+| Missing broad requirement, interface, UX, security, recovery, release, test definition, policy, decision authority, reuse asset, or module boundary | `spec-architect` |
 | Missing readiness report, failed spec checks, stale approval, missing human approval, or semantic judge gap | `spec-readiness-review` |
-| Missing clean-rebuild decision, generation map, source-of-truth coverage, or closed-boundary type policy | `spec-readiness-review` |
+| Missing clean-rebuild decision, generation map, source-of-truth coverage, or closed-boundary type policy | `spec-architect` |
 | Missing wave order, dependency, status, ticket scope, vertical slice, test-first order, or owner | `spec-implementation-planner` |
 | Over-broad parallel work, conflicting write scopes, missing sidecar-agent bounds, or missing generator-first phase order | `spec-implementation-planner` |
 | Code, test, generated artifact, path, quality, or ticket-scope defect | `spec-ticket-implementation` |
 | Completed or partial wave needs acceptance, merge, release, or persisted findings | `spec-implementation-review` |
+
+## Lifecycle State Contract
+
+`planned → ready → in_progress → implemented → review_pending → accepted` is
+the normal progression. `blocked`, `partial`, and `skipped` are explicit side
+states. Only `spec-implementation-review` can set `accepted`. A dependency may
+declare a lower prerequisite (for example generated contract readiness), but
+must name that state and evidence; it must never silently treat self-reported
+`done` or `merged` as acceptance.
 
 ## Pause And Resume
 

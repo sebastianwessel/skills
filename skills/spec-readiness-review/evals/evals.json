@@ -60,6 +60,30 @@
       "prompt": "Approve specs that define API endpoints, database tables, and tests, but do not list the application capabilities, frontend access paths, data lifecycle/PII retention, state transitions, or final states for exports, notifications, and background sync.",
       "expected_output": "Blocks approval through end_to_end_definition_gate and checklist_walk_gate until specs include a capability inventory and end-to-end definition chains covering actor/consumer, entrypoint/reachability, contracts, data touched, classification/PII retention/deletion/export/redaction, state transitions, side effects, permissions, errors, recovery, observability, acceptance, verification, owner, and final state or explicit N/A evidence.",
       "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Approve specs that define UserDto, UserPayload, UserRecord, and UserSummary in different files but include no catalog, owners, or mappings showing why the shapes differ.",
+      "expected_output": "Blocks approval through representation_reuse_gate until the specs provide a representation catalog with canonical sources, owners, classes, consumer lists, explicit mappings, permitted differences, and verification or scoped N/A evidence.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Approve a spec set whose human approval was recorded before an API schema and mapping changed.",
+      "expected_output": "Blocks approval until spec-manifest.yaml hashes every authoritative artifact, the content digest matches, provenance records the source revision, and fresh accountable approval evidence names that exact digest.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Approve a representation catalog where User is listed but UserRead is only named by a mapping, mapping references are partial, and a nearby prose paragraph says N/A.",
+      "expected_output": "Blocks approval with exact catalog graph findings: every endpoint must be a registered shape, both shapes must reference each mapping, contract refs must resolve, and only scoped structured N/A evidence is accepted.",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "Let an implementation agent decide whether to make an exported type, alter a public mapping default, or introduce a shared module because the spec is concise.",
+      "expected_output": "Blocks the decision unless decision-authority and reuse/module artifacts cite an approved D2/D3 decision. Allows only D0 mechanical and D1 private reversible choices under the declared autonomy budget.",
+      "files": []
     }
   ]
 }

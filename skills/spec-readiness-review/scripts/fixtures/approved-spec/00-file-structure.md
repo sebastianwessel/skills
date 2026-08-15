@@ -1,0 +1,3 @@
+# File Structure
+
+Fixture paths.

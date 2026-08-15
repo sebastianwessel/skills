@@ -8,6 +8,7 @@ Approve only when every gate passes or is N/A with evidence.
 - Judge Loop
 - Coverage
 - Clean Rebuild Gate
+- Representation Reuse Gate
 - Contract And Runtime Gate
 - Production Gate
 
@@ -33,6 +34,16 @@ Approve only when every gate passes or is N/A with evidence.
 - Human approval is required for missing intent, compliance/security, public
   semantics, irreversible architecture, material side effects, contradictions,
   or hard guesses.
+- Approval is bound to `spec-manifest.yaml.content_digest`. It requires an
+  accountable approver, timestamp, immutable approval reference, scope refs,
+  and matching digest; changing an authoritative artifact invalidates it.
+- `00-applicability.yaml` is the only source for scoped applicability and N/A
+  claims. A concern needs exact scope refs; `not_applicable` also needs a
+  concrete rationale. A prose N/A never bypasses a gate.
+- `00-decision-authority.yaml` gives agents a narrow autonomy budget: D0 is
+  mechanical, D1 is private and reversible under an approved convention, D2
+  is an approved semantic/architectural decision, and D3 is human-only. An
+  implementation ticket may not create a D2/D3 decision.
 - Deterministic checks are smoke tests; semantic approval needs judge evidence.
 
 ## Judge Loop
@@ -93,6 +104,33 @@ Closed contract boundaries require strong generated/source-derived types. Go
 `map[string]any`, TypeScript `any`/`unknown`, `Record<string, unknown>`,
 anonymous map wrappers, and handwritten contract mirrors are blockers unless the
 source contract defines an open JSON leaf.
+
+## Representation Reuse Gate
+
+When in-scope work introduces or changes domain data, API/event payloads,
+commands, queries, persistence records, or client projections, require
+`03-contracts/representation-catalog.yaml`. It is the single index of semantic
+shape ownership, not a mandate to share one language type across all layers.
+
+Each catalog entry has a stable `shape_id`, representation class, canonical
+source artifact, owner, stability/open policy, allowed consumers, source
+contract refs, and mapping refs. A canonical semantic shape is reused when the
+meaning and lifecycle match. A boundary request, persistence record, event, or
+view projection may differ only through a catalogued mapping that states its
+direction, permitted field differences, redaction/loss policy, and verification.
+
+Block approval when a capability or contract introduces an unregistered shape,
+a duplicate semantic shape, an unmapped cross-layer transformation, a new
+exported shape with no owner/canonical source, or a ticket would need to decide
+whether a new shape is justified. `not_applicable` needs evidence that no
+domain, boundary, durable-data, command/query, or projection shape is in scope.
+
+The deterministic gate parses the catalog and rejects duplicate IDs, malformed
+entries, dangling source-contract refs, missing endpoint references, mappings
+to unknown/self shapes, mappings omitted from either endpoint, and unscoped
+N/A. Mapping verification includes exact field operations as well as the loss
+policy, so a mapper cannot choose defaults, null handling, conversions, or
+redaction behavior during implementation.
 
 ## Contract And Runtime Gate
 

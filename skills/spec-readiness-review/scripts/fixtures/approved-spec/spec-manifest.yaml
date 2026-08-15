@@ -1,0 +1,41 @@
+spec_manifest_version: 1
+content_digest: sha256:fc5010d0f14b2edb55e48902f9cb9fe33bb0d196ec674756ed4fb02203571423
+artifacts:
+  - path: 00-applicability.yaml
+    sha256: sha256:7daf1fc473bb9f18585d5b3ff91a22de0c77b1f880f0d877ca1c7aa0a8d95c71
+  - path: 00-architecture-overview.md
+    sha256: sha256:1d09246c25929af4804b4962a3fe70d04280cda146f5b4f1344429213c3767b5
+  - path: 00-conventions.md
+    sha256: sha256:b4b5a2ceef412be8aaf5b6841c2b2aed83e91e0410591e31449ea43add7c151a
+  - path: 00-decision-authority.yaml
+    sha256: sha256:45f0c8082cde3b84b4c360db26c6021ccf29ef9a704a0f762f56233211fa6ff0
+  - path: 00-file-structure.md
+    sha256: sha256:20958640eeac7ca05934be26b52b985e23540fc9e44c567c7a533e714dbf9d5a
+  - path: 00-module-boundaries.yaml
+    sha256: sha256:58636ebe5eac4478cd0247f8ac83f4b936a55a3f6bb1e69d2c920808413f08d5
+  - path: 00-policy-profile.yaml
+    sha256: sha256:58e276451bae6e91aae104b6aac153375b311efa1942645b56e10d3c812ee88c
+  - path: 00-reuse-inventory.yaml
+    sha256: sha256:1a01e76a0f27ee96430f0d90d2e5cbdf364d6a784af85fee30a8acf0337b4848
+  - path: 00-stack.md
+    sha256: sha256:7d22e72cfe8f892dde63882a28d4ccc28fc27d5348183508cc13b1c52e09b073
+  - path: 00-traceability.yaml
+    sha256: sha256:faafbfcf3354daa5c986795feb8cc4b974146c2d446edce7162c937dbeb88e3e
+  - path: 00-vision.md
+    sha256: sha256:55e52bab8909fccd54187a0417e64f5c640af8f1b1f719e749f0b929262f469c
+  - path: 02-capabilities/capability-inventory.md
+    sha256: sha256:baf43f876a788c842a4c915071f624122777de70a18506ecbef05b7883214c9f
+  - path: 03-contracts/representation-catalog.yaml
+    sha256: sha256:612cb0ecbc84db509f6d5cc0c9a9a4e5730a1bf19ec6b0e39a0121360ab0d589
+  - path: 03-contracts/user.schema.json
+    sha256: sha256:f5e816ec5d138293c6e923d4f98c9d530c0fb7b13bda1242b45869112a0e4fe7
+  - path: 03-flows/e2e-coverage.md
+    sha256: sha256:d13978a2024f4129f2741adb926c62474ddfce10854df40cd59aa6ba95948f1f
+  - path: _registry.yaml
+    sha256: sha256:21360b1741a88a999b7305acc332a5d7f7b33c311464673896f7eb04f12a83c7
+  - path: glossary.md
+    sha256: sha256:fcc6fcbcc26ad22744312d2180c709d4dd9844034fcfb76c4b3365da3846e5c1
+provenance:
+  source_revision: fixture-revision
+  generated_at: 2026-08-15T09:36:38.078Z
+  generator: spec-manifest/v1

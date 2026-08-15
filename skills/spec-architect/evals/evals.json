@@ -54,6 +54,12 @@
       "prompt": "Create specs for a customer dashboard where the user mentions exports, profile data, notifications, and background sync, but does not describe how users reach each feature or how data states and retention work.",
       "expected_output": "Creates a capability inventory and fills or records gaps for each capability's actor, entrypoint, reachability path, frontend states, contracts, data touched, state transitions, PII classification, retention, deletion/export, side effects, permissions, recovery, observability, acceptance, and verification before readiness review.",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Create specs for a user API, event stream, database record, and dashboard projection where implementers often add renamed copies of the user shape.",
+      "expected_output": "Creates an in-scope representation catalog with canonical shape ownership, boundary/persistence/projection classes, explicit mappings, permitted differences, generated/shared outputs, and verification; it does not require one DTO across every layer.",
+      "files": []
     }
   ]
 }

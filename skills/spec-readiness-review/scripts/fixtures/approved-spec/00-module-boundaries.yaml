@@ -1,0 +1,3 @@
+module_boundary_version: 1
+modules: []
+no_modules_rationale: Fixture has no implementation module.

@@ -30,6 +30,12 @@ Scope: <wave/plan/tickets/commit range>
 | Path | Status | Evidence | Notes |
 | --- | --- | --- | --- |
 
+## Digest And Impact Evidence
+
+- Readiness/spec/plan digest:
+- Changed asset/module/contract IDs:
+- Affected consumers and test evidence:
+
 ## Verification
 | Command | Result | Evidence |
 | --- | --- | --- |
@@ -81,8 +87,9 @@ When `plans/_status.yaml` or an equivalent tracker exists:
   route to `spec-implementation-planner`
 - tooling gaps route to the relevant skill/checker maintainer with reproducer,
   expected enforcement, and missing deterministic/semantic check
-- passing review records `review_id`, reviewed scope, command evidence, and
-  zero open blocking findings
+- passing review records `review_id`, pinned digest, reviewed scope/consumers,
+  command evidence, and zero open blocking findings, then transitions the
+  reviewed ticket or wave to `accepted`
 
 Do not close, merge, or mark done when blocking findings remain open.
 

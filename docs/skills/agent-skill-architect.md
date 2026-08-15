@@ -62,7 +62,7 @@ surface, and evaluate both should-trigger and near-miss prompts.
 Run the checker against a skill directory:
 
 ```bash
-node skills/agent-skill-architect/scripts/check_skill.mjs skills/<skill-name>
+node <agent-skill-architect-skill-root>/scripts/check_skill.mjs <skill-dir>
 ```
 
 Then run plugin-eval when available:

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Refresh the generated skill index in README.md."""
+"""Refresh or verify the generated skill index in README.md."""
 
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -81,6 +82,14 @@ def main() -> None:
         readme,
         flags=re.DOTALL,
     )
+    if "--check" in sys.argv[1:]:
+        if updated != readme:
+            raise SystemExit(
+                "README.md skill index is stale; run: python3 scripts/update-readme.py"
+            )
+        print("README.md skill index is current")
+        return
+
     README.write_text(updated, encoding="utf-8")
 
 

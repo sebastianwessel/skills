@@ -1,0 +1,4 @@
+reuse_inventory_version: 1
+discovery_revision: fixture-revision
+assets: []
+no_assets_rationale: Fixture has no existing reusable asset.

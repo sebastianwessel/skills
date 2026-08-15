@@ -1,6 +1,8 @@
 # Definition of Done
 
-A ticket is done only when all relevant checks pass.
+A ticket is `implemented` only when all relevant checks pass. It becomes
+`accepted` only after independent review; implementation agents do not accept
+their own work.
 
 ## Contents
 
@@ -27,9 +29,12 @@ A ticket is done only when all relevant checks pass.
       explicitly approved with evidence.
 - [ ] Contract-heavy rebuild work has generation-map, generator-test,
       compile-check, drift-check, and generated-package evidence before
-      handwritten service logic is marked done.
+      handwritten service logic is marked implemented.
 - [ ] Required generated artifacts exist and trace to approved generation
       commands, or the ticket was blocked before production edits.
+- [ ] Every changed data representation and mapper has the ticket's approved
+      catalog `shape_id` and mapping ref. No unregistered exported DTO, entity,
+      schema, event, record, projection, or semantic duplicate was introduced.
 - [ ] Semantic hardcoded values are centralized into inline-documented constants
       with units in duration/size/count/rate/limit names.
 - [ ] No commented-out code or unresolved TODO/FIXME.
@@ -67,7 +72,7 @@ A ticket is done only when all relevant checks pass.
 
 - [ ] Acceptance criteria have passing public-interface tests; matrix rows are
       implemented/tested/verified/N/A with evidence. Blocked/missing rows mean
-      partial, not done.
+      partial, not implemented.
 - [ ] Tests trace to spec refs/contracts and were written or generated before
       the business logic they prove, or a concrete exception is recorded.
 - [ ] Happy, unhappy, failure, contract/codegen drift, integration, and E2E
@@ -90,6 +95,8 @@ A ticket is done only when all relevant checks pass.
 - [ ] Clean-rebuild tickets do not preserve stale aliases, compatibility
       wrappers, fallback synthesis, storage-era shapes, or handwritten mirrors
       unless approved migration scope explicitly owns them.
+- [ ] Catalogued mappings permit the implemented field omissions, defaults,
+      nullability, precision, ID/time semantics, and redaction/loss behavior.
 - [ ] Auth/tenancy scope has negative tests for cross-tenant list/get-by-known-
       id/update/delete, owner-only commands, and missing/expired/revoked
       sessions when relevant.
@@ -106,6 +113,10 @@ A ticket is done only when all relevant checks pass.
 - [ ] Public APIs, exported constants, enum types/values, docs, examples, and
       complex logic are documented as required.
 - [ ] Ticket status and changed-file tracking are updated.
+- [ ] Ticket lifecycle is moved to `implemented`, not `accepted`; the
+      review-owned implementation-evidence manifest records actual changed
+      paths/symbols, reused asset/module refs, command outcomes/effects, and
+      consumer impact for the review gate.
 - [ ] Ticket commands, scoped project verification, build/compile, static
       analysis, lint, and tests pass.
 - [ ] Review-judge loop found no unresolved ticket-scope defect.

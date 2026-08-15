@@ -1,0 +1,48 @@
+name: Verify skills
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-checks:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: python3
+          - os: windows-latest
+            python: python
+    env:
+      PYTHON: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          check-latest: true
+          package-manager-cache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: JavaScript syntax lint
+        run: node scripts/check-all.mjs syntax
+      - name: Checker tests
+        run: node scripts/check-all.mjs tests
+      - name: Skill package validation
+        run: node scripts/check-all.mjs skills
+      - name: Evaluation manifest validation
+        run: node scripts/check-all.mjs evals
+      - name: Resource-link validation
+        run: node scripts/check-all.mjs links
+      - name: README generated-state validation
+        run: node scripts/check-all.mjs readme
+      - name: Adversarial fixture validation
+        run: node scripts/check-all.mjs fixtures

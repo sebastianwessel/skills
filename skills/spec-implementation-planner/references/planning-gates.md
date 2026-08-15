@@ -13,9 +13,15 @@
 ## Output
 
 - `plans/implementation-plan.md`
-- `plans/_registry.yaml`, `_status.yaml`, `_dependencies.yaml`, `_scope.yaml`
+- `plans/plan-manifest.yaml`, `_registry.yaml`, `_status.yaml`,
+  `_dependencies.yaml`, `_scope.yaml`
 - `plans/wave_NN_slug/plan.md`
 - `plans/wave_NN_slug/tickets/TICKET-NNN-name.md`
+
+The four index files and ticket frontmatter use a restricted YAML subset:
+two-space indentation, mappings, lists, scalars, and simple flow lists.
+Do not use anchors, aliases, merge keys, duplicate keys, or multiline scalars.
+The checker parses this subset and rejects ambiguous YAML rather than guessing.
 
 Prefer vertical slices: each wave ends in a working, testable end-to-end
 increment. If a slice is too large for one agent, split isolated tickets that
@@ -56,21 +62,168 @@ phase that remains blocked until the proof exists.
 
 ## Ticket Shape
 
-Frontmatter: `id`, `title`, `wave`, `status`, `parallel_group`, `depends_on`,
+Frontmatter: `id`, `title`, `wave`, `lifecycle`, `spec_manifest_digest`,
+`plan_manifest_digest`, `parallel_group`, `depends_on`,
 `blocked_by`, `spec_refs`, `write_scope`, `read_scope`, `contract_readiness`,
+`traceability`,
 `generated_contracts`, `ticket_readiness`, `slice_type`,
-`phase_gate_exception`.
+`phase_gate_exception`, `representation_reuse`, `autonomy`,
+`verification_commands`, `action_steps`, `acceptance`.
 
 Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
 `Action Plan`, `Requirements Traceability`, `Contract Traceability`,
 `Spec Drift Controls`, `Generator And Type Plan`, `Test-First Order`,
-`Modularity And Reuse Plan`, `Slice Strategy`, `Tasks`, `Acceptance`,
+`Modularity And Reuse Plan`, `Representation Reuse Plan`, `Slice Strategy`, `Tasks`, `Acceptance`,
 `Acceptance Test Matrix`, `Review And Verification Plan`,
 `End-To-End Definition Coverage`, `Operational Path Coverage`, `Verification`,
 `Non-goals`, `Handoff`.
 
 Tickets are crisp human/AI instructions: boundaries, expectations, acceptance,
 verification, no pasted specs, no vague implementation prose.
+
+### Lifecycle
+
+`lifecycle` is the sole ticket state. Its normal path is:
+
+```text
+planned -> ready -> in_progress -> implemented -> review_pending -> accepted
+```
+
+`partial`, `blocked`, and `skipped` are side states and require `resume_notes`
+or a `superseded_by` reference in `_status.yaml`. An implementation agent may
+move a ticket only from `ready`/`in_progress` to `implemented` after all local
+evidence is recorded. A controller submits `implemented` work as
+`review_pending`; only independent review can mark it `accepted`. Do not use
+`done` as a lifecycle state.
+
+`spec_manifest_digest` is required on every ticket and must exactly equal the
+approved `spec-manifest.yaml.content_digest`. `plan_manifest_digest` must equal
+`plan-manifest.yaml.content_digest`. The planner does not create or reuse
+tickets when either digest changes; it regenerates affected tickets from the
+newly approved specification set.
+
+`plan-manifest.yaml` hashes the plan, indexes, wave plans, and ticket files. It
+excludes itself plus review/evidence paths. The canonical ticket hash excludes
+only the self-referential `plan_manifest_digest` pointer line; all other ticket
+content remains bound. Generate it after plan artifacts are complete:
+
+```bash
+node references/generate_plan_manifest.mjs <repo-root> [plans-root] [specs-root]
+node references/check_plan.mjs <repo-root> [plans-root] [specs-root]
+```
+
+### Plan Indexes
+
+All four index files have the same complete ticket-ID set. Each row must match
+the ticket frontmatter exactly:
+
+```yaml
+# _registry.yaml
+tickets:
+  TICKET-001:
+    path: wave_01_identity/tickets/TICKET-001-user.md
+    wave: 1
+    lifecycle: ready
+
+# _status.yaml
+tickets:
+  TICKET-001:
+    lifecycle: ready
+    current_proof: baseline-recorded
+    resume_notes: none
+    affected_spec_refs: [specs/01-scope.md#REQ-USER-01]
+
+# _dependencies.yaml
+tickets:
+  TICKET-001:
+    depends_on: []
+    blocked_by: []
+    unblocks: [TICKET-002]
+
+# _scope.yaml
+tickets:
+  TICKET-001:
+    write_scope: [packages/identity/src]
+    read_scope: [packages/contracts/src/user.ts]
+```
+
+### Decision Authority And Commands
+
+Executable tickets declare an autonomy budget. D0 is mechanical/generation
+work. D1 is a private, reversible choice allowed only by cited project
+conventions. D2 (public, architectural, data, security, compatibility) and D3
+(business, compliance, irreversible, external) cannot be delegated as choices;
+they require approved decision refs and are executed mechanically, or the agent
+stops.
+
+```yaml
+autonomy:
+  allowed_classes: [D0, D1]
+  convention_refs: [specs/00-conventions.md#CONV-ERRORS]
+  approved_decision_refs: [specs/02-architecture.md#DEC-USER-BOUNDARY]
+  escalation: blocker
+verification_commands:
+  CMD-UNIT:
+    command: npm run test:unit
+    purpose: public-interface unit verification
+    expected: pass
+    network: forbidden
+    writes: workspace_only
+    secrets: forbidden
+```
+
+Command metadata is a preflight control, not permission to improvise commands.
+Default commands must have no shell chaining, redirection, substitutions,
+network, credentials, or writes outside the workspace. External or secret-bound
+checks need their own approved ticket and caller-controlled environment.
+
+### Structured Execution And Acceptance
+
+Body sections explain the work; frontmatter carries the checkable handoff.
+Every active ticket needs one `preflight`, `contract`, `test`, `implement`,
+`verify`, and `handoff` action step. Every acceptance row links exact
+requirement anchors, test refs, command IDs, expected outcome, lifecycle, and
+one or more canonical `traceability_acceptance_ids`; each row must be owned by
+an action step. `traceability` maps the ticket to IDs in the approved
+`specs/00-traceability.yaml`. Across non-skipped tickets, every approved
+requirement, capability, path, and acceptance ID must be covered.
+
+```yaml
+action_steps:
+  - id: STEP-TEST
+    kind: test
+    files: [packages/identity/src/user.test.ts]
+    command_refs: [CMD-UNIT]
+    acceptance_refs: [ACC-USER-01]
+    expected_proof: test fails before implementation and passes after
+acceptance:
+  - id: ACC-USER-01
+    traceability_acceptance_ids: [ACCEPT-USER-01]
+    requirement_refs: [specs/01-scope.md#REQ-USER-01]
+    test_refs: [packages/identity/src/user.test.ts#creates_user]
+    command_refs: [CMD-UNIT]
+    expected_outcome: creates a valid user through the public interface
+    lifecycle: planned
+traceability:
+  requirement_ids: [REQ-USER-01]
+  capability_ids: [CAP-USER-01]
+  path_ids: [PATH-USER-CREATE]
+  acceptance_ids: [ACCEPT-USER-01]
+```
+
+For tickets that touch data shapes, frontmatter uses this structure:
+
+```yaml
+representation_reuse:
+  status: ready
+  catalog_ref: specs/03-contracts/representation-catalog.yaml
+  shape_refs: [identity.user, identity.user-dashboard-projection]
+  mapping_refs: [MAP-USER-DASHBOARD]
+  new_shape_decision: none
+```
+
+Use `status: not_applicable` only with a `rationale` that the ticket has no
+domain, boundary, durable-data, command/query, event, or projection shape.
 
 `Action Plan` is the executable handoff. It must be numbered and must include:
 
@@ -133,10 +286,19 @@ shared abstractions to extend, duplicate code to avoid, and boundaries that must
 not gain unrelated domain logic. New abstractions require a concrete reuse or
 complexity-reduction reason from approved scope.
 
+`Representation Reuse Plan` must name the approved
+`representation-catalog.yaml` path, `shape_id` and mapping refs used by the
+ticket, generated/shared artifacts to reuse, and prohibited new shapes or
+mappers. A genuinely new representation is allowed only when approved specs
+record its canonical source, owner, representation class, and mapping(s); the
+ticket must link that decision and schedule its catalog/contract foundation
+before dependent implementation. A representation does not become distinct
+merely because it is used by a different layer.
+
 `Review And Verification Plan` must require a final review against source specs,
 the ticket action plan, acceptance matrix, generated artifacts/drift checks,
 strict typing, modular placement, reuse/no-duplication, and changed-file scope.
-Done is impossible while review finds spec drift, invented behavior, missing
+Acceptance is impossible while review finds spec drift, invented behavior, missing
 unhappy-path tests, weak avoidable typing, duplicate code, misplaced domain
 logic, or unverifiable acceptance rows.
 
@@ -211,6 +373,10 @@ Use parallel agents only for independent, bounded work:
   contract timing.
 - Tickets declare generated artifact prerequisites and owner before
   handler/client edits.
+- Tickets that touch data shapes declare `representation_reuse` with a ready
+  catalog ref, registered `shape_id` and mapping refs, or `not_applicable` with
+  scoped evidence. They do not introduce exported DTOs, entities, schemas,
+  events, records, projections, or mappers without an approved catalog entry.
 - Closed contract surfaces reject weak boundary types such as Go
   `map[string]any`, TypeScript `any`, TypeScript `unknown`,
   `Record<string, unknown>`, anonymous map-shaped wrappers, and handwritten
@@ -245,14 +411,15 @@ Use parallel agents only for independent, bounded work:
 - No ticket leaves task order, target files, commands, expected failures,
   generated artifacts, or verification proof for the implementer to derive.
 - No ticket allows spec drift, invented behavior, avoidable manual generated
-  shapes, avoidable weak typing, duplicate logic, misplaced domain code, or done
-  status without review against ticket and specs.
+  shapes, avoidable weak typing, duplicate logic, misplaced domain code, or
+  `accepted` lifecycle without review against ticket and specs.
 - No ticket allows unapproved dependency versions or third-party behavior; those
   gaps return to `spec-readiness-review`.
 - No placeholder/fake/mock/stub/no-op work unless specs explicitly require a test
   fixture/fake provider.
-- `_status.yaml` supports planned, in_progress, partial, blocked, done, skipped,
-  resume notes, current proof, `superseded_by`, and affected specs. Changed
+- `_status.yaml` supports the lifecycle `planned`, `ready`, `in_progress`,
+  `implemented`, `review_pending`, `accepted`, plus `partial`, `blocked`, and
+  `skipped`, resume notes, current proof, `superseded_by`, and affected specs. Changed
   specs create impact notes/follow-up tickets; completed tickets stay historical.
 - `implementation-plan.md` has `Self-Audit`: assumptions, evidence, coverage,
   NFR/ops/supply-chain ownership, fake-work risk, parallel risk, blockers or
@@ -267,8 +434,9 @@ Use parallel agents only for independent, bounded work:
   full E2E alignment.
 - Acceptance rows map to tests, command/browser verification, N/A evidence, or
   blocked status; no silent partial completion.
-- Coverage defaults to 80% unless approved specs/project standards say
-  otherwise; lower coverage needs explicit spec approval.
+- Coverage thresholds come only from an approved project policy profile or an
+  explicit spec threshold. Tickets must cite that policy/threshold; neither the
+  planner nor an implementation agent invents a default percentage.
 - Prefer deterministic generators/tools from approved contract sources; manual
   code/types/tests/docs must cite why generation is unavailable, unsafe, or out
   of scope.

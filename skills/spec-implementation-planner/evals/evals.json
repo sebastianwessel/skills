@@ -126,6 +126,24 @@
             "prompt": "Create tickets from approved-looking specs where exports, notifications, and background sync are mentioned, but the readiness report lacks end_to_end_definition_gate and the tickets do not reference capability inventory rows, access paths, data lifecycle, state transitions, or final states.",
             "expected_output": "Blocks ticket generation until readiness review passes end_to_end_definition_gate, then requires each ticket to include End-To-End Definition Coverage with capability inventory refs, actor/consumer, entrypoint/reachability, contracts, data touched, state transitions, side effects, permissions, errors, recovery, observability, acceptance, verification, owner, and final state or N/A evidence.",
             "files": []
+        },
+        {
+            "id": 22,
+            "prompt": "Plan a dashboard ticket that introduces UserSummary even though the approved representation catalog already has identity.user-dashboard-projection and a generated mapper.",
+            "expected_output": "Rejects the duplicate shape and requires representation_reuse frontmatter plus a Representation Reuse Plan naming the catalog, registered shape_id, mapping refs, generated/shared artifacts to reuse, and final diff review against those refs.",
+            "files": []
+        },
+        {
+            "id": 23,
+            "prompt": "Plan a ready ticket that says an agent may choose retry policy and API nullability, uses status: done, and has no decision authority or safe command metadata.",
+            "expected_output": "Rejects it: the lifecycle must use planned through accepted, executable autonomy is D0 plus convention-bound D1 only, public semantics require approved decision refs, and every declared command is exact, hermetic, network- and secret-free with an expected effect.",
+            "files": []
+        },
+        {
+            "id": 24,
+            "prompt": "Review a plan whose ticket frontmatter and registry agree, but _scope has an extra ticket, an acceptance row has no action step, and the dependency graph is cyclic.",
+            "expected_output": "Rejects the plan with exact structural diagnostics: all plan indexes must reconcile exactly, every acceptance row maps to actions/tests/commands, and dependencies are acyclic.",
+            "files": []
         }
     ]
 }

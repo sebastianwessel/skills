@@ -26,6 +26,33 @@ Each expected output must state observable behavior:
 
 Avoid expectations that depend only on tone or subjective quality.
 
+## Fixture-Backed Cases
+
+Use deterministic fixtures for parser, checker, catalog, and plan regressions.
+Keep them outside an individual skill package under `tests/fixtures/`, so they
+can exercise the actual checker a skill ships. Each fixture case must declare:
+
+- a stable case ID and the checker it invokes
+- only repository-relative fixture arguments
+- an expected non-zero or zero exit code
+- one precise diagnostic or success phrase
+
+An eval may link to a fixture without embedding its files:
+
+```json
+{
+  "id": "catalog-mutation",
+  "prompt": "Review a catalog with a dangling mapping.",
+  "expected_output": "Blocks the catalog and reports the dangling mapping ID.",
+  "fixture": { "case_id": "readiness-rejects-dangling-mapping" },
+  "assertions": ["blocks approval", "reports the mapping ID"]
+}
+```
+
+`fixture` and `assertions` are optional for conversational evals, but use both
+when an expected behavior can be observed mechanically. Never claim that a
+natural-language expected output alone is an executable regression test.
+
 ## Description Optimization
 
 Optimize descriptions with train/validation separation:

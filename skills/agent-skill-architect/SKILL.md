@@ -39,7 +39,7 @@ conditions prevent drift, hidden assumptions, and project-specific hardcoding.
 5. Apply `references/quality-gates.md`.
 6. Create or update `evals/evals.json` using `references/eval-design.md`.
 7. Add deterministic scripts only for fragile/repeated checks.
-8. Run `node skills/agent-skill-architect/scripts/check_skill.mjs <skill-dir>`.
+8. Run `node <agent-skill-architect-skill-root>/scripts/check_skill.mjs <skill-dir>`.
 9. Run `plugin-eval analyze <skill-dir> --format markdown` when available.
 10. Self-audit trigger fit, ambiguity, disclosure, security, eval coverage,
     deterministic checks, and residual risk.

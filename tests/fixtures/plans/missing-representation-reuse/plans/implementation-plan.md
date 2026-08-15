@@ -1,0 +1,3 @@
+# Implementation plan
+
+Self-Audit: assumptions, blockers, evidence. Requirement coverage and path coverage. Capability inventory, end-to-end definition, actor, entrypoint, data touched, state transition, permissions, final state. Security N/A. Generator N/A. Frontend N/A. Vertical slice. Unit tests and E2E tests with 80% coverage. Test-first. Acceptance matrix implemented. Preflight N/A. Full end-to-end alignment. Incremental patch. Generation map N/A. Strong boundary type N/A. Read-only discovery N/A. Strict typing typecheck. Modular domain/topic structure. Reuse existing module. Review specs and tickets.
