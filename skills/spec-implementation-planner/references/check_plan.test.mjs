@@ -8,6 +8,8 @@ import path from "node:path";
 const checker = path.resolve(import.meta.dirname, "check_plan.mjs");
 const generator = path.resolve(import.meta.dirname, "generate_plan_manifest.mjs");
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), "check-plan-"));
+const ticketPath = "plans/wave_01_identity/tickets/TICKET-001-user.md";
+const generate = () => execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
 const write = (relative, content) => {
   const file = path.join(temp, relative);
   fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -128,47 +130,79 @@ try {
   write("specs/contracts.md", "# Contracts\nCON-USER\n");
   write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
   write("plans/implementation-plan.md", "# Plan\n\n## Self-Audit\nEvidence.\n");
-  write("plans/wave_01_identity/plan.md", "## End-to-End Outcome\nWorks.\n\n## Implementation Order\nOrdered.\n\n## Slice Strategy\nVertical.\n\n## Isolation\nIsolated.\n\n## Status\nReady.\n\n## Operational Path Coverage\nCovered.\n");
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
+  write("plans/wave_01_identity/plan.md", "# Identity wave\n\nValidate and return the approved user view.\n");
+  write(ticketPath, ticket());
   indexes();
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  generate();
   assert.equal(run().ok, true, "valid structural plan should pass");
 
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket().replace(/\n/g, "\r\n"));
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  const representationBlock = /representation_reuse:\n[\s\S]*?(?=^autonomy:)/m;
+
+  write(ticketPath, ticket().replace(representationBlock, ""));
+  generate();
+  assert.match(run().output, /missing representation_reuse/, "missing representation disposition must fail");
+
+  write("specs/03-contracts/representation-catalog.yaml", "catalog_version: 1\nshapes:\n  - shape_id: identity.user\nmappings: []\n");
+  const dataTicket = ticket().replace(representationBlock, `representation_reuse:
+  status: ready
+  catalog_ref: specs/03-contracts/representation-catalog.yaml
+  shape_refs: [identity.user]
+  mapping_refs: []
+  new_shape_decision: reuse
+`);
+  write(ticketPath, dataTicket);
+  generate();
+  assert.equal(run().ok, true, "registered representation can be planned");
+  write(ticketPath, dataTicket.replace("shape_refs: [identity.user]", "shape_refs: [identity.unknown]"));
+  generate();
+  assert.match(run().output, /unregistered representation shape_ref identity.unknown/, "unknown representation must fail");
+  write(ticketPath, ticket());
+  generate();
+
+  const manifestPath = path.join(temp, "plans/plan-manifest.yaml");
+  const approvedPlan = fs.readFileSync(manifestPath, "utf8");
+  write("plans/reviews/wave-01/review-01/tickets/TICKET-001.md", "# Review notes\n");
+  write("plans/implementation-evidence/TICKET-001.json", "{}\n");
+  assert.equal(run().ok, true, "review notes and implementation evidence are outside the plan digest");
+  generate();
+  assert.equal(fs.readFileSync(manifestPath, "utf8"), approvedPlan, "review and evidence files do not rewrite the manifest");
+
+
+  write(ticketPath, ticket().replace(/\n/g, "\r\n"));
+  generate();
   assert.equal(run().ok, true, "CRLF ticket frontmatter should pass");
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  write(ticketPath, ticket());
+  generate();
 
   write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\n  - capability_id: CAP-002\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
   assert.match(run().output, /capabilities ID CAP-002 is not covered by a non-skipped ticket/, "every approved traceability ID must be planned");
   write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
 
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket().replace("capability_ids: [CAP-001]", "capability_ids: [CAP-UNKNOWN]"));
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  write(ticketPath, ticket().replace("capability_ids: [CAP-001]", "capability_ids: [CAP-UNKNOWN]"));
+  generate();
   assert.match(run().output, /unknown traceability capability_ids ID CAP-UNKNOWN/, "unknown traceability IDs must fail");
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  write(ticketPath, ticket());
+  generate();
 
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket() + "\nEdited after generation.\n");
+  write(ticketPath, ticket() + "\nEdited after generation.\n");
   assert.match(run().output, /artifact digest differs for .*TICKET-001-user.md/, "stale ticket content must fail");
-  const editedTicket = fs.readFileSync(path.join(temp, "plans/wave_01_identity/tickets/TICKET-001-user.md"), "utf8");
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
-  assert.equal(fs.readFileSync(path.join(temp, "plans/wave_01_identity/tickets/TICKET-001-user.md"), "utf8"), editedTicket,
+  const editedTicket = fs.readFileSync(path.join(temp, ticketPath), "utf8");
+  generate();
+  assert.equal(fs.readFileSync(path.join(temp, ticketPath), "utf8"), editedTicket,
     "plan generation must never rewrite a ticket");
   assert.equal(run().ok, true, "editing one ticket only requires generating the central manifest");
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  write(ticketPath, ticket());
+  generate();
 
   write("plans/_scope.yaml", "tickets: {}\n");
   assert.match(run().output, /ticket IDs must exactly reconcile/, "stale index must fail");
   indexes();
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  generate();
 
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket("TICKET-001", "[TICKET-001]"));
+  write(ticketPath, ticket("TICKET-001", "[TICKET-001]"));
   indexes("TICKET-001", "[TICKET-001]");
   write("plans/_dependencies.yaml", "tickets:\n  TICKET-001:\n    depends_on: [TICKET-001]\n    blocked_by: []\n    unblocks: [TICKET-001]\n");
-  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  generate();
   assert.match(run().output, /cycle TICKET-001 -> TICKET-001/, "dependency cycle must fail");
 
   console.log("check_plan tests ok");

@@ -5,9 +5,9 @@
  * implementation agent: anchors, aliases, multiline scalars, merge keys, and
  * duplicate keys.
  */
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { readPlanSnapshot } from "./lib/plan-snapshot.mjs";
 
 const root = path.resolve(process.argv[2] || ".");
 const plansName = process.argv[3] || "plans";
@@ -18,7 +18,6 @@ const problems = [];
 const fail = (message) => problems.push(message);
 const exists = (file) => fs.existsSync(file);
 const read = (file) => exists(file) ? fs.readFileSync(file, "utf8") : "";
-const hash = (content) => `sha256:${crypto.createHash("sha256").update(content).digest("hex")}`;
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const asList = (value) => Array.isArray(value) ? value : [];
 const asString = (value) => typeof value === "string" ? value : "";
@@ -34,13 +33,6 @@ const scopeContains = (scope, file) => {
   const root = scope.replace(/\/$/, "");
   return file === root || file.startsWith(`${root}/`);
 };
-const walk = (dir) => exists(dir) ? fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-  const file = path.join(dir, entry.name);
-  return entry.isDirectory() ? walk(file) : [file];
-}) : [];
-const planRelative = (file) => path.relative(plans, file).split(path.sep).join("/");
-const excludedPlanArtifact = (file) => file === "plan-manifest.yaml" || /^(?:review|reviews|evidence|implementation-evidence)(?:\/|$)/.test(file);
-
 function parseScalar(value, label, line) {
   if (!value) return "";
   if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) return value.slice(1, -1);
@@ -218,7 +210,7 @@ for (const [plural, idField] of [["requirements", "requirement_id"], ["capabilit
 if (plan && planManifest.plan_manifest_version !== 2) fail(`${plansName}/plan-manifest.yaml: plan_manifest_version must be 2`);
 if (plan && !/^sha256:[a-f0-9]{64}$/.test(planManifestDigest)) fail(`${plansName}/plan-manifest.yaml: content_digest must be a sha256 digest`);
 if (plan && planManifest.source_spec_manifest_digest !== manifestDigest) fail(`${plansName}/plan-manifest.yaml: source_spec_manifest_digest must equal spec-manifest.yaml.content_digest`);
-const planArtifacts = walk(plans).map((file) => ({ file, path: planRelative(file) })).filter((entry) => !excludedPlanArtifact(entry.path)).sort((left, right) => left.path.localeCompare(right.path));
+const { artifacts: planArtifacts, contentDigest } = readPlanSnapshot(plans);
 const suppliedPlanArtifacts = new Map();
 for (const artifact of asList(planManifest.artifacts)) {
   if (!isObject(artifact) || !asString(artifact.path) || !/^sha256:[a-f0-9]{64}$/.test(asString(artifact.sha256))) { fail(`${plansName}/plan-manifest.yaml: artifacts require path and sha256`); continue; }
@@ -226,13 +218,10 @@ for (const artifact of asList(planManifest.artifacts)) {
   suppliedPlanArtifacts.set(artifact.path, artifact.sha256);
 }
 if (plan && !exactSet(sorted(planArtifacts.map((artifact) => artifact.path)), sorted([...suppliedPlanArtifacts.keys()]))) fail(`${plansName}/plan-manifest.yaml: artifacts must exactly cover canonical plan files`);
-const expectedPlanRecords = [];
 for (const artifact of planArtifacts) {
-  const digest = hash(read(artifact.file).replace(/\r\n?/g, "\n"));
-  if (suppliedPlanArtifacts.get(artifact.path) !== digest) fail(`${plansName}/plan-manifest.yaml: artifact digest differs for ${artifact.path}`);
-  expectedPlanRecords.push(`${artifact.path}\0${digest}\n`);
+  if (suppliedPlanArtifacts.get(artifact.path) !== artifact.sha256) fail(`${plansName}/plan-manifest.yaml: artifact digest differs for ${artifact.path}`);
 }
-if (plan && planManifestDigest !== hash(expectedPlanRecords.join(""))) fail(`${plansName}/plan-manifest.yaml: content_digest does not match canonical plan artifacts`);
+if (plan && planManifestDigest !== contentDigest) fail(`${plansName}/plan-manifest.yaml: content_digest does not match canonical plan artifacts`);
 
 let registry = {}, statusIndex = {}, dependencyIndex = {}, scopeIndex = {};
 for (const [file, assign] of [["_registry.yaml", (value) => { registry = value; }], ["_status.yaml", (value) => { statusIndex = value; }], ["_dependencies.yaml", (value) => { dependencyIndex = value; }], ["_scope.yaml", (value) => { scopeIndex = value; }]]) {
@@ -249,8 +238,8 @@ scopeIndex = requiredObject(scopeIndex.tickets, "_scope.yaml.tickets");
 const tickets = new Map();
 const parallelGroups = new Map();
 const catalogs = new Map();
-for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.includes(`${path.sep}tickets${path.sep}`))) {
-  const relative = path.relative(plans, file).split(path.sep).join("/");
+for (const { path: relative } of planArtifacts.filter(({ path }) => /(?:^|\/)tickets\/.+\.md$/.test(path))) {
+  const file = path.join(plans, relative);
   let data, body;
   try { ({ data, body } = frontmatter(read(file), relative)); }
   catch (error) { fail(error.message); continue; }

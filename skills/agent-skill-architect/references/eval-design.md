@@ -28,9 +28,10 @@ Avoid expectations that depend only on tone or subjective quality.
 
 ## Fixture-Backed Cases
 
-Use deterministic fixtures for parser, checker, catalog, and plan regressions.
-Keep them outside an individual skill package under `tests/fixtures/`, so they
-can exercise the actual checker a skill ships. Each fixture case must declare:
+Run the packaged checker against a valid baseline and a focused mutation
+for parser, catalog, and plan regressions. Build small fixtures in a temporary
+directory in the test. For larger static fixtures, use the repository's test
+fixture directory. Give each fixture case:
 
 - a stable case ID and the checker it invokes
 - only repository-relative fixture arguments

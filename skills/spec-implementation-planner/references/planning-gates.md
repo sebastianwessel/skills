@@ -55,7 +55,7 @@ Split a ticket instead of emitting it when it:
 Use a phase-gated exception only when approved specs make the work atomic and
 splitting would break an invariant such as a migration, generated package
 transaction, or compatibility boundary. Exception tickets must set
-`phase_gate_exception: true`, state the rationale in `Slice Strategy`, and put
+`phase_gate_exception: true`, state the rationale in the ticket, and put
 blocking `Phase Gate:` checkpoints in `Action Plan`. Each gate names source
 refs, prerequisite files/artifacts, exact commands, expected proof, and the next
 phase that remains blocked until the proof exists.
@@ -90,7 +90,9 @@ evidence is recorded. A controller submits `implemented` work as
 `done` as a lifecycle state.
 
 `plan-manifest.yaml` records the approved source spec digest and hashes the
-plan, indexes, wave plans, and complete ticket files. The generator writes
+plan, indexes, wave plans, and complete ticket files. Review notes under
+`plans/reviews/` and records under `plans/implementation-evidence/` sit outside
+that snapshot. The generator writes
 only the manifest. When a spec revision changes, review impact and update
 affected tickets before regenerating the plan manifest. Implementation verifies
 the approved specs and the current plan before editing.
@@ -213,7 +215,7 @@ representation_reuse:
 Use `status: not_applicable` only with a `rationale` that the ticket has no
 domain, boundary, durable-data, command/query, event, or projection shape.
 
-`Action Plan` is the executable handoff. It must be numbered and must include:
+The ordered `action_steps` are the executable handoff. Include:
 
 - preflight reads limited to `read_scope`, readiness/dependency checks, and
   baseline commands
@@ -236,21 +238,20 @@ edits, and proof.
 
 ## Drift, Generation, Typing, And Reuse
 
-`Spec Drift Controls` must list the exact spec refs, requirement IDs, contract
-anchors, acceptance rows, and forbidden interpretations for the ticket. It must
-state how implementation will be reviewed against both ticket and specs before
-done. If a required behavior is not traceable to approved specs, the ticket is
-blocked or returned to `spec-readiness-review`.
+Use `spec_refs`, `traceability`, and `acceptance` to cite governing rules,
+contract anchors, and verification. State any forbidden interpretation that
+needs emphasis in the ticket body. Route missing governing behavior to
+`spec-readiness-review`.
 
-`End-To-End Definition Coverage` must list capability-inventory rows and
-definition-chain refs covered by the ticket. It names actor/consumer,
+Cite the capability-inventory rows and governing definition chain for each
+covered path. Check actor or consumer,
 entrypoint/reachability, contracts, data touched, state transitions, side
 effects, permissions, errors, recovery, observability, owner, final state,
 acceptance, and verification or N/A. Missing chain evidence blocks the ticket.
 
-`Generator And Type Plan` must prefer deterministic generation from approved
+Prefer deterministic generation from approved
 spec definitions for types, classes, interfaces, clients, validators, schemas,
-stubs, ports, fixtures, docs, and generated tests. It must name source
+stubs, ports, fixtures, docs, and generated tests. Name source
 definitions, generator commands, generated outputs, drift checks, compile/type
 checks, and manual-code boundaries. Manual type/interface/class work is allowed
 only when generation is unavailable, unsafe, or out of scope, with evidence and
@@ -259,23 +260,21 @@ possible; weak maps, `any`, `unknown`, unchecked casts, stringly typed
 contracts, and duplicate handwritten mirrors require an approved open extension
 point or explicit N/A evidence.
 
-`Test-First Order` must name tests before implementation for every acceptance
-row. It includes happy paths, unhappy/failure paths, validation failures,
+Order test steps before implementation for every acceptance row. Cover
+success, unhappy paths, validation failures,
 authorization/permission denials, async/timeout/retry/cancel behavior, recovery,
 logging/redaction, and regression coverage when in scope. Each row states the
 expected failing proof before implementation or cites already-existing tests
 that prove the behavior from spec refs.
 
-`Modularity And Reuse Plan` must follow the general file/folder structure
-defined in approved specs. It states the domain/topic placement for new or
-changed code, including nested folders when the spec-defined project structure
-warrants it. It must name existing modules/helpers/components/services to reuse,
+Follow the approved file and folder structure. Cite where new or changed
+code belongs. Name existing modules, helpers, components, and services to reuse,
 shared abstractions to extend, duplicate code to avoid, and boundaries that must
 not gain unrelated domain logic. New abstractions require a concrete reuse or
 complexity-reduction reason from approved scope.
 
-`Representation Reuse Plan` must name the approved
-`representation-catalog.yaml` path, `shape_id` and mapping refs used by the
+Use `representation_reuse` to cite the approved catalog, shape IDs, and
+mapping refs used by the
 ticket, generated/shared artifacts to reuse, and prohibited new shapes or
 mappers. A genuinely new representation is allowed only when approved specs
 record its canonical source, owner, representation class, and mapping(s); the
@@ -283,8 +282,8 @@ ticket must link that decision and schedule its catalog/contract foundation
 before dependent implementation. A representation does not become distinct
 merely because it is used by a different layer.
 
-`Review And Verification Plan` must require a final review against source specs,
-the ticket action plan, acceptance matrix, generated artifacts/drift checks,
+Review final work against the source specs, action steps, acceptance,
+generated artifacts and drift checks,
 strict typing, modular placement, reuse/no-duplication, and changed-file scope.
 Acceptance is impossible while review finds spec drift, invented behavior, missing
 unhappy-path tests, weak avoidable typing, duplicate code, misplaced domain
@@ -337,18 +336,16 @@ Use parallel agents only for independent, bounded work:
 - Readiness includes `end_to_end_definition_gate.status: passed`; otherwise
   return gaps to `spec-readiness-review`.
 - No Wave 0/spec-closure implementation wave.
-- Every wave declares `Slice Strategy`: vertical slice with reachable E2E
-  outcome, or horizontal exception with rationale, unblocks, next vertical slice,
+- Describe each wave's reachable outcome or approved horizontal exception,
+  including rationale, dependencies unblocked, the next vertical slice,
   and tests.
 - Over-broad tickets spanning many domains/layers must be split or include
   explicit phase gates with blocking preflight checks, prerequisite artifacts,
   exact commands, and proof before later phases start.
-- Active tickets include `slice_type`, `phase_gate_exception`, and numbered
-  `Action Plan` steps. Broad multi-layer tickets fail unless
+- Active tickets include `slice_type`, `phase_gate_exception`, and ordered
+  `action_steps`. Broad multi-layer tickets fail unless
   `phase_gate_exception: true` and `Action Plan` contains blocking `Phase Gate:`
   proof points.
-- Active tickets include `Spec Drift Controls`, `Generator And Type Plan`,
-  `Modularity And Reuse Plan`, and `Review And Verification Plan`.
 - Tickets that touch dependencies, databases, frameworks, cloud services,
   third-party APIs, SDKs, drivers, or generated tools cite approved spec/readiness
   refs instead of choosing versions or researching docs during planning.
@@ -373,8 +370,7 @@ Use parallel agents only for independent, bounded work:
 - Parallel sidecar work is read-only or has disjoint `write_scope`; broad tasks
   like "refactor backend", "fix all drift", or "generate everything" are
   rejected.
-- Tickets declare `Test-First Order`: spec/contract/acceptance/unhappy-path
-  tests first, then business logic. Split business-logic tickets depend on
+- Order contract, acceptance, and unhappy-path tests before business logic. Split business-logic tickets depend on
   required contract/test foundations.
 - Tickets require strict typing whenever the language/toolchain supports it,
   type/compile checks, no duplicate handwritten contract mirrors, no avoidable

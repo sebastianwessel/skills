@@ -128,7 +128,8 @@ node scripts/check-all.mjs
 ```
 
 It validates skill packages, JavaScript syntax, checker tests, eval manifests,
-local resource links, generated README state, and adversarial checker fixtures.
+local resource links, and generated README state. Checker tests exercise a valid
+baseline and specific failure cases.
 GitHub Actions runs the same checks independently on Linux and Windows so each
 failed category is immediately visible. Run a single category locally with,
 for example, `node scripts/check-all.mjs tests`.
