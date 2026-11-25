@@ -40,7 +40,7 @@
     {
       "id": 7,
       "prompt": "Create specs for account login, projects, and API keys where the request only describes the happy path.",
-      "expected_output": "Loads the checklist index plus relevant topic files, fills or records gaps for auth login/signup/recovery, permissions/roles, database indexes and constraints, credential and secret storage, generated contracts, unhappy-path tests, observability, release, and operations, then hands off to readiness review without self-approval.",
+      "expected_output": "Loads baseline and relevant topic checklists directly from the readiness skill, fills or records gaps for auth login/signup/recovery, permissions/roles, database indexes and constraints, credential and secret storage, generated contracts, unhappy-path tests, observability, release, and operations, then hands off to readiness review without self-approval.",
       "files": []
     },
     {

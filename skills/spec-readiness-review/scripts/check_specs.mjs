@@ -47,16 +47,26 @@ function exactFile(value) {
 
 function validateManifest(all) {
   const file = "spec-manifest.yaml";
+  if (!exists(file)) {
+    fail(`Missing ${file} for approved readiness`);
+    return null;
+  }
   const manifest = structured(file);
-  if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) return null;
+  if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) {
+    fail(`${file} must be a map`);
+    return null;
+  }
   if (manifest.spec_manifest_version !== 1) fail(`${file}.spec_manifest_version must be 1`);
   if (!/^sha256:[a-f0-9]{64}$/.test(manifest.content_digest || "")) fail(`${file}.content_digest must be a sha256 digest`);
-  if (!Array.isArray(manifest.artifacts) || !manifest.artifacts.length) fail(`${file}.artifacts must be a non-empty list`);
+  if (!Array.isArray(manifest.artifacts) || !manifest.artifacts.length) {
+    fail(`${file}.artifacts must be a non-empty list`);
+    return null;
+  }
   // The manifest and approval/provenance records are attestations about the
   // source set. Excluding all three avoids a self-referential digest cycle.
   const expected = all.map(rel).filter((entry) => ![file, ".readiness-report.yaml", "_provenance.yaml"].includes(entry)).sort();
   const supplied = new Map();
-  for (const entry of manifest.artifacts || []) {
+  for (const entry of manifest.artifacts) {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) { fail(`${file}.artifacts entries must be maps`); continue; }
     if (!exactFile(entry.path)) { fail(`${file}.artifacts has invalid path`); continue; }
     if (!/^sha256:[a-f0-9]{64}$/.test(entry.sha256 || "")) fail(`${file}.artifacts.${entry.path}.sha256 must be a sha256 digest`);
@@ -85,11 +95,14 @@ function validateManifest(all) {
   return manifest;
 }
 
-function validateReadinessReport(report, manifest) {
-  if (!report || typeof report !== "object" || Array.isArray(report)) return false;
+function validateReadinessReport(report, manifest, knowledgeProfile) {
+  if (!report || typeof report !== "object" || Array.isArray(report)) {
+    fail(".readiness-report.yaml must be a map");
+    return;
+  }
   const approved = report.status === "approved";
   if (!["draft", "needs_human_review", "approved", "blocked"].includes(report.status)) fail(".readiness-report.yaml.status is invalid");
-  if (!approved) return false;
+  if (!approved) return;
   if (report.language !== "en") fail(".readiness-report.yaml.language must be en");
   if (!Array.isArray(report.open_decisions) || report.open_decisions.length) fail(".readiness-report.yaml.open_decisions must be []");
   const approval = report.approval_evidence;
@@ -116,7 +129,9 @@ function validateReadinessReport(report, manifest) {
   if (!semantic || semantic.status !== "passed" || !isNonEmptyString(semantic.judge) || !isNonEmptyString(semantic.evidence_ref) || !isNonEmptyString(semantic.reviewed_at)) {
     fail("semantic_judge_evidence requires passed status, judge, evidence_ref, and reviewed_at");
   }
-  return approved;
+  if (knowledgeProfile && manifest && semantic?.manifest_digest !== manifest.content_digest) {
+    fail("semantic_judge_evidence.manifest_digest must match spec-manifest.yaml.content_digest");
+  }
 }
 
 function validateArtifactContracts() {
@@ -138,7 +153,12 @@ function validateArtifactContracts() {
   if (!authority || authority.decision_authority_version !== 1 || !isStringList(authority.default_allowed_classes, 1) || !authority.default_allowed_classes.every((value) => ["D0", "D1"].includes(value))) {
     fail("00-decision-authority.yaml must restrict default_allowed_classes to D0/D1");
   }
-  for (const decision of authority?.decisions || []) {
+  const decisionIds = new Set();
+  const decisions = authority?.decisions ?? [];
+  if (!Array.isArray(decisions)) fail("00-decision-authority.yaml.decisions must be a list");
+  for (const decision of Array.isArray(decisions) ? decisions : []) {
+    if (decisionIds.has(decision?.decision_id)) fail(`00-decision-authority.yaml: duplicate decision_id ${decision.decision_id}`);
+    if (isId(decision?.decision_id)) decisionIds.add(decision.decision_id);
     if (!isId(decision?.decision_id) || !["D0", "D1", "D2", "D3"].includes(decision?.class) || !isNonEmptyString(decision?.authority) || !isStringList(decision?.scope_refs, 1)) {
       fail("00-decision-authority.yaml decisions require id, class, authority, and scope_refs");
     }
@@ -336,11 +356,11 @@ else {
   }
   const report = structured(".readiness-report.yaml");
   const approved = report?.status === "approved";
-  if (exists("index.md")) validateProjectKnowledge(root, all, {
+  const knowledgeProfile = validateProjectKnowledge(root, all, {
     approved, readAuthority: () => structured("00-decision-authority.yaml"), fail,
   });
   const manifest = approved ? validateManifest(all) : null;
-  validateReadinessReport(report, manifest);
+  validateReadinessReport(report, manifest, knowledgeProfile);
   if (approved) {
     validateArtifactContracts();
     validateTraceability(structured("_registry.yaml"));

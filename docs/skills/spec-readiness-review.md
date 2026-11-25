@@ -37,8 +37,8 @@ npx skills add sebastianwessel/skills
   domain/topic, including ownership boundaries, shared/reusable module
   placement, generated artifacts, and public entrypoint or operational asset
   locations.
-- Walks the root checklist index, relevant high-level indexes, and detailed
-  topic checklist files; blocks approval when relevant topics such as database
+- Links directly to baseline and scoped topic checklists. Blocks approval for
+  gaps in topics such as database
   indexes, auth flows, permissions, secret handling, generated contracts,
   unhappy-path tests, release, or operations are gaps.
 - Blocks approval when dependency versions or third-party implementation
@@ -49,8 +49,9 @@ npx skills add sebastianwessel/skills
 ## How It Works
 
 For projects using the [project knowledge profile](../project-knowledge.md),
-the review checks direct discovery, decision authority, gap disposition, and
-rendered diagrams alongside the existing approval gates.
+the review checks direct discovery, decision authority, gap disposition, and rendered
+diagrams. The readiness checker verifies that the semantic judge reviewed
+the same digest as the human approver.
 
 The skill loads readiness gates and artifact-shape references only when review
 is requested. It regenerates the spec manifest after every canonical-source
@@ -78,7 +79,6 @@ treating keyword success as approval.
 | `skills/spec-readiness-review/references/readiness-gates.md` | Approval gates and judge loop. |
 | `skills/spec-readiness-review/references/artifact-shapes.md` | Expected spec tree and readiness report fields. |
 | `skills/spec-readiness-review/references/representation-catalog.md` | Canonical shape ownership, mapping, and reuse requirements. |
-| `skills/spec-readiness-review/references/spec-checklists.md` | Root checklist index that routes to high-level indexes and topic-specific checklist files. |
 | `skills/spec-readiness-review/scripts/check_specs.mjs` | Deterministic spec-shape checker. |
 | `skills/spec-readiness-review/scripts/generate_spec_manifest.mjs` | Rebuilds the authoritative spec manifest and content digest. |
 | `skills/spec-readiness-review/evals/evals.json` | Evaluation scenarios for readiness review. |

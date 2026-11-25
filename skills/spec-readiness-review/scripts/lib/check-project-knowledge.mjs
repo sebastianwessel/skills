@@ -56,9 +56,9 @@ function hasAcceptedReplacement(pages, file) {
 
 export function validateProjectKnowledge(root, files, { approved, readAuthority, fail }) {
   const entry = path.join(root, "index.md");
-  if (!files.includes(entry)) return;
+  if (!files.includes(entry)) return false;
   const frontmatter = frontmatterPattern.exec(fs.readFileSync(entry, "utf8"));
-  if (!frontmatter || !markerPattern.test(frontmatter[1])) return;
+  if (!frontmatter || !markerPattern.test(frontmatter[1])) return false;
 
   const localFiles = new Set();
   const pages = new Map();
@@ -172,4 +172,5 @@ export function validateProjectKnowledge(root, files, { approved, readAuthority,
       fail(`${file}: editable diagram needs an embedded SVG or PNG export`);
     }
   }
+  return true;
 }

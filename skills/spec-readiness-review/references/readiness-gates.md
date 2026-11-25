@@ -1,6 +1,7 @@
 # Readiness Gates
 
-Approve only when every gate passes or is N/A with evidence.
+Approve only when every gate passes. Record a scoped N/A with evidence for a
+gate concern outside the approved scope.
 
 ## Contents
 
@@ -49,16 +50,18 @@ Approve only when every gate passes or is N/A with evidence.
 
 ## Judge Loop
 
-Run once before planning handoff. For every capability/business outcome, record
+Run on the final candidate digest before human approval. Rerun against a new
+digest after a canonical edit. For every capability/business outcome, record
 actor, entrypoint, reachability path, preconditions, data touched, state
 transitions, side effects, permissions, contracts, observability, verification,
 owner, final state, and N/A evidence. Walk success, unhappy, recovery,
 frontend/client, interface, security/privacy, data lifecycle, data-integrity,
 observability, performance, release, supply-chain, and testability paths.
 
-Require `spec_judge_loop.status: passed`, `run_timing: approval_only`,
-reviewed flows/paths/refs, uncertainty, finding counts, judge metadata, and
-`blocking_findings_count: 0`.
+Require `gates.spec_judge_loop.status: passed`. Record the detailed loop under
+`spec_judge_loop` with `run_timing: approval_only`, reviewed flows/paths/refs,
+uncertainty, finding counts, judge metadata, and `blocking_findings_count: 0`.
+Bind the judge evidence to the reviewed digest.
 
 ## Coverage
 
@@ -79,8 +82,8 @@ reviewed flows/paths/refs, uncertainty, finding counts, judge metadata, and
 - General file/folder structure is covered or N/A: domain/topic folders,
   nested structure expectations, generated outputs, shared/reusable modules,
   public entrypoints, migrations, runbooks, and ownership boundaries.
-- `spec-checklists.md`, relevant high-level checklist indexes, and relevant
-  detailed topic checklist files have been walked. Every relevant topic is
+- The baseline and applicable topic files selected in the readiness skill
+  have been walked. Every relevant topic is
   `covered` or `not_applicable` with evidence; any `gap` blocks approval.
 - Dependency, database, framework, cloud, and third-party solution choices have
   current-doc evidence. Database schemas, indexes, and query/performance

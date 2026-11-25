@@ -1,99 +1,96 @@
 ---
 name: spec-readiness-review
-description: Reviews, repairs, and approves implementation spec readiness. Use when specs need semantic review, deterministic checks, readiness reports, approval gates, or gap repair before planning.
+description: Reviews and approves project knowledge and implementation specs for planning. Use when checking completeness, contradictions, decision authority, readiness evidence, or repairing a targeted spec gap.
 ---
 
 # Spec Readiness Review
 
-Review canonical specs after authoring and before planning. Own the readiness
-decision, deterministic checks, semantic judge evidence, and spec gap repair.
-Do not create implementation plans or implement code.
-
-## Standard
-
-Approve only when planning agents can create tickets without deciding behavior,
-interfaces, failures, data, runtime, security, recovery, release, ops, tests,
-clean-rebuild strategy, generation mapping, general file/folder structure, or
-closed-boundary type semantics. Specs must define every capability end to end:
-actor/consumer, entrypoint/reachability, contracts, data, states, side effects,
-permissions, errors, recovery, observability, acceptance, verification, and
-final state or explicit N/A. Use the checklist walk to find omitted topics
-before planning. Third-party and dependency choices require current primary
-documentation, package/release metadata, or dated research evidence.
-For in-scope data shapes, approve only a catalog that distinguishes canonical
-semantic shapes from valid boundary/persistence/projection representations and
-records every allowed mapping.
-
-## Modes
-
-- `Review/Approve`: judge existing specs, run checks, write or update
-  `specs/.readiness-report.yaml`, and route blocking findings.
-- `Fix Gap`: update canonical specs from explicit findings, relink dependents,
-  prune stale duplicates, record impact, then rerun readiness review. Do not
-  invent broad requirements; route broad authoring to `spec-architect`.
+Own the approval gate before planning. In Review/Approve mode, record findings
+and approval evidence. In Fix Gap mode, apply a specific supported correction,
+update affected references, and review the revised source. Route new business
+or technical choices and broad authoring to `spec-architect`.
 
 ## Workflow
 
-1. Confirm source specs exist and the requested scope is clear.
-2. Load `references/readiness-gates.md`, `references/artifact-shapes.md`, and
-   `references/spec-checklists.md`, and `references/representation-catalog.md`;
-   then load relevant high-level checklist
-   indexes and only the detailed topic checklist files those indexes route to.
-3. Run the approval-time spec judge loop from `references/readiness-gates.md`.
-   If `specs/index.md` declares the project knowledge profile, walk the direct
-   retrieval, decision authority, gap disposition, and visual review gates.
-4. Verify the capability inventory and end-to-end definition chain across
-   feature, UX/client, API, data lifecycle, state transition, async, and ops
-   paths. Validate the reciprocal `00-traceability.yaml` graph from
-   requirement through capability and path to testable acceptance.
-5. Walk relevant checklist indexes and topic files; record `covered`,
-   `not_applicable`, or `gap` evidence and block on any relevant gap.
-6. Verify dependency and third-party solution specs use current stable versions
-   by default, official docs for schema/query/security/config/performance
-   guidance, and explicit rationale for older pins or nonstandard choices.
-7. Run semantic judge evidence when available.
-8. Run `node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`.
-   Before approval, run
-   `node <spec-readiness-review-skill-root>/scripts/generate_spec_manifest.mjs <spec-root> <source-revision>`
-   after every canonical-source edit, then obtain fresh, content-bound approval
-   evidence; never carry approval forward across a digest change.
-9. For contract-heavy boundaries, verify the clean-rebuild decision,
-   generation map, generated outputs/checks, strong boundary type policy,
-   handwritten remainder, and compatibility/migration stance.
-10. Verify every in-scope representation has a catalog entry, canonical owner,
-    closed/open policy, consumer list, and approved mapping or N/A evidence.
-11. If gaps exist, update canonical specs only in `Fix Gap` mode or persist
-   findings for `spec-architect`; do not approve.
-12. If all gates pass and human approval is recorded, write approved readiness
-    with the matching manifest digest, an accountable approval reference, and
-    semantic-judge evidence. Verify decision authority, scoped applicability,
-    reuse inventory, and module-boundary artifacts before handoff.
-13. Self-audit assumptions, skipped checks, current-doc uncertainty, checklist uncertainty, and residual
-    risk.
+1. **Establish the review scope.** Confirm the canonical source exists. Use
+   [Artifact shapes](references/artifact-shapes.md) for the spec tree and
+   readiness report. Start from `specs/index.md` when the knowledge profile is
+   declared. Run the spec checker against existing records or a draft report
+   for structural feedback. If a previous approval covers an older digest,
+   record it as stale and return the report to draft before reviewing the new source.
+2. **Review the sources.** Apply [Readiness gates](references/readiness-gates.md).
+   Use **Checklist selection** below to open the baseline and applicable topics.
+   Record source refs, evidenced N/A, or an owned gap for each topic. Load
+   [Representation catalog](references/representation-catalog.md) for in-scope data shapes. Verify the trace from capabilities and
+   contracts through success, failure, and recovery paths to acceptance.
+   Check authority, scope, security, data integrity, operational outcomes,
+   dependency research, and any applicable generation or migration evidence.
+   For a profiled project, verify direct discovery, ADRs, gaps, and actual
+   diagram exports using the project knowledge gate.
+3. **Resolve or route blockers.** Record the affected requirement, owner,
+   evidence, and missing decision or verification. Use `blocked` while a
+   blocker remains. Resume from the revised canonical sources after repair.
+4. **Bind the review to source.** Run the manifest generator after canonical
+   edits. Run the approval-time judge loop and obtain attributable semantic
+   judge evidence for that digest. Obtain human approval for the same digest
+   and scope. Once the semantic review finds zero blockers, use
+   `needs_human_review` while awaiting that approval. Keep new review evidence
+   outside the spec tree or in the readiness report. A source change requires
+   a new review and approval.
+5. **Validate the approved report before handoff.** Self-audit scope, source
+   authority, contradictions, N/A, and skipped proofs. Record approved
+   readiness only with all required evidence. Run the checker against that
+   report to exercise the approval gates. If it fails, record `blocked` and
+   the failure. On success give `spec-implementation-planner` the report,
+   manifest digest, and verified scope.
+
+## Checklist selection
+
+Read the baseline, then open the files for each applicable scope trigger.
+
+### Baseline
+
+- [Scope and traceability](references/checklist-core.md)
+- [End-to-end definition](references/checklist-end-to-end-definition.md)
+- [Architecture and file structure](references/checklist-architecture-structure.md)
+- [Contracts and generation](references/checklist-contracts-generation.md)
+- [Tests and verification](references/checklist-testing-verification.md)
+- [Security and abuse](references/checklist-security-abuse.md)
+- [Secrets and privacy](references/checklist-secrets-privacy.md)
+- [Performance and capacity](references/checklist-performance-capacity.md)
+
+### Scope triggers
+
+| When scope includes | Open |
+| --- | --- |
+| Runtime configuration, workers, API/client boundaries, deployables or multiple packages | [Runtime](references/checklist-runtime-platform.md), [Service topology](references/checklist-service-topology.md) |
+| Third-party dependencies or platform choices | [Dependency research](references/checklist-dependencies-research.md) |
+| Deployment, operations, recovery or release | [Operations and release](references/checklist-operations-release.md) |
+| Durable or cached data, volume, reporting storage | [Data persistence](references/checklist-data-persistence.md) |
+| Identity, permissions or tenant boundaries | [Auth and permissions](references/checklist-auth-permissions.md) |
+| Webhooks, jobs, external services, async or realtime | [Async integrations](references/checklist-async-integrations.md) |
+| Web, mobile, desktop, embedded or public UX | [Frontend UX](references/checklist-frontend-ux.md), [Localization, content and SEO](references/checklist-i18n-content-seo.md) |
+| Billing, commerce or entitlements | [Payments and entitlements](references/checklist-payments-entitlements.md) |
+| Messaging, alerts or subscriptions | [Notifications](references/checklist-notifications-communications.md) |
+| Uploads, media, moderation or rendered files | [Files and media](references/checklist-files-media.md) |
+| Search, reporting, dashboards or analytics | [Search and reporting](references/checklist-search-reporting-analytics.md) |
+| Ingestion, export, movement or synchronization of data | [Import, export and sync](references/checklist-import-export-sync.md) |
+| Administration, support or governance | [Admin and governance](references/checklist-admin-support-governance.md) |
+| AI, automated decisions or ML workflows | [AI and automation](references/checklist-ai-ml-automation.md) |
+
+## Commands
+
+Resolve the skill root from the installed skill. These commands use Node.js
+and work on the target project passed as `<spec-root>` (normally `specs/`).
+
+```text
+node <spec-readiness-review-skill-root>/scripts/generate_spec_manifest.mjs <spec-root> <source-revision>
+node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>
+```
 
 ## Stop Conditions
 
-Stop without approval when specs are missing, scope is unclear, human approval is
-missing, approval evidence is not bound to the current manifest digest,
-semantic judge evidence is unavailable when required, deterministic
-checks fail, source contracts are ambiguous, generation mapping is incomplete,
-weak closed-boundary types are accepted without an open JSON leaf, or planning
-would need to invent behavior, file/folder placement, dependency versions, or
-third-party implementation guidance, a data shape, or a representation mapping.
-
-## Reference Map
-
-- `references/readiness-gates.md`: approval gates and judge loop.
-- `references/artifact-shapes.md`: expected spec tree and readiness report.
-- `references/spec-checklists.md`: root checklist index that routes to
-  high-level checklist indexes and detailed topic files.
-- `references/representation-catalog.md`: required catalog shape and reuse
-  decision rules for in-scope data representations.
-- `scripts/check_specs.mjs`: deterministic spec-shape checker.
-
-## Lifecycle Handoff
-
-Authoring and broad spec updates start in `spec-architect`. Approved readiness
-hands off to `spec-implementation-planner`. Implementation review spec gaps
-return here for persisted findings and repair routing. If stage is unclear, use
-`spec-driven-workflow`.
+Withhold approval when intent, authority, evidence, or a material failure path
+is unresolved, or when a required checker or judge cannot run. Structural
+success on a draft is authoring feedback. Planning requires the approved
+report and a passing check against the current source bytes.

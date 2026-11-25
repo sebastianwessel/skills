@@ -45,9 +45,9 @@ Put `x-project-knowledge-version: 1` in the YAML frontmatter of
 Link directly to vision, architecture, capability inventory, E2E coverage,
 `decisions/index.md`, and `gaps/index.md`. Give people and agents a direct
 route to each domain, component, and flow from the root or one section index
-linked there. Include human terms, stable IDs, and short descriptions in link
-labels or adjacent text. Add the start path and the rules for normative sources
-to project agent guidance. Keep an empty decisions or gaps index explicit.
+linked there. Use familiar names and stable IDs in link labels. Add orientation
+text where a label alone would be unclear. Keep detailed descriptions on the
+owner. Add the start path and rules for normative sources to project agent guidance. Keep an empty decisions or gaps index explicit.
 
 Use inline Markdown links with explicit relative filenames for first-party
 knowledge references. Keep their targets inside `specs/`. Cite external

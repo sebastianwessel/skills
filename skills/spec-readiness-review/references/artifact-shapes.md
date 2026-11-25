@@ -59,6 +59,24 @@ evidence, current dependency/doc research evidence, capability inventory and
 end-to-end definition evidence, file/folder structure evidence, clean-rebuild
 evidence, HITL decisions, checklist walk topics/gaps, and maintenance impact.
 
+### Checklist evidence
+
+Record a concrete source ref for `covered`, scoped exclusion evidence for
+`not_applicable`, or an owned finding for `gap`. In-scope gaps block approval.
+
+```yaml
+checklist_walk:
+  status: passed
+  topics:
+    authentication:
+      applicability: relevant
+      checklist: references/checklist-auth-permissions.md
+      evidence:
+        - specs/02-capabilities/auth.md#login
+      gaps: []
+  blocking_findings_count: 0
+```
+
 ## Content-Bound Approval
 
 An approved report must name a digest that binds approval to the exact source
@@ -103,7 +121,16 @@ semantic_judge_evidence:
   judge: <judge name and version>
   reviewed_at: 2026-08-15T12:04:00Z
   evidence_ref: reports/spec-judge-identity.yaml
+  manifest_digest: sha256:<same digest as spec-manifest.yaml>
 ```
+
+Record semantic judge evidence against the current exact digest. The checker
+requires the judge digest for project knowledge profile 1. A successful
+draft check covers structural feedback. The checker exercises full approval
+gates against the candidate approved report before handoff. Check the actual
+judge and approval references for authority, scope, and provenance. Store
+post-review evidence in the readiness report or outside `specs/` so recording
+it preserves the reviewed digest.
 
 ## Canonical Control Artifacts
 
@@ -126,11 +153,11 @@ concerns:
 decision_authority_version: 1
 default_allowed_classes: [D0, D1]
 decisions:
-  - decision_id: DEC-IDENTITY-001
+  - decision_id: ADR-012
     class: D2 # D0 mechanical; D1 private/reversible; D2 approved semantic; D3 human-only
     authority: architecture-owner
     scope_refs: [CAP-IDENTITY-001]
-    source_refs: [ADR-012]
+    source_refs: [components/identity/decisions/adr-012.md]
 ```
 
 `00-reuse-inventory.yaml` has `reuse_inventory_version: 1`,

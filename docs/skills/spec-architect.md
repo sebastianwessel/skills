@@ -35,7 +35,7 @@ npx skills add sebastianwessel/skills
 - Defines decision authority, scoped applicability/N/A records, and a versioned
   policy profile. Agents may infer only private mechanical details that policy
   explicitly permits.
-- Walks the checklist index and relevant topic checklist files, filling gaps or
+- Walks the baseline and applicable checklists from readiness review, filling gaps or
   recording N/A evidence for topics such as auth, data, secrets, APIs, tests,
   UX, operations, release, and supply chain.
 - Uses current stable versions by default for dependencies and third-party
@@ -84,7 +84,7 @@ contract semantics, material side effects, or contradictions.
    runbooks.
 6. Research current primary docs/package metadata for dependencies and
    third-party solutions, including database schema/query/index guidance.
-7. Walk the checklist index plus relevant topic files and record covered, N/A,
+7. Walk the applicable readiness checklists and record covered, N/A,
    or gap evidence.
 8. Normalize requirements into traceable, verifiable statements.
 9. Define source-of-truth contracts and link human specs to them.

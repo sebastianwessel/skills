@@ -11,7 +11,7 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 
 ## Stage Selection
 
-- No approved specs, changed requirements, spec contradiction, unclear behavior,
+- Missing canonical specs, changed requirements, spec contradiction, unclear behavior,
   missing interface/UX/NFR/security/release/test definition, decision authority,
   policy profile, reuse inventory, or module boundary:
   use `spec-architect`.
@@ -54,7 +54,7 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
      gap repair when requested.
    - Check: readiness approved for the current spec manifest digest, human
      approval is attributable, semantic judge passed,
-     `spec_judge_loop.status: passed`, zero blocking judge findings, no open
+     `gates.spec_judge_loop.status: passed`, zero blocking judge findings, no open
      implementation decisions.
    - Next: planning.
 

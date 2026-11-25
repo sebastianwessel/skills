@@ -106,6 +106,7 @@ function pinFixtureApproval(root) {
   const digest = manifest.match(/^content_digest: (sha256:[a-f0-9]{64})$/m)?.[1];
   assert.ok(digest);
   change(root, ".readiness-report.yaml", /manifest_digest: sha256:[a-f0-9]{64}/, `manifest_digest: ${digest}`);
+  change(root, ".readiness-report.yaml", "semantic_judge_evidence:\n", `semantic_judge_evidence:\n  manifest_digest: ${digest}\n`);
 }
 
 function checkProfile(name, mutate, diagnostic, afterApproval = () => {}) {
@@ -172,3 +173,22 @@ test("a YAML example in a legacy index does not activate the profile", (context)
   const checked = run("check_specs.mjs", root);
   assert.equal(checked.status, 0, checked.stderr);
 });
+
+checkProfile("approval requires the source manifest on disk", () => {}, /Missing spec-manifest.yaml for approved readiness/, (root) => {
+  fs.unlinkSync(path.join(root, "spec-manifest.yaml"));
+});
+checkProfile("a report must be a map with an explicit readiness state", () => {}, /readiness-report.yaml must be a map/, (root) => {
+  write(root, ".readiness-report.yaml", "- approved\n");
+});
+checkProfile("semantic judge evidence must match the reviewed manifest", () => {}, /semantic_judge_evidence.manifest_digest must match/, (root) => {
+  change(root, ".readiness-report.yaml", /semantic_judge_evidence:\n  manifest_digest: sha256:[a-f0-9]{64}/,
+    "semantic_judge_evidence:\n  manifest_digest: sha256:" + "a".repeat(64));
+});
+checkProfile("one decision ID cannot grant competing authority", (root) => {
+  fs.appendFileSync(path.join(root, "00-decision-authority.yaml"), `  - decision_id: ADR-001
+    class: D2
+    authority: another-owner
+    scope_refs: [CAP-FIXTURE-001]
+    source_refs: [components/identity/decisions/adr-001.md]
+`);
+}, /duplicate decision_id ADR-001/);
