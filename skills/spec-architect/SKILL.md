@@ -1,6 +1,6 @@
 ---
 name: spec-architect
-description: Creates and updates canonical implementation specs. Use when specs need authoring, evolution, source-of-truth repair, contracts, UX, NFRs, release, or supply-chain definition before readiness review.
+description: Creates and updates canonical project knowledge and implementation specs. Use when defining business domains, solution design, components, flows, ADRs, knowledge gaps, contracts, or specs before readiness review.
 ---
 
 # Spec Architect
@@ -24,6 +24,9 @@ planning. Do not approve your own specs.
 
 1. Select mode: `Create`, `Update`, or `Fix Gap`.
 2. Normalize requirements and source/rationale.
+   Apply `references/project-knowledge.md` for new project knowledge sets or
+   when expanding an existing set. Give humans and agents direct entry points,
+   and capture unresolved scope in the gaps index.
 3. Perform read-only repository discovery; create/update the reuse and module
    boundary inventory with the inspected revision and public symbols.
 4. Create/update decision, policy-profile, and applicability records. Block on
@@ -63,8 +66,9 @@ planning. Do not approve your own specs.
 19. Mark async/concurrency/runtime semantics explicitly.
 20. Record material migration requirements under specs; the planner creates
    executable migration tickets only after readiness approval.
-21. Sync registries/provenance; prune duplicates and generate/update the
-   canonical spec manifest.
+21. Sync registries, ADRs, gap dispositions, indexes, and provenance. Apply
+   `references/diagram-and-publishing.md` to useful views and any publication.
+   Prune duplicates and generate/update the canonical spec manifest.
 22. Self-audit source/current-doc coverage, assumptions, checklist gaps, decisions, and N/A.
 23. Hand off to `spec-readiness-review` for judge loop, deterministic checks,
     human approval evidence, and readiness report.
@@ -78,6 +82,10 @@ repository or relative to this skill package.
 
 - `references/decision-and-reuse-controls.md`: decision authority, policy,
   scoped applicability, and reuse/module controls.
+- `references/project-knowledge.md`: business and technical ownership,
+  shallow navigation, scoped decisions, gaps, and optional meeting records.
+- `references/diagram-and-publishing.md`: visual design, source and export
+  review, and renderer-ready publication.
 
 ## Lifecycle Handoff
 

@@ -40,6 +40,8 @@ records every allowed mapping.
    then load relevant high-level checklist
    indexes and only the detailed topic checklist files those indexes route to.
 3. Run the approval-time spec judge loop from `references/readiness-gates.md`.
+   If `specs/index.md` declares the project knowledge profile, walk the direct
+   retrieval, decision authority, gap disposition, and visual review gates.
 4. Verify the capability inventory and end-to-end definition chain across
    feature, UX/client, API, data lifecycle, state transition, async, and ops
    paths. Validate the reciprocal `00-traceability.yaml` graph from

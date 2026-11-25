@@ -1,6 +1,6 @@
 # Spec Architect
 
-`spec-architect` creates and updates canonical implementation specs. It turns
+`spec-architect` creates and updates canonical project knowledge and implementation specs. It turns
 product or engineering intent into source-of-truth requirements, flows,
 contracts, UX, NFRs, release, and supply-chain definitions before a separate
 readiness review approves the specs for planning.
@@ -15,7 +15,8 @@ npx skills add sebastianwessel/skills
 
 ## What It Does
 
-- Creates and updates project spec sets.
+- Organizes business domains, solution design, components, flows, ADRs, and
+  gaps in a [project knowledge set](../project-knowledge.md).
 - Repairs source-of-truth gaps from explicit findings.
 - Defines layered specs for domains, capabilities, contracts, ports, flows, UX,
   operations, release, and non-functional requirements.

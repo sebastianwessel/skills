@@ -48,6 +48,10 @@ npx skills add sebastianwessel/skills
 
 ## How It Works
 
+For projects using the [project knowledge profile](../project-knowledge.md),
+the review checks direct discovery, decision authority, gap disposition, and
+rendered diagrams alongside the existing approval gates.
+
 The skill loads readiness gates and artifact-shape references only when review
 is requested. It regenerates the spec manifest after every canonical-source
 change, uses `scripts/check_specs.mjs` for structural graph validation plus

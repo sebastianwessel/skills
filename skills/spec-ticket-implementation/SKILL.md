@@ -23,6 +23,10 @@ manifest and move it to `implemented`; do not mark a ticket `accepted` yourself.
 Confirm its `spec_manifest_digest` exactly matches the approved readiness
 manifest and `plan_manifest_digest` exactly matches the plan manifest before
 editing; either mismatch is a spec/plan blocker.
+Run `node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`
+before editing to verify that the current canonical files match approval.
+Use the ticket's exact governing rule and contract refs. If those sources
+disagree or a required behavior is an open gap, route it back for resolution.
 
 ## Stop Conditions
 

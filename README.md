@@ -11,6 +11,7 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 ## Contents
 
 - [Skill Index](#skill-index)
+- [Project Knowledge](#project-knowledge)
 - [Spec-Driven Workflow](#spec-driven-workflow)
 - [Spec-Driven Development](#spec-driven-development)
 - [Installation](#installation)
@@ -26,7 +27,7 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 | Skill | Description | Human docs |
 | --- | --- | --- |
 | [agent-skill-architect](skills/agent-skill-architect/SKILL.md) | Creates, reviews, repairs, and optimizes agent skills. Use when a skill needs authoring, trigger tuning, evals, checks, packaging readiness, or drift controls. | [docs](docs/skills/agent-skill-architect.md) |
-| [spec-architect](skills/spec-architect/SKILL.md) | Creates and updates canonical implementation specs. Use when specs need authoring, evolution, source-of-truth repair, contracts, UX, NFRs, release, or supply-chain definition before readiness review. | [docs](docs/skills/spec-architect.md) |
+| [spec-architect](skills/spec-architect/SKILL.md) | Creates and updates canonical project knowledge and implementation specs. Use when defining business domains, solution design, components, flows, ADRs, knowledge gaps, contracts, or specs before readiness review. | [docs](docs/skills/spec-architect.md) |
 | [spec-driven-workflow](skills/spec-driven-workflow/SKILL.md) | Coordinates the spec-driven lifecycle. Use when choosing order across specs, plans, tickets, reviews, feedback routing, or pause/resume. | [docs](docs/skills/spec-driven-workflow.md) |
 | [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks. | [docs](docs/skills/spec-implementation-planner.md) |
 | [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings. | [docs](docs/skills/spec-implementation-review.md) |
@@ -34,17 +35,24 @@ skill lives in its own subdirectory under `skills/` and follows Anthropic's
 | [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Implements exactly one approved spec plan ticket in fixed scope. Use when a ready ticket needs code changes with contract/codegen-first, test-first, verification, and no invention. | [docs](docs/skills/spec-ticket-implementation.md) |
 <!-- skills-index:end -->
 
+## Project Knowledge
+
+Use the [project knowledge guide](docs/project-knowledge.md) to organize business
+rules, solution design, components, flows, decisions, and gaps for human and
+agent readers. The guide includes the MkDocs preview and publishing workflow.
+
 ## Spec-Driven Workflow
 
 Use [`spec-driven-workflow`](skills/spec-driven-workflow/SKILL.md) when a task
 spans more than one lifecycle stage or when the next step is unclear.
 
-1. Specify with `spec-architect` until specs are approved.
-2. Plan with `spec-implementation-planner` until waves, tickets, dependencies,
+1. Specify with `spec-architect`.
+2. Review and approve with `spec-readiness-review`.
+3. Plan with `spec-implementation-planner` until waves, tickets, dependencies,
    scopes, status, and test-first order are ready.
-3. Implement one ready ticket with `spec-ticket-implementation`.
-4. Review ticket sets or waves with `spec-implementation-review`.
-5. Route findings back to the owning skill and repeat until no blocking findings
+4. Implement one ready ticket with `spec-ticket-implementation`.
+5. Review ticket sets or waves with `spec-implementation-review`.
+6. Route findings back to the owning skill and repeat until no blocking findings
    remain.
 
 ## Spec-Driven Development

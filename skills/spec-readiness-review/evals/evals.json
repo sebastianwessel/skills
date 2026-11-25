@@ -84,6 +84,12 @@
       "prompt": "Let an implementation agent decide whether to make an exported type, alter a public mapping default, or introduce a shared module because the spec is concise.",
       "expected_output": "Blocks the decision unless decision-authority and reuse/module artifacts cite an approved D2/D3 decision. Allows only D0 mechanical and D1 private reversible choices under the declared autonomy budget.",
       "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Approve a project whose index and contracts pass the file checks, but an edge-case gap is still open and a recovery diagram differs from the flow.",
+      "expected_output": "Runs the spec checker, records both blockers with exact links, compares canonical outcome and rendered export, routes the gaps back to their owner, and withholds approval.",
+      "files": []
     }
   ]
 }

@@ -18,6 +18,8 @@ work backward to the owning skill instead of letting agents decide or invent.
 1. **Orient**
    - Identify current artifacts: `specs/`, `.readiness-report.yaml`, `plans/`,
      ticket status, implementation diff, review findings.
+   - When present, start from `specs/index.md`. Follow direct links to the
+     affected business rules, architecture, components, flows, decisions, and gaps.
    - Decide whether the work is an incremental patch/refactor or a
      contract-first clean rebuild by boundary. If compatibility debt,
      overlapping contract surfaces, stale mirrors, or generator opportunity
@@ -32,6 +34,9 @@ work backward to the owning skill instead of letting agents decide or invent.
    - Gate: canonical specs have source/rationale, a bounded reuse/module
      inventory, approved decision/policy records, no authoring gaps, and are
      ready for readiness review.
+   - Route knowledge changes to the canonical owner through `spec-architect`.
+     Treat meeting records as optional evidence and keep decisions, gaps, and
+     rendered views synchronized with their owning definitions.
 
 3. **Readiness Review**
    - Use `spec-readiness-review` after specs are authored or repaired.

@@ -10,7 +10,9 @@ tickets agents can execute in isolation without guessing.
 
 ## Hard Gate
 
-Read `specs/.readiness-report.yaml`. Stop unless:
+Read `specs/.readiness-report.yaml`. Run
+`node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`
+to verify the current source bytes against approval. Stop unless it passes and:
 
 - `status: approved`
 - `human_approval.status: approved`
@@ -59,7 +61,8 @@ Otherwise create a spec/plan gap.
    actor/consumer, entrypoint/reachability, contracts, data lifecycle, states,
    side effects, permissions, recovery, observability, acceptance,
    verification, NFRs, operations, supply chain, frontend/client UX,
-   design/component reuse, tests, and coverage.
+   design/component reuse, tests, and coverage. Cite exact governing rule,
+   flow, contract, and decision refs as applicable. Use indexes for discovery.
 9. Split tickets until each active ticket has one bounded deliverable, exact
    write scope, exact prerequisite artifacts, and a numbered action plan with
    files/commands/proof for every step. Use phase-gated exceptions only when

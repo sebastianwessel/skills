@@ -2,6 +2,9 @@
 
 Human-facing documentation for the skills in this repository.
 
+Start with the [project knowledge guide](project-knowledge.md) for business
+rules, solution design, flows, decisions, gaps, diagrams, and site publishing.
+
 ## Skills
 
 - [agent-skill-architect](skills/agent-skill-architect.md)

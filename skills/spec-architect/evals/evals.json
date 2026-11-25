@@ -60,6 +60,18 @@
       "prompt": "Create specs for a user API, event stream, database record, and dashboard projection where implementers often add renamed copies of the user shape.",
       "expected_output": "Creates an in-scope representation catalog with canonical shape ownership, boundary/persistence/projection classes, explicit mappings, permitted differences, generated/shared outputs, and verification; it does not require one DTO across every layer.",
       "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Turn product rules, a shared service design and several failure variants into human-readable project knowledge. We have optional workshop notes and an undecided recovery limit.",
+      "expected_output": "Creates a versioned entry point with direct routes to domain, component, flow, decision and gap owners. Clusters variants by shared behavior, captures the undecided recovery limit as a blocking gap, keeps optional notes outside the spec tree and leaves readiness pending.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Correct wording in a component page. Its stable title, ID, contract, outcomes and diagram are still correct.",
+      "expected_output": "Edits the canonical owner without rewriting neighboring pages, indexes, backlinks or diagrams. Inspects dependents, refreshes canonical digest evidence and reports the need for fresh readiness approval.",
+      "files": []
     }
   ]
 }

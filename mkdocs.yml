@@ -1,0 +1,18 @@
+site_name: AI Skills
+repo_url: https://github.com/sebastianwessel/skills
+edit_uri: edit/main/docs/
+theme: mkdocs
+validation:
+  links:
+    anchors: warn
+nav:
+  - Home: README.md
+  - Project knowledge: project-knowledge.md
+  - Skills:
+      - Agent Skill Architect: skills/agent-skill-architect.md
+      - Spec Driven Workflow: skills/spec-driven-workflow.md
+      - Spec Architect: skills/spec-architect.md
+      - Spec Readiness Review: skills/spec-readiness-review.md
+      - Spec Implementation Planner: skills/spec-implementation-planner.md
+      - Spec Ticket Implementation: skills/spec-ticket-implementation.md
+      - Spec Implementation Review: skills/spec-implementation-review.md

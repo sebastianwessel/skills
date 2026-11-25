@@ -36,6 +36,12 @@
       "prompt": "A backend rebuild has GraphQL, AsyncAPI, JSON Schema entities, error taxonomy, database records, stale aliases, and compatibility fallbacks. The user asks agents to refactor the old backend.",
       "expected_output": "Routes to spec-readiness-review for a patch-vs-clean-rebuild readiness decision, generation map, source-contract inventory, and strong boundary type policy before planning or coding; broad missing authoring routes to spec-architect.",
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "A workshop proposes changing a business policy and a validation flow. Where does the change go before coding?",
+      "expected_output": "Starts from specs/index.md, routes the proposal to spec-architect, records scoped ADR/gap evidence near the owner, and requires content-bound readiness before planning. Treats optional workshop notes as evidence.",
+      "files": []
     }
   ]
 }

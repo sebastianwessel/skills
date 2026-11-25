@@ -2,6 +2,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { validateProjectKnowledge } from "./lib/check-project-knowledge.mjs";
 import { parseYaml, yamlStrings } from "./lib/simple-yaml.mjs";
 
 const root = path.resolve(process.argv[2] || "specs");
@@ -323,9 +324,11 @@ function validateLegacySmoke(all, text) {
 if (!fs.existsSync(root)) fail(`Missing spec root: ${root}`);
 else {
   const all = walk(root);
-  const text = all.map((file) => fs.readFileSync(file, "utf8")).join("\n");
+  // Visual assets are covered by the manifest, but carry no spec prose.
+  const textFiles = all.filter((file) => !/\.(drawio|svg|png)$/i.test(file));
+  const text = textFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
   [".readiness-report.yaml", "_registry.yaml", "_provenance.yaml", "00-vision.md", "00-stack.md", "00-conventions.md", "00-architecture-overview.md", "00-file-structure.md", "02-capabilities/capability-inventory.md", "glossary.md"].forEach((file) => !exists(file) && fail(`Missing artifact: ${file}`));
-  for (const file of all) {
+  for (const file of textFiles) {
     const body = fs.readFileSync(file, "utf8");
     if (/\.(json|schema)$/i.test(file)) try { JSON.parse(body); } catch (error) { fail(`${rel(file)} invalid JSON: ${error.message}`); }
     if (/\b(TODO|TBD|FIXME|OPEN QUESTION|QUESTION:)\b/i.test(body)) fail(`${rel(file)} contains unresolved marker`);
@@ -333,6 +336,9 @@ else {
   }
   const report = structured(".readiness-report.yaml");
   const approved = report?.status === "approved";
+  if (exists("index.md")) validateProjectKnowledge(root, all, {
+    approved, readAuthority: () => structured("00-decision-authority.yaml"), fail,
+  });
   const manifest = approved ? validateManifest(all) : null;
   validateReadinessReport(report, manifest);
   if (approved) {
@@ -344,7 +350,7 @@ else {
     if (exists(catalog)) validateCatalog(structured("_registry.yaml"));
     if (!exists("03-flows/e2e-coverage.md")) fail("Missing E2E coverage matrix: 03-flows/e2e-coverage.md");
     const vague = /\b(as appropriate|if needed|where possible|to be determined|decide later|future work will decide|handle errors|support auth|validate input|make configurable|sync data|recover gracefully|log appropriately|securely|performant|best effort|best practices|standard protocols)\b/i;
-    all.filter((file) => !file.endsWith(".readiness-report.yaml")).forEach((file) => vague.test(fs.readFileSync(file, "utf8")) && fail(`${rel(file)} contains ambiguous implementation language`));
+    textFiles.filter((file) => !file.endsWith(".readiness-report.yaml")).forEach((file) => vague.test(fs.readFileSync(file, "utf8")) && fail(`${rel(file)} contains ambiguous implementation language`));
     validateLegacySmoke(all, text);
   }
   if (!exists("03-contracts")) warn("Missing specs/03-contracts");

@@ -7,6 +7,7 @@ Approve only when every gate passes or is N/A with evidence.
 - Core Gates
 - Judge Loop
 - Coverage
+- Project Knowledge Gate
 - Clean Rebuild Gate
 - Representation Reuse Gate
 - Contract And Runtime Gate
@@ -85,7 +86,36 @@ reviewed flows/paths/refs, uncertainty, finding counts, judge metadata, and
   current-doc evidence. Database schemas, indexes, and query/performance
   guidance come from official docs or approved research, not generic
   "best practice" wording.
-- Shared facts live once. Diagrams are optional and must stay aligned.
+- Shared facts live once. Review material diagram views against their owning
+  definitions and inspect the actual export for readability.
+
+## Project Knowledge Gate
+
+When `specs/index.md` declares `x-project-knowledge-version: 1`, record
+evidence under the existing structure, contradiction, semantic, and
+visualization gates. Start at the index and answer representative business,
+component/contract, failure/recovery, and ADR questions. Cite the owning page
+and exact rule. Check the primary owner backlink for each ADR and gap, and
+compare vision, policies, component contracts, and flow outcomes for conflict.
+Review downstream pages for changed claims, links, or coverage. Stable
+navigation and cross-references should survive a local editorial edit.
+
+Check accepted ADRs against the authority entry and immutable approval.
+Confirm that the decision is applied to the governing sources, linked trace,
+and downstream consumers. Follow supersession to the replacement and verify
+which decision governs. An unresolved question, contradictory authority,
+proposed decision, or incomplete failure branch affecting approved scope
+blocks readiness. A deferred gap needs an approved exclusion, a revisit
+trigger, and evidence that approved paths can operate without it.
+
+For material diagrams, record source and export paths, reviewed canonical
+refs, reviewer, and result. Open the export at standard and narrow widths.
+Review node and edge semantics, failure branches, captions and text
+equivalents, alignment, crossings, clipping, and contrast. Where a diagram
+would improve comprehension, require the relevant view or document the
+scope and rationale for using text/table evidence. Profile link and
+asset checks and the spec digest provide structural evidence. Judge
+correctness, readability, and publication scope separately.
 
 ## Clean Rebuild Gate
 
