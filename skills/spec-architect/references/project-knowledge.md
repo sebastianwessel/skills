@@ -11,11 +11,8 @@
 
 ## Adoption and layout
 
-For new spec sets, use project knowledge profile 1. For an existing project,
-keep its canonical filenames and add the profile when expanding its knowledge
-structure or when migration is requested. Start from the existing owners and
-registries. Move an authority only with an explicit migration that updates
-inbound links, manifests, and approvals.
+Use the layout below for all spec sets. Keep a primary owner for each rule
+and reserve file or ID changes for cases where the scope actually changes.
 
 ```text
 specs/
@@ -91,8 +88,8 @@ source evidence for facts. If using OKF lifecycle or verification metadata,
 use their OKF meanings and keep project disposition in `x-project-state`.
 Preserve frontmatter keys you do not own.
 Use simple scalars, lists and maps that the dependency-free readiness parser
-supports. When exporting to an OKF consumer, add `type` metadata to legacy
-vision, architecture, capability, and coverage pages you want it to ingest.
+supports. For OKF export, add `type` metadata to overview or inventory pages
+you want the consumer to ingest.
 The profile applies selected OKF v0.3 conventions. For an exchange that
 requires formal OKF conformance, verify the exported bundle independently.
 

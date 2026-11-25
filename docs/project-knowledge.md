@@ -101,10 +101,9 @@ outside the publication input. [MkDocs configuration](https://www.mkdocs.org/use
 
 ## Adopt and verify
 
-1. For a new project, declare `x-project-knowledge-version: 1` in the root
-   `specs/index.md`. For an existing project, start with navigation and add the
-   profile when expanding its knowledge structure. Retain existing canonical
-   filenames and controls.
+1. Use `specs/index.md` with `x-project-knowledge-version: 1` as the entry
+   point. Use the current report and manifest formats when updating an existing
+   spec set.
 2. Use [Spec Architect](skills/spec-architect.md) to add owners, direct links,
    decisions, gaps, and valuable visuals. The profile uses OKF v0.3 Markdown
    and frontmatter conventions with project-specific fields under

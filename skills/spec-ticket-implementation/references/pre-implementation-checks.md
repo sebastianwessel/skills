@@ -28,13 +28,9 @@ inside scope, the ticket must fix them.
 - [ ] Ticket lifecycle is `ready` or `in_progress`, executable/AFK, and not
       blocked/HITL. `implemented`, `review_pending`, and `accepted` tickets are
       not reopened without a planner remediation ticket.
-- [ ] Ticket `spec_manifest_digest` exactly matches approved
-      `spec-manifest.yaml.content_digest` and
-      `.readiness-report.yaml.approval_evidence.manifest_digest`; otherwise
-      stop for replanning, not implementation.
-- [ ] Ticket `plan_manifest_digest` exactly matches
-      `plans/plan-manifest.yaml.content_digest`, whose source-spec digest also
-      matches the approved spec manifest. Do not proceed on a stale ticket.
+- [ ] The spec and plan checkers pass on the current bytes. The readiness
+      evidence matches the spec manifest, and the plan manifest binds the
+      current ticket file to that same spec digest.
 - [ ] Dependencies are `accepted` in `_status.yaml` or equivalent unless an
       approved phase gate names the exact earlier proof.
 - [ ] `autonomy` permits only D0 and optional D1 work; D1 convention refs and

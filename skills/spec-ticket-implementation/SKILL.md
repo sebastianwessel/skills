@@ -20,11 +20,14 @@ new-shape disposition.
 Only start a ticket in `ready` or `in_progress`. After every scoped acceptance
 row and local check passes, record the review-owned implementation-evidence
 manifest and move it to `implemented`; do not mark a ticket `accepted` yourself.
-Confirm its `spec_manifest_digest` exactly matches the approved readiness
-manifest and `plan_manifest_digest` exactly matches the plan manifest before
-editing; either mismatch is a spec/plan blocker.
-Run `node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`
-before editing to verify that the current canonical files match approval.
+Before editing, require approved readiness and run both package checks for
+the exact repository:
+
+- `node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`
+- `node <spec-implementation-planner-skill-root>/references/check_plan.mjs <repo-root>`
+
+The plan manifest binds the ticket bytes to the approved spec revision.
+Record the verified spec and plan digests in implementation evidence.
 Use the ticket's exact governing rule and contract refs. If those sources
 disagree or a required behavior is an open gap, route it back for resolution.
 

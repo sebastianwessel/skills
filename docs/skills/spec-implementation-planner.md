@@ -16,12 +16,8 @@ The CLI and public skill directory are introduced in Vercel's
 ## What It Does
 
 - Reads `specs/.readiness-report.yaml` and stops unless specs are approved.
-- Requires the readiness checklist walk to pass with zero blocking findings
-  before creating tickets.
-- Requires the approved readiness report to pass `end_to_end_definition_gate`
-  so tickets trace to capability inventory rows and complete definition chains.
-- Requires approved specs to declare `language: en` and pass semantic judge
-  review when the deterministic English smoke checks are used.
+- Verifies the current spec bundle and its human and judge evidence before
+  deriving tickets from the approved definitions.
 - Creates `plans/implementation-plan.md` plus registry, status, dependency, and scope indexes.
 - Prefers vertical-slice waves that each end in a working, reachable, testable
   end-to-end increment for that wave's scope.
@@ -85,9 +81,8 @@ The CLI and public skill directory are introduced in Vercel's
   refs, generated/shared artifacts to reuse, and any approved new-shape decision
   before implementation agents can add exported DTOs, entities, schemas, events,
   records, projections, or mappers.
-- Requires tickets to pin the approved spec-manifest digest, declare D0/D1-only
-  autonomy, cite reusable assets/module boundaries, and describe safe hermetic
-  verification command effects before implementation.
+- Binds tickets to the approved spec through the central plan manifest. Each
+  ticket gives its autonomy, reuse and module refs, and verification commands.
 - Flags tickets that are too broad for autonomous agents and requires split
   tickets when one ticket spans independently shippable behaviors, unrelated
   layers, or generator/backend/frontend/release work without frozen
@@ -182,7 +177,7 @@ When a gap appears, it writes a blocked readiness note instead of creating imple
 | `skills/spec-implementation-planner/SKILL.md` | Executable agent instructions and trigger metadata. |
 | `skills/spec-implementation-planner/references/planning-gates.md` | Ticket shape, plan quality, public workflow, and verification gates. |
 | `skills/spec-implementation-planner/references/check_plan.mjs` | Deterministic plan consistency checker. |
-| `skills/spec-implementation-planner/references/generate_plan_manifest.mjs` | Rebuilds the canonical plan manifest and ticket digest pins. |
+| `skills/spec-implementation-planner/references/generate_plan_manifest.mjs` | Writes the canonical plan manifest. |
 | `skills/spec-implementation-planner/evals/evals.json` | Evaluation scenarios for the skill. |
 
 ## Validation And Safety

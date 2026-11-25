@@ -1,3 +1,0 @@
-# Conventions
-
-Fixture-only conventions.

@@ -17,9 +17,8 @@ npx skills add sebastianwessel/skills
 
 - Reviews specs after `spec-architect` authors or updates them.
 - Runs the approval-time judge loop and deterministic spec checker.
-- Owns content-bound approval: `spec-manifest.yaml` hashes authoritative specs,
-  while readiness approval, provenance, and judge evidence must name that exact
-  digest.
+- Binds human approval and semantic judge evidence to the exact
+  `spec-manifest.yaml` digest.
 - Requires structured applicability/N/A, decision-authority, policy-profile,
   reuse-inventory, module-boundary, and reciprocal traceability artifacts before
   approval.
@@ -48,16 +47,14 @@ npx skills add sebastianwessel/skills
 
 ## How It Works
 
-For projects using the [project knowledge profile](../project-knowledge.md),
-the review checks direct discovery, decision authority, gap disposition, and rendered
-diagrams. The readiness checker verifies that the semantic judge reviewed
-the same digest as the human approver.
+Review the [project knowledge](../project-knowledge.md) for direct discovery,
+decision authority, gap disposition, and rendered diagrams. Record human and
+judge evidence in one readiness report.
 
 The skill loads readiness gates and artifact-shape references only when review
 is requested. It regenerates the spec manifest after every canonical-source
-change, uses `scripts/check_specs.mjs` for structural graph validation plus
-clearly labelled smoke checks, and records semantic uncertainty instead of
-treating keyword success as approval.
+change. The checker verifies file integrity, links, and structured records.
+The reviewer evaluates meaning, completeness, and evidence.
 
 ## Workflow
 

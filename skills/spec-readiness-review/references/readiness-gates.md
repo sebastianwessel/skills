@@ -30,7 +30,6 @@ gate concern outside the approved scope.
 - No ticket may discover features, access paths, data flows, state transitions,
   lifecycle rules, or operational outcomes. Specs define them end to end or
   record explicit N/A evidence.
-- Checked prose is English: `language: en`.
 - Vague text, unresolved markers, contradictions, duplicate facts, and missing
   N/A evidence block approval.
 - Human approval is required for missing intent, compliance/security, public
@@ -46,7 +45,8 @@ gate concern outside the approved scope.
   mechanical, D1 is private and reversible under an approved convention, D2
   is an approved semantic/architectural decision, and D3 is human-only. An
   implementation ticket may not create a D2/D3 decision.
-- Deterministic checks are smoke tests; semantic approval needs judge evidence.
+- The checker validates structure and references. The semantic judge checks
+  completeness, ambiguity, contradictions, and adequacy of evidence.
 
 ## Judge Loop
 
@@ -58,10 +58,9 @@ owner, final state, and N/A evidence. Walk success, unhappy, recovery,
 frontend/client, interface, security/privacy, data lifecycle, data-integrity,
 observability, performance, release, supply-chain, and testability paths.
 
-Require `gates.spec_judge_loop.status: passed`. Record the detailed loop under
-`spec_judge_loop` with `run_timing: approval_only`, reviewed flows/paths/refs,
-uncertainty, finding counts, judge metadata, and `blocking_findings_count: 0`.
-Bind the judge evidence to the reviewed digest.
+In the judge evidence, cite reviewed flows and path refs, test or inspection
+proof, uncertainties, and any findings. Clear blocking findings before marking
+that evidence passed. Record its reference and digest in the readiness report.
 
 ## Coverage
 
@@ -94,9 +93,8 @@ Bind the judge evidence to the reviewed digest.
 
 ## Project Knowledge Gate
 
-When `specs/index.md` declares `x-project-knowledge-version: 1`, record
-evidence under the existing structure, contradiction, semantic, and
-visualization gates. Start at the index and answer representative business,
+Record direct discovery, contradictions, and visualization in the semantic
+review evidence. Start at the index and answer representative business,
 component/contract, failure/recovery, and ADR questions. Cite the owning page
 and exact rule. Check the primary owner backlink for each ADR and gap, and
 compare vision, policies, component contracts, and flow outcomes for conflict.

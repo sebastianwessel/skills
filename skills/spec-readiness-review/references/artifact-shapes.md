@@ -11,8 +11,8 @@
 
 ## Spec Tree
 
-- `specs/.readiness-report.yaml`, `spec-manifest.yaml`, `_registry.yaml`,
-  `_provenance.yaml`
+- `specs/index.md`, `decisions/index.md`, `gaps/index.md`,
+  `.readiness-report.yaml`, `spec-manifest.yaml`, and `_registry.yaml`
 - `00-applicability.yaml`, `00-decision-authority.yaml`,
   `00-policy-profile.yaml`, `00-reuse-inventory.yaml`, `00-module-boundaries.yaml`,
   `00-traceability.yaml`
@@ -35,83 +35,20 @@
 
 ## Readiness Report
 
-Approved specs require `status: approved`, `human_approval.status: approved`,
-`open_decisions: []`, `language: en`, and passed gate statuses:
+Use `draft`, `blocked`, `needs_human_review`, or `approved` in
+`specs/.readiness-report.yaml`. The gap and decision pages own unresolved
+items. The report records the decision and links to the evidence.
 
-`no_drift_gate`, `ambiguity_gate`, `spec_structure_gate`, `visualization_gate`,
-`semantic_alignment_gate`, `requirements_quality_gate`,
-`end_to_end_definition_gate`, `file_structure_gate`,
-`current_dependency_research_gate`, `concise_spec_gate`,
-`client_consumer_coverage_gate`, `frontend_ux_integration_gate`,
-`standards_first_gate`, `machine_readable_contract_gate`,
-`async_semantics_gate`, `clean_rebuild_boundary_gate`, `generation_map_gate`,
-`strong_boundary_type_gate`, `representation_reuse_gate`, `interface_gate`, `e2e_gate`,
-`unhappy_path_gate`, `security_privacy_gate`, `observability_gate`,
-`performance_resilience_gate`, `data_integrity_recovery_gate`,
-`production_readiness_gate`, `supply_chain_gate`, `wave_readiness`,
-`migration_gate`, `checklist_walk_gate`, `contradiction_check`, `spec_judge_loop`,
-`semantic_judge_gate`, `self_audit_gate`, `gate_simulation`.
-
-Also record deterministic status, traceability, inferred defaults, risks, wave
-evidence, production/release/supply-chain, migrations, spec judge evidence,
-semantic judge evidence, self-audit, machine-readable contract/generator/drift
-evidence, current dependency/doc research evidence, capability inventory and
-end-to-end definition evidence, file/folder structure evidence, clean-rebuild
-evidence, HITL decisions, checklist walk topics/gaps, and maintenance impact.
-
-### Checklist evidence
-
-Record a concrete source ref for `covered`, scoped exclusion evidence for
-`not_applicable`, or an owned finding for `gap`. In-scope gaps block approval.
+For approval, record both human and semantic evidence for the same manifest.
+In the linked review, cite the flows, acceptance checks, and relevant topics
+reviewed, including failure and recovery outcomes. Record scoped exclusions
+from `00-applicability.yaml`, and route any blocker to its owning gap. Keep the
+review concise by citing sources and tests.
 
 ```yaml
-checklist_walk:
-  status: passed
-  topics:
-    authentication:
-      applicability: relevant
-      checklist: references/checklist-auth-permissions.md
-      evidence:
-        - specs/02-capabilities/auth.md#login
-      gaps: []
-  blocking_findings_count: 0
-```
-
-## Content-Bound Approval
-
-An approved report must name a digest that binds approval to the exact source
-specification set. `spec-manifest.yaml` lists every authoritative source
-artifact except the manifest and the approval/provenance records
-(`.readiness-report.yaml`, `_provenance.yaml`); each entry has the file digest and
-the manifest has the digest of sorted `path + NUL + artifact-digest + newline`
-records. Any source edit therefore produces a different digest and invalidates
-approval. `_provenance.yaml.spec_manifest.content_digest` repeats that digest.
-Generate it with
-`node <spec-readiness-review-skill-root>/scripts/generate_spec_manifest.mjs <spec-root> <source-revision>`;
-the helper preserves the declared source revision when the second argument is
-omitted, rebuilds the manifest, and updates the provenance binding. Generation
-does not approve the changed content.
-
-```yaml
-spec_manifest_version: 1
-content_digest: sha256:<64 lowercase hex characters>
-artifacts:
-  - path: 03-contracts/openapi.yaml
-    sha256: sha256:<64 lowercase hex characters>
-provenance:
-  source_revision: <immutable source revision>
-  generated_at: 2026-08-15T12:00:00Z
-  generator: spec-manifest/v1
-```
-
-The readiness report retains `human_approval` for lifecycle compatibility, but
-approval is valid only with this evidence (the approval reference may point to
-a reviewed PR, ticket, or signed approval system record):
-
-```yaml
+status: approved
 approval_evidence:
-  status: approved
-  approver_id: <human or accountable approval role>
+  approver_id: product-owner
   approved_at: 2026-08-15T12:05:00Z
   approval_ref: PR-123#approval-456
   manifest_digest: sha256:<same digest as spec-manifest.yaml>
@@ -120,17 +57,35 @@ semantic_judge_evidence:
   status: passed
   judge: <judge name and version>
   reviewed_at: 2026-08-15T12:04:00Z
-  evidence_ref: reports/spec-judge-identity.yaml
+  evidence_ref: reports/spec-judge-identity.md
   manifest_digest: sha256:<same digest as spec-manifest.yaml>
 ```
 
-Record semantic judge evidence against the current exact digest. The checker
-requires the judge digest for project knowledge profile 1. A successful
-draft check covers structural feedback. The checker exercises full approval
-gates against the candidate approved report before handoff. Check the actual
-judge and approval references for authority, scope, and provenance. Store
-post-review evidence in the readiness report or outside `specs/` so recording
-it preserves the reviewed digest.
+Check that the references actually authorize the reviewed scope and that the
+evidence resolves the applicable concerns. Keep review evidence in the report
+or outside `specs/` so recording it preserves the digest.
+
+## Content-Bound Approval
+
+Generate `spec-manifest.yaml` with
+`node <spec-readiness-review-skill-root>/scripts/generate_spec_manifest.mjs <spec-root> <source-revision>`.
+The manifest records the inspected revision and hashes the canonical files,
+excluding itself and the readiness report. Reuse the same manifest bytes if
+the source revision and file digests are identical. After an authoritative
+edit, refresh the manifest and approve the new digest.
+
+```yaml
+spec_manifest_version: 2
+content_digest: sha256:<64 lowercase hex characters>
+source_revision: <immutable source revision>
+artifacts:
+  - path: 03-contracts/openapi.yaml
+    sha256: sha256:<64 lowercase hex characters>
+```
+
+A draft check provides structural feedback. Rerun it on the candidate
+approved report to verify source bytes, recorded evidence, and applicable
+structured controls before handoff.
 
 ## Canonical Control Artifacts
 

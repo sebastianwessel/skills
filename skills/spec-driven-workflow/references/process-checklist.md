@@ -27,7 +27,7 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
 - Approved readiness exists but no implementation plan, stale plan, missing wave
   order, missing dependencies, missing ticket scope, or no test-first order:
   use `spec-implementation-planner`.
-- One ticket is ready, its pinned spec/plan digests match, required dependencies
+- One ticket is ready, the plan matches the ticket and approved specs, required dependencies
   are accepted (or have an explicitly approved lower readiness requirement), and
   scope is fixed:
   use `spec-ticket-implementation`.
@@ -54,8 +54,7 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
      gap repair when requested.
    - Check: readiness approved for the current spec manifest digest, human
      approval is attributable, semantic judge passed,
-     `gates.spec_judge_loop.status: passed`, zero blocking judge findings, no open
-     implementation decisions.
+     the evidence covers the same digest, and no blocking findings remain.
    - Next: planning.
 
 3. **Plan Gate**
@@ -63,8 +62,9 @@ Use this checklist to coordinate the specialized spec-driven skills in order.
      tracking, contract/codegen foundations, generation-map/drift-check work,
      bounded parallel discovery or disjoint implementation, and test-first
      order.
-   - Check: every ready ticket pins approved digests and has `Slice Strategy`, `Test-First Order`,
-     acceptance matrix, traceability, scopes, dependencies, generated-contract
+   - Check: the manifest binds ready tickets to approved specs. Each ticket has a slice
+     strategy, test-first steps, acceptance, traceability, scopes, dependencies,
+     generated-contract
      evidence, generation-map disposition, closed-boundary type checks, coverage
      ownership, and verification.
    - Next: ticket implementation.

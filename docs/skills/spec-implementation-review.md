@@ -59,7 +59,7 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## How It Works
 
-The skill verifies matching spec/plan/ticket digests, reads the
+The skill verifies the approved spec and plan manifests, reads the
 implementation-evidence and consumer-impact set, then reads the approved specs,
 implementation plan, wave plan, tickets, changed files, verification evidence,
 and prior review artifacts. It builds a path matrix, checks each path against

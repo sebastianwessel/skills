@@ -62,24 +62,17 @@ phase that remains blocked until the proof exists.
 
 ## Ticket Shape
 
-Frontmatter: `id`, `title`, `wave`, `lifecycle`, `spec_manifest_digest`,
-`plan_manifest_digest`, `parallel_group`, `depends_on`,
+Frontmatter: `id`, `title`, `wave`, `lifecycle`, `parallel_group`, `depends_on`,
 `blocked_by`, `spec_refs`, `write_scope`, `read_scope`, `contract_readiness`,
 `traceability`,
 `generated_contracts`, `ticket_readiness`, `slice_type`,
 `phase_gate_exception`, `representation_reuse`, `autonomy`,
 `verification_commands`, `action_steps`, `acceptance`.
 
-Body: `Goal`, `Context Digest`, `Implementation Approach`, `Decision Ledger`,
-`Action Plan`, `Requirements Traceability`, `Contract Traceability`,
-`Spec Drift Controls`, `Generator And Type Plan`, `Test-First Order`,
-`Modularity And Reuse Plan`, `Representation Reuse Plan`, `Slice Strategy`, `Tasks`, `Acceptance`,
-`Acceptance Test Matrix`, `Review And Verification Plan`,
-`End-To-End Definition Coverage`, `Operational Path Coverage`, `Verification`,
-`Non-goals`, `Handoff`.
-
-Tickets are crisp human/AI instructions: boundaries, expectations, acceptance,
-verification, no pasted specs, no vague implementation prose.
+Use a short body for the outcome, rationale, and any work an agent cannot
+derive from frontmatter and cited specs. Include explicit phase proof in an
+`Action Plan` when using a phase-gated exception. Use headings that help the
+reader navigate the ticket.
 
 ### Lifecycle
 
@@ -96,16 +89,11 @@ evidence is recorded. A controller submits `implemented` work as
 `review_pending`; only independent review can mark it `accepted`. Do not use
 `done` as a lifecycle state.
 
-`spec_manifest_digest` is required on every ticket and must exactly equal the
-approved `spec-manifest.yaml.content_digest`. `plan_manifest_digest` must equal
-`plan-manifest.yaml.content_digest`. The planner does not create or reuse
-tickets when either digest changes; it regenerates affected tickets from the
-newly approved specification set.
-
-`plan-manifest.yaml` hashes the plan, indexes, wave plans, and ticket files. It
-excludes itself plus review/evidence paths. The canonical ticket hash excludes
-only the self-referential `plan_manifest_digest` pointer line; all other ticket
-content remains bound. Generate it after plan artifacts are complete:
+`plan-manifest.yaml` records the approved source spec digest and hashes the
+plan, indexes, wave plans, and complete ticket files. The generator writes
+only the manifest. When a spec revision changes, review impact and update
+affected tickets before regenerating the plan manifest. Implementation verifies
+the approved specs and the current plan before editing.
 
 ```bash
 node references/generate_plan_manifest.mjs <repo-root> [plans-root] [specs-root]
@@ -344,8 +332,8 @@ Use parallel agents only for independent, bounded work:
 
 ## Checks
 
-- Specs are approved; `language: en` and semantic judge passed when English
-  smoke checks are used. Otherwise return gaps to `spec-readiness-review`.
+- Specs are approved and the source checker passes for the current digest.
+  Return failed readiness evidence to `spec-readiness-review`.
 - Readiness includes `end_to_end_definition_gate.status: passed`; otherwise
   return gaps to `spec-readiness-review`.
 - No Wave 0/spec-closure implementation wave.

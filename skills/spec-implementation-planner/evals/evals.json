@@ -111,8 +111,8 @@
         },
         {
             "id": 19,
-            "prompt": "Create tickets from a readiness report that is status approved, but checklist_walk_gate is missing and no checklist topics were recorded.",
-            "expected_output": "Blocks ticket generation until readiness review records a passed checklist_walk_gate with checklist_walk topics, zero blocking findings, and evidence that relevant common topics are covered or N/A.",
+            "prompt": "Create tickets from a readiness report that is status approved, but its semantic judge evidence is missing.",
+            "expected_output": "Blocks ticket generation until readiness review records attributable judge evidence for the current digest with all blocking findings resolved.",
             "files": []
         },
         {

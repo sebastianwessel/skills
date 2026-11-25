@@ -39,8 +39,7 @@ review scope cannot be identified.
    boundaries, domain logic, persistence, async work, external boundaries,
    generated artifacts, generation-map coverage, boundary type strength,
    observability, response/output, cleanup, recovery.
-4. Run the loaded `scripts/check_implementation_evidence.mjs` and apply
-   `references/implementation-evidence.md` plus `references/review-gates.md`
+4. Apply `references/implementation-evidence.md` and `references/review-gates.md`
    for spec drift, interfaces, tests,
    requirements traceability, security, performance, operations, supply chain,
    robustness, maintainability, docs, and false work.

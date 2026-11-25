@@ -13,13 +13,12 @@ const write = (relative, content) => {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, content);
 };
-const body = ["Goal", "Context Digest", "Implementation Approach", "Decision Ledger", "Action Plan", "Requirements Traceability", "Contract Traceability", "Spec Drift Controls", "Generator And Type Plan", "Test-First Order", "Modularity And Reuse Plan", "Representation Reuse Plan", "Slice Strategy", "Tasks", "Acceptance", "Acceptance Test Matrix", "End-To-End Definition Coverage", "Operational Path Coverage", "Review And Verification Plan", "Verification", "Non-goals", "Handoff"].map((heading) => `## ${heading}\nEvidence.\n`).join("\n");
+const body = "## Outcome\nReturn the approved user view.\n";
 const ticket = (id = "TICKET-001", dependsOn = "[]") => `---
 id: ${id}
 title: User boundary
 wave: 1
 lifecycle: ready
-spec_manifest_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 parallel_group: ""
 depends_on: ${dependsOn}
 blocked_by: []
@@ -123,8 +122,8 @@ const run = () => {
 };
 
 try {
-  write("specs/.readiness-report.yaml", "status: approved\nhuman_approval:\n  status: approved\napproval_evidence:\n  status: approved\n  manifest_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-  write("specs/spec-manifest.yaml", "spec_manifest_version: 1\ncontent_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nartifacts: []\n");
+  write("specs/.readiness-report.yaml", "status: approved\napproval_evidence:\n  manifest_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nsemantic_judge_evidence:\n  manifest_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+  write("specs/spec-manifest.yaml", "spec_manifest_version: 2\ncontent_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nartifacts: []\n");
   write("specs/scope.md", "# Scope\nREQ-001\n");
   write("specs/contracts.md", "# Contracts\nCON-USER\n");
   write("specs/00-traceability.yaml", "traceability_version: 1\nrequirements:\n  - requirement_id: REQ-001\ncapabilities:\n  - capability_id: CAP-001\npaths:\n  - path_id: PATH-001\nacceptance:\n  - acceptance_id: ACCEPT-001\n");
@@ -151,8 +150,13 @@ try {
   write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
   execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
 
-  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket().replace("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"));
-  assert.match(run().output, /spec_manifest_digest must equal/, "stale ticket digest must fail");
+  write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket() + "\nEdited after generation.\n");
+  assert.match(run().output, /artifact digest differs for .*TICKET-001-user.md/, "stale ticket content must fail");
+  const editedTicket = fs.readFileSync(path.join(temp, "plans/wave_01_identity/tickets/TICKET-001-user.md"), "utf8");
+  execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
+  assert.equal(fs.readFileSync(path.join(temp, "plans/wave_01_identity/tickets/TICKET-001-user.md"), "utf8"), editedTicket,
+    "plan generation must never rewrite a ticket");
+  assert.equal(run().ok, true, "editing one ticket only requires generating the central manifest");
   write("plans/wave_01_identity/tickets/TICKET-001-user.md", ticket());
   execFileSync(process.execPath, [generator, temp], { encoding: "utf8" });
 

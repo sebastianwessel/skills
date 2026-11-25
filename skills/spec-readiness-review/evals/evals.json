@@ -40,7 +40,7 @@
     {
       "id": 7,
       "prompt": "Approve specs for auth and API keys where the readiness report has normal gates, but the specs omit signup/recovery flows, roles, database indexes, secret rotation, and unhappy-path tests.",
-      "expected_output": "Blocks approval using the applicable topic checklists, records relevant topic gaps with evidence, requires checklist_walk_gate and checklist_walk blocking_findings_count to reflect the gaps, and routes repair instead of planning.",
+      "expected_output": "Blocks approval using the applicable topic checklists, records relevant topic gaps with evidence, records their scope and blocking disposition in the semantic review evidence, and routes repair instead of planning.",
       "files": []
     },
     {
@@ -58,7 +58,7 @@
     {
       "id": 10,
       "prompt": "Approve specs that define API endpoints, database tables, and tests, but do not list the application capabilities, frontend access paths, data lifecycle/PII retention, state transitions, or final states for exports, notifications, and background sync.",
-      "expected_output": "Blocks approval through end_to_end_definition_gate and checklist_walk_gate until specs include a capability inventory and end-to-end definition chains covering actor/consumer, entrypoint/reachability, contracts, data touched, classification/PII retention/deletion/export/redaction, state transitions, side effects, permissions, errors, recovery, observability, acceptance, verification, owner, and final state or explicit N/A evidence.",
+      "expected_output": "Blocks approval until specs include a capability inventory and end-to-end definition chains covering actor/consumer, entrypoint/reachability, contracts, data touched, classification/PII retention/deletion/export/redaction, state transitions, side effects, permissions, errors, recovery, observability, acceptance, verification, owner, and final state or explicit N/A evidence.",
       "files": []
     },
     {

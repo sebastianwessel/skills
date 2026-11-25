@@ -164,14 +164,26 @@ checkProfile("a diagram change invalidates the old approval", () => {}, /hash do
   write(root, "visuals/boundary.svg", '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>\n');
 });
 
-test("a YAML example in a legacy index does not activate the profile", (context) => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "specs-legacy-"));
-  context.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.cpSync(fixture, root, { recursive: true });
-  write(root, "index.md", "# Legacy map\n\n\x60\x60\x60yaml\nx-project-knowledge-version: 1\n\x60\x60\x60\n");
-  pinFixtureApproval(root);
-  const checked = run("check_specs.mjs", root);
-  assert.equal(checked.status, 0, checked.stderr);
+checkProfile("knowledge entry point is required", (root) => {
+  fs.unlinkSync(path.join(root, "index.md"));
+}, /index.md: x-project-knowledge-version must be 1/);
+checkProfile("figurative language in source evidence is not an approval gate", (root) => {
+  fs.appendFileSync(path.join(root, "00-vision.md"), '\nThe old notes said "TBD" and "handle errors"; that history is superseded.\n');
+});
+checkProfile("catalog applicability comes from the central register", (root) => {
+  change(root, "00-applicability.yaml", "status: applicable", "status: not_applicable\n    rationale: Fixture excludes representations");
+}, /representation-catalog.yaml conflicts with representation_reuse applicability/);
+checkProfile("applicable representations require a catalog", (root) => {
+  fs.unlinkSync(path.join(root, "03-contracts/representation-catalog.yaml"));
+}, /Missing representation catalog/);
+checkProfile("a mapping must link registered shapes", (root) => {
+  change(root, "03-contracts/representation-catalog.yaml", "to_shape: identity.user-read", "to_shape: identity.unknown");
+}, /must link two distinct registered shapes/);
+checkProfile("traceability catches a dangling capability ID", (root) => {
+  change(root, "00-traceability.yaml", "capability_ids: [CAP-FIXTURE-001]", "capability_ids: [CAP-UNKNOWN-001]");
+}, /capability_ids has unknown ID/);
+checkProfile("human approval also needs to match current source", () => {}, /approval_evidence.manifest_digest must match/, (root) => {
+  change(root, ".readiness-report.yaml", /manifest_digest: sha256:[a-f0-9]{64}/, "manifest_digest: sha256:" + "b".repeat(64));
 });
 
 checkProfile("approval requires the source manifest on disk", () => {}, /Missing spec-manifest.yaml for approved readiness/, (root) => {

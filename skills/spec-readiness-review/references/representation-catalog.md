@@ -24,9 +24,6 @@ Create `03-contracts/representation-catalog.yaml` with this minimum shape:
 
 ```yaml
 catalog_version: 1
-applicability:
-  status: applicable
-  scope_refs: [CAP-IDENTITY-001]
 shapes:
   - shape_id: identity.user
     representation_class: domain
@@ -98,13 +95,5 @@ transformation in the diff to those refs.
 
 `not_applicable` is valid only when the scoped capability has no domain data,
 interface payload, durable record, command/query, event, or client projection.
-Record it in the catalog—not a nearby prose paragraph—with an exact scope:
-
-```yaml
-applicability:
-  status: not_applicable
-  scope_refs: [CAP-HEALTH-001]
-  rationale: Health endpoint returns only a fixed status and introduces no domain shape.
-shapes: []
-mappings: []
-```
+Record the exact scope and rationale in `00-applicability.yaml` under
+`representation_reuse`. Create the catalog when that concern is applicable.

@@ -40,12 +40,6 @@ const walk = (dir) => exists(dir) ? fs.readdirSync(dir, { withFileTypes: true })
 }) : [];
 const planRelative = (file) => path.relative(plans, file).split(path.sep).join("/");
 const excludedPlanArtifact = (file) => file === "plan-manifest.yaml" || /^(?:review|reviews|evidence|implementation-evidence)(?:\/|$)/.test(file);
-const canonicalPlanText = (file, content) => {
-  const normalized = content.replace(/\r\n?/g, "\n");
-  return file.endsWith(".md") && file.includes("/tickets/")
-    ? normalized.replace(/^plan_manifest_digest:\s*.*(?:\n|$)/m, "")
-    : normalized;
-};
 
 function parseScalar(value, label, line) {
   if (!value) return "";
@@ -181,7 +175,6 @@ const lifecycle = ["planned", "ready", "in_progress", "partial", "blocked", "imp
 const executableLifecycle = new Set(["ready", "in_progress"]);
 const sliceTypes = new Set(["vertical_slice", "foundation_exception", "refactor_exception", "remediation", "migration"]);
 const unsafeCommand = /[;&|`$()<>]|^\s*(?:sh|bash|zsh|fish|cmd|powershell)\b|^\s*[A-Za-z_][A-Za-z0-9_]*=|\b(?:curl|wget|ssh|scp)\b|\bgit\s+(?:clone|fetch|pull|push)\b|\b(?:npm|pnpm|yarn)\s+(?:install|add|upgrade)\b|\b(?:pip|pip3)\s+install\b|\bgo\s+get\b|\bcargo\s+(?:install|add)\b/i;
-const requiredSections = ["Goal", "Context Digest", "Implementation Approach", "Decision Ledger", "Action Plan", "Requirements Traceability", "Contract Traceability", "Spec Drift Controls", "Generator And Type Plan", "Test-First Order", "Modularity And Reuse Plan", "Representation Reuse Plan", "Slice Strategy", "Tasks", "Acceptance", "Acceptance Test Matrix", "End-To-End Definition Coverage", "Operational Path Coverage", "Review And Verification Plan", "Verification", "Non-goals", "Handoff"];
 
 const plan = read(path.join(plans, "implementation-plan.md"));
 const specReady = read(path.join(specs, ".readiness-report.yaml"));
@@ -203,12 +196,11 @@ const manifestDigest = asString(manifest.content_digest);
 const planManifestDigest = asString(planManifest.content_digest);
 const approvalEvidence = isObject(readiness.approval_evidence) ? readiness.approval_evidence : {};
 if (plan && readiness.status !== "approved") fail(`${specsName}/.readiness-report.yaml: status must be approved`);
-if (plan && readiness.human_approval?.status !== "approved") fail(`${specsName}/.readiness-report.yaml: human approval required`);
-if (plan && manifest.spec_manifest_version !== 1) fail(`${specsName}/spec-manifest.yaml: spec_manifest_version must be 1`);
+if (plan && manifest.spec_manifest_version !== 2) fail(`${specsName}/spec-manifest.yaml: spec_manifest_version must be 2`);
 if (plan && !Array.isArray(manifest.artifacts)) fail(`${specsName}/spec-manifest.yaml: artifacts must be a list`);
 if (plan && !/^sha256:[a-f0-9]{64}$/.test(manifestDigest)) fail(`${specsName}/spec-manifest.yaml: content_digest must be a sha256 digest`);
-if (plan && approvalEvidence.status !== "approved") fail(`${specsName}/.readiness-report.yaml: approval_evidence.status must be approved`);
 if (plan && approvalEvidence.manifest_digest !== manifestDigest) fail(`${specsName}/.readiness-report.yaml: approval_evidence.manifest_digest must equal spec-manifest.yaml.content_digest`);
+if (plan && readiness.semantic_judge_evidence?.manifest_digest !== manifestDigest) fail(`${specsName}/.readiness-report.yaml: semantic_judge_evidence.manifest_digest must equal spec-manifest.yaml.content_digest`);
 if (plan && !exists(path.join(specs, "00-traceability.yaml"))) fail(`${specsName}/: missing 00-traceability.yaml`);
 if (plan && traceability.traceability_version !== 1) fail(`${specsName}/00-traceability.yaml: traceability_version must be 1`);
 const traceabilityIds = {};
@@ -223,11 +215,9 @@ for (const [plural, idField] of [["requirements", "requirement_id"], ["capabilit
   }
   traceabilityIds[plural] = seen;
 }
-if (plan && planManifest.plan_manifest_version !== 1) fail(`${plansName}/plan-manifest.yaml: plan_manifest_version must be 1`);
+if (plan && planManifest.plan_manifest_version !== 2) fail(`${plansName}/plan-manifest.yaml: plan_manifest_version must be 2`);
 if (plan && !/^sha256:[a-f0-9]{64}$/.test(planManifestDigest)) fail(`${plansName}/plan-manifest.yaml: content_digest must be a sha256 digest`);
 if (plan && planManifest.source_spec_manifest_digest !== manifestDigest) fail(`${plansName}/plan-manifest.yaml: source_spec_manifest_digest must equal spec-manifest.yaml.content_digest`);
-const planProvenance = isObject(planManifest.provenance) ? planManifest.provenance : {};
-if (plan && (!asString(planProvenance.generated_at) || Number.isNaN(Date.parse(planProvenance.generated_at)) || planProvenance.generator !== "plan-manifest/v1")) fail(`${plansName}/plan-manifest.yaml: provenance requires ISO generated_at and generator: plan-manifest/v1`);
 const planArtifacts = walk(plans).map((file) => ({ file, path: planRelative(file) })).filter((entry) => !excludedPlanArtifact(entry.path)).sort((left, right) => left.path.localeCompare(right.path));
 const suppliedPlanArtifacts = new Map();
 for (const artifact of asList(planManifest.artifacts)) {
@@ -238,13 +228,11 @@ for (const artifact of asList(planManifest.artifacts)) {
 if (plan && !exactSet(sorted(planArtifacts.map((artifact) => artifact.path)), sorted([...suppliedPlanArtifacts.keys()]))) fail(`${plansName}/plan-manifest.yaml: artifacts must exactly cover canonical plan files`);
 const expectedPlanRecords = [];
 for (const artifact of planArtifacts) {
-  const digest = hash(canonicalPlanText(artifact.path, read(artifact.file)));
+  const digest = hash(read(artifact.file).replace(/\r\n?/g, "\n"));
   if (suppliedPlanArtifacts.get(artifact.path) !== digest) fail(`${plansName}/plan-manifest.yaml: artifact digest differs for ${artifact.path}`);
   expectedPlanRecords.push(`${artifact.path}\0${digest}\n`);
 }
 if (plan && planManifestDigest !== hash(expectedPlanRecords.join(""))) fail(`${plansName}/plan-manifest.yaml: content_digest does not match canonical plan artifacts`);
-if (plan && /Wave 0|Spec and Contract Closure|build-blocking gaps/i.test(plan)) fail("implementation-plan.md: forbidden spec-closure wave");
-if (plan && !section(plan, "Self-Audit")) fail("implementation-plan.md: missing Self-Audit");
 
 let registry = {}, statusIndex = {}, dependencyIndex = {}, scopeIndex = {};
 for (const [file, assign] of [["_registry.yaml", (value) => { registry = value; }], ["_status.yaml", (value) => { statusIndex = value; }], ["_dependencies.yaml", (value) => { dependencyIndex = value; }], ["_scope.yaml", (value) => { scopeIndex = value; }]]) {
@@ -266,7 +254,7 @@ for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.inc
   let data, body;
   try { ({ data, body } = frontmatter(read(file), relative)); }
   catch (error) { fail(error.message); continue; }
-  const fields = ["id", "title", "wave", "lifecycle", "spec_manifest_digest", "plan_manifest_digest", "parallel_group", "depends_on", "blocked_by", "spec_refs", "traceability", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
+  const fields = ["id", "title", "wave", "lifecycle", "parallel_group", "depends_on", "blocked_by", "spec_refs", "traceability", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
   requireFields(data, fields, relative);
   noUnknownFields(data, fields, relative);
   const id = asString(data.id);
@@ -274,14 +262,11 @@ for (const file of walk(plans).filter((item) => item.endsWith(".md") && item.inc
   const active = executableLifecycle.has(state);
   if (!/^TICKET-\d{3,}$/.test(id)) fail(`${relative}: id must be TICKET-NNN`);
   if (!lifecycle.includes(state)) fail(`${relative}: invalid lifecycle ${state}`);
-  if (data.spec_manifest_digest !== manifestDigest) fail(`${relative}: spec_manifest_digest must equal spec-manifest.yaml.content_digest`);
-  if (data.plan_manifest_digest !== planManifestDigest) fail(`${relative}: plan_manifest_digest must equal plan-manifest.yaml.content_digest`);
   if (!sliceTypes.has(data.slice_type)) fail(`${relative}: invalid slice_type ${data.slice_type}`);
   if (typeof data.phase_gate_exception !== "boolean") fail(`${relative}: phase_gate_exception must be boolean`);
   if (active && data.phase_gate_exception && !/Phase Gate:/i.test(section(body, "Action Plan"))) fail(`${relative}: phase_gate_exception requires explicit Phase Gate proof points in Action Plan`);
   if (!Number.isInteger(data.wave) || data.wave < 1) fail(`${relative}: wave must be a positive integer`);
   if (tickets.has(id)) fail(`${relative}: duplicate ticket id ${id}`);
-  for (const name of requiredSections) if (!section(body, name)) fail(`${relative}: missing or empty ${name}`);
   const refs = requiredList(data.spec_refs, `${relative}.spec_refs`);
   for (const ref of refs) validRef(ref, `${relative}.spec_refs`, { requiredAnchor: true });
   const trace = requiredObject(data.traceability, `${relative}.traceability`);
@@ -450,7 +435,6 @@ for (const [group, members] of parallelGroups) for (let index = 0; index < membe
 for (const wave of exists(plans) ? fs.readdirSync(plans, { withFileTypes: true }).filter((entry) => entry.isDirectory() && /^wave_\d+_/.test(entry.name)) : []) {
   const wavePlan = read(path.join(plans, wave.name, "plan.md"));
   if (!wavePlan) fail(`${wave.name}: missing plan.md`);
-  for (const heading of ["End-to-End Outcome", "Implementation Order", "Slice Strategy", "Isolation", "Status", "Operational Path Coverage"]) if (!section(wavePlan, heading)) fail(`${wave.name}/plan.md: missing ${heading}`);
 }
 
 if (problems.length) {

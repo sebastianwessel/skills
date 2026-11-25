@@ -4,7 +4,6 @@ import { parseYaml } from "./simple-yaml.mjs";
 
 const profileKey = "x-project-knowledge-version";
 const frontmatterPattern = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
-const markerPattern = /^\s*x-project-knowledge-version\s*:/m;
 const recordIndexes = { ADR: "decisions/index.md", Gap: "gaps/index.md" };
 const projectTypes = new Set(["Business Domain", "Component", "Flow", ...Object.keys(recordIndexes)]);
 const present = (value) => typeof value === "string" && value.trim().length > 0;
@@ -54,12 +53,7 @@ function hasAcceptedReplacement(pages, file) {
   return false;
 }
 
-export function validateProjectKnowledge(root, files, { approved, readAuthority, fail }) {
-  const entry = path.join(root, "index.md");
-  if (!files.includes(entry)) return false;
-  const frontmatter = frontmatterPattern.exec(fs.readFileSync(entry, "utf8"));
-  if (!frontmatter || !markerPattern.test(frontmatter[1])) return false;
-
+export function validateProjectKnowledge(root, files, { approved, authority, fail }) {
   const localFiles = new Set();
   const pages = new Map();
   for (const file of files) {
@@ -96,7 +90,6 @@ export function validateProjectKnowledge(root, files, { approved, readAuthority,
   }
   const ids = new Set();
   const publishedImages = new Set();
-  const authority = readAuthority();
   const decisions = Array.isArray(authority?.decisions) ? authority.decisions : [];
   for (const [file, { meta, links, images }] of pages) {
     for (const target of [...links, ...images]) {
@@ -172,5 +165,4 @@ export function validateProjectKnowledge(root, files, { approved, readAuthority,
       fail(`${file}: editable diagram needs an embedded SVG or PNG export`);
     }
   }
-  return true;
 }

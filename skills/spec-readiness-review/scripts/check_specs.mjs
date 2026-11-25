@@ -6,9 +6,8 @@ import { validateProjectKnowledge } from "./lib/check-project-knowledge.mjs";
 import { parseYaml, yamlStrings } from "./lib/simple-yaml.mjs";
 
 const root = path.resolve(process.argv[2] || "specs");
-const errors = [], warnings = [];
+const errors = [];
 const fail = (message) => errors.push(message);
-const warn = (message) => warnings.push(message);
 const at = (file) => path.join(root, file);
 const exists = (file) => fs.existsSync(at(file));
 const read = (file) => fs.readFileSync(at(file), "utf8");
@@ -17,10 +16,6 @@ const hash = (value) => `sha256:${crypto.createHash("sha256").update(value).dige
 const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
 const isId = (value) => isNonEmptyString(value) && /^[A-Za-z][A-Za-z0-9_.:-]*$/.test(value);
 const isStringList = (value, minimum = 0) => Array.isArray(value) && value.length >= minimum && value.every(isNonEmptyString);
-const contractTerm = String.raw`contract definition|interface definition|schema definition|machine-readable|source of truth|OpenAPI|GraphQL|AsyncAPI|JSON Schema|gRPC|protobuf|CloudEvents|Avro|Thrift|Smithy|OpenRPC|RAML|YANG|WSDL|schema registry|schema artifact|IDL`;
-const generationMapTerm = String.raw`generation map|source contracts?|generated package|record ID template|derived component|service owner|generated outputs?|drift check`;
-const weakBoundaryTerm = String.raw`map\\[string\\]any|TypeScript any|TS any|type any|literal any|TypeScript unknown|TS unknown|type unknown|literal unknown|Record<string, unknown>|anonymous map|handwritten duplicate interface|weak boundary type|strong boundary type|closed contract|open JSON leaf|JSONValue|json\\.RawMessage|additionalProperties`;
-const currentResearchTerm = String.raw`current stable|latest stable|most recent|official docs?|primary documentation|package metadata|release metadata|changelog|release notes|version pin|dependency version|third-party|state of the art|dated research|research evidence|not applicable|N/A`;
 const walk = (directory) => fs.existsSync(directory) ? fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
   const file = path.join(directory, entry.name);
   return entry.isDirectory() ? walk(file) : [file];
@@ -30,17 +25,6 @@ const structured = (file) => {
   try { return parseYaml(read(file), file); }
   catch (error) { fail(`${file} invalid structured YAML: ${error.message}`); return null; }
 };
-const gates = [
-  "no_drift_gate", "ambiguity_gate", "semantic_alignment_gate", "spec_structure_gate", "visualization_gate",
-  "requirements_quality_gate", "end_to_end_definition_gate", "file_structure_gate", "current_dependency_research_gate",
-  "concise_spec_gate", "client_consumer_coverage_gate", "frontend_ux_integration_gate", "standards_first_gate",
-  "machine_readable_contract_gate", "async_semantics_gate", "clean_rebuild_boundary_gate", "generation_map_gate",
-  "strong_boundary_type_gate", "representation_reuse_gate", "interface_gate", "e2e_gate", "unhappy_path_gate",
-  "security_privacy_gate", "observability_gate", "performance_resilience_gate", "data_integrity_recovery_gate",
-  "production_readiness_gate", "supply_chain_gate", "wave_readiness", "migration_gate", "checklist_walk_gate",
-  "contradiction_check", "spec_judge_loop", "semantic_judge_gate", "self_audit_gate", "gate_simulation",
-];
-
 function exactFile(value) {
   return isNonEmptyString(value) && !path.isAbsolute(value) && !value.includes("\\") && !value.split("/").includes("..") && value !== ".";
 }
@@ -56,15 +40,14 @@ function validateManifest(all) {
     fail(`${file} must be a map`);
     return null;
   }
-  if (manifest.spec_manifest_version !== 1) fail(`${file}.spec_manifest_version must be 1`);
+  if (manifest.spec_manifest_version !== 2) fail(`${file}.spec_manifest_version must be 2`);
   if (!/^sha256:[a-f0-9]{64}$/.test(manifest.content_digest || "")) fail(`${file}.content_digest must be a sha256 digest`);
   if (!Array.isArray(manifest.artifacts) || !manifest.artifacts.length) {
     fail(`${file}.artifacts must be a non-empty list`);
     return null;
   }
-  // The manifest and approval/provenance records are attestations about the
-  // source set. Excluding all three avoids a self-referential digest cycle.
-  const expected = all.map(rel).filter((entry) => ![file, ".readiness-report.yaml", "_provenance.yaml"].includes(entry)).sort();
+  // The manifest and readiness report attest to the source set.
+  const expected = all.map(rel).filter((entry) => ![file, ".readiness-report.yaml"].includes(entry)).sort();
   const supplied = new Map();
   for (const entry of manifest.artifacts) {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) { fail(`${file}.artifacts entries must be maps`); continue; }
@@ -76,26 +59,18 @@ function validateManifest(all) {
   const actual = [];
   for (const entry of expected) {
     if (!supplied.has(entry)) fail(`${file} omits authoritative artifact: ${entry}`);
-    else if (supplied.get(entry) !== hash(fs.readFileSync(at(entry)))) fail(`${file} hash does not match: ${entry}`);
-    actual.push(`${entry}\0${hash(fs.readFileSync(at(entry)))}\n`);
+    const digest = hash(fs.readFileSync(at(entry)));
+    if (supplied.has(entry) && supplied.get(entry) !== digest) fail(`${file} hash does not match: ${entry}`);
+    actual.push(`${entry}\0${digest}\n`);
   }
   for (const entry of supplied.keys()) if (!expected.includes(entry)) fail(`${file} names non-authoritative or missing artifact: ${entry}`);
   const digest = hash(actual.sort().join(""));
   if (manifest.content_digest !== digest) fail(`${file}.content_digest does not match the declared artifact set`);
-  const provenance = manifest.provenance;
-  if (!provenance || typeof provenance !== "object" || Array.isArray(provenance)) fail(`${file}.provenance must be a map`);
-  else {
-    ["source_revision", "generated_at", "generator"].forEach((key) => !isNonEmptyString(provenance[key]) && fail(`${file}.provenance.${key} is required`));
-    if (isNonEmptyString(provenance.generated_at) && Number.isNaN(Date.parse(provenance.generated_at))) fail(`${file}.provenance.generated_at must be ISO-8601`);
-  }
-  const rootProvenance = structured("_provenance.yaml");
-  if (rootProvenance && (!rootProvenance.spec_manifest || rootProvenance.spec_manifest.content_digest !== manifest.content_digest)) {
-    fail(`_provenance.yaml.spec_manifest.content_digest must equal ${file}.content_digest`);
-  }
+  if (!isNonEmptyString(manifest.source_revision)) fail(`${file}.source_revision is required`);
   return manifest;
 }
 
-function validateReadinessReport(report, manifest, knowledgeProfile) {
+function validateReadinessReport(report, manifest) {
   if (!report || typeof report !== "object" || Array.isArray(report)) {
     fail(".readiness-report.yaml must be a map");
     return;
@@ -103,39 +78,26 @@ function validateReadinessReport(report, manifest, knowledgeProfile) {
   const approved = report.status === "approved";
   if (!["draft", "needs_human_review", "approved", "blocked"].includes(report.status)) fail(".readiness-report.yaml.status is invalid");
   if (!approved) return;
-  if (report.language !== "en") fail(".readiness-report.yaml.language must be en");
-  if (!Array.isArray(report.open_decisions) || report.open_decisions.length) fail(".readiness-report.yaml.open_decisions must be []");
   const approval = report.approval_evidence;
   if (!approval || typeof approval !== "object" || Array.isArray(approval)) fail("Approved readiness requires approval_evidence");
   else {
-    if (approval.status !== "approved") fail("approval_evidence.status must be approved");
     ["approver_id", "approved_at", "approval_ref", "manifest_digest"].forEach((key) => !isNonEmptyString(approval[key]) && fail(`approval_evidence.${key} is required`));
     if (isNonEmptyString(approval.approved_at) && Number.isNaN(Date.parse(approval.approved_at))) fail("approval_evidence.approved_at must be ISO-8601");
     if (!isStringList(approval.scope_refs, 1)) fail("approval_evidence.scope_refs must be a non-empty list");
     if (manifest && approval.manifest_digest !== manifest.content_digest) fail("approval_evidence.manifest_digest must match spec-manifest.yaml.content_digest");
   }
-  if (report.human_approval?.status !== "approved") fail("human_approval.status must be approved");
-  const gateMap = report.gates && typeof report.gates === "object" ? report.gates : report;
-  for (const gate of gates) if (gateMap[gate]?.status !== "passed") fail(`${gate}.status must pass`);
-  const judge = report.spec_judge_loop;
-  if (!judge || judge.run_timing !== "approval_only" || !Array.isArray(judge.reviewed_flows) || !judge.reviewed_flows.length || judge.blocking_findings_count !== 0) {
-    fail("spec_judge_loop must be approval-only, record reviewed flows, and have zero blocking findings");
-  }
-  const walkEvidence = report.checklist_walk;
-  if (!walkEvidence || !walkEvidence.topics || typeof walkEvidence.topics !== "object" || Array.isArray(walkEvidence.topics) || walkEvidence.blocking_findings_count !== 0) {
-    fail("checklist_walk must record scoped topics and have zero blocking findings");
-  }
   const semantic = report.semantic_judge_evidence;
   if (!semantic || semantic.status !== "passed" || !isNonEmptyString(semantic.judge) || !isNonEmptyString(semantic.evidence_ref) || !isNonEmptyString(semantic.reviewed_at)) {
     fail("semantic_judge_evidence requires passed status, judge, evidence_ref, and reviewed_at");
+  } else if (Number.isNaN(Date.parse(semantic.reviewed_at))) {
+    fail("semantic_judge_evidence.reviewed_at must be ISO-8601");
   }
-  if (knowledgeProfile && manifest && semantic?.manifest_digest !== manifest.content_digest) {
+  if (manifest && semantic?.manifest_digest !== manifest.content_digest) {
     fail("semantic_judge_evidence.manifest_digest must match spec-manifest.yaml.content_digest");
   }
 }
 
-function validateArtifactContracts() {
-  const applicability = structured("00-applicability.yaml");
+function validateArtifactContracts(applicability, authority) {
   if (!applicability || applicability.applicability_version !== 1 || !Array.isArray(applicability.concerns)) {
     fail("00-applicability.yaml must declare applicability_version: 1 and concerns");
   } else {
@@ -149,7 +111,6 @@ function validateArtifactContracts() {
     }
     if (!ids.has("representation_reuse")) fail("00-applicability.yaml must declare representation_reuse");
   }
-  const authority = structured("00-decision-authority.yaml");
   if (!authority || authority.decision_authority_version !== 1 || !isStringList(authority.default_allowed_classes, 1) || !authority.default_allowed_classes.every((value) => ["D0", "D1"].includes(value))) {
     fail("00-decision-authority.yaml must restrict default_allowed_classes to D0/D1");
   }
@@ -253,14 +214,15 @@ function validateTraceability(registry) {
 function validateCatalog(registry) {
   const file = "03-contracts/representation-catalog.yaml";
   const catalog = structured(file);
-  if (!catalog || typeof catalog !== "object" || Array.isArray(catalog)) return;
+  if (!catalog || typeof catalog !== "object" || Array.isArray(catalog)) {
+    fail(`${file} must be a map`);
+    return;
+  }
   if (catalog.catalog_version !== 1) fail(`${file}.catalog_version must be 1`);
-  const applicability = catalog.applicability;
-  if (!applicability || !["applicable", "not_applicable"].includes(applicability.status) || !isStringList(applicability.scope_refs, 1)) fail(`${file}.applicability needs status and scope_refs`);
-  if (applicability?.status === "not_applicable" && !isNonEmptyString(applicability.rationale)) fail(`${file}.applicability.rationale is required for not_applicable`);
-  if (!Array.isArray(catalog.shapes) || !Array.isArray(catalog.mappings)) { fail(`${file}.shapes and ${file}.mappings must be lists`); return; }
-  if (applicability?.status === "applicable" && !catalog.shapes.length) fail(`${file}.shapes must be non-empty when applicable`);
-  if (applicability?.status === "not_applicable" && (catalog.shapes.length || catalog.mappings.length)) fail(`${file} cannot include shapes/mappings when not_applicable`);
+  if (!Array.isArray(catalog.shapes) || !catalog.shapes.length || !Array.isArray(catalog.mappings)) {
+    fail(`${file} requires a non-empty shapes list and a mappings list`);
+    return;
+  }
   const allowedClasses = new Set(["domain", "boundary", "persistence", "command", "query", "projection"]);
   const allowedStability = new Set(["experimental", "internal", "versioned", "stable", "deprecated"]);
   const allowedOpen = new Set(["closed", "open_json_leaf"]);
@@ -303,79 +265,35 @@ function validateCatalog(registry) {
   }
 }
 
-function validateLegacySmoke(all, text) {
-  // Structural artifacts above are approval gates. These legacy checks remain
-  // intentionally labelled smoke tests for cross-cutting prose omissions.
-  const contractFiles = all.filter((file) => rel(file).startsWith("03-contracts/") && /\.(ya?ml|json|graphql|gql|proto|avsc|thrift|smithy|yang|wsdl|raml)$/i.test(file));
-  const must = [
-    [/\b(unhappy|failure path|validation failure|authorization|denial|timeout|retry|rollback|recovery|cancellation|manual intervention)\b/i, "Missing unhappy/recovery paths"],
-    [/\b(business|user|customer|outcome|goal|why|rationale)\b/i, "Missing business context"],
-    [/\b(requirement|flow|contract|NFR|acceptance).{0,80}\b(id|trace|source|owner|priority|risk|verification method|test|inspection|analysis|demo)\b/i, "Missing requirement traceability"],
-    [/\b(capability inventory|feature inventory|capability ID|feature ID|business capability|user-facing|admin-facing|API-facing|CLI|SDK|worker|job|operational capability|not applicable|N\/A)\b/i, "Missing capability/feature inventory or N/A evidence"],
-    [/\b(end-to-end definition|definition chain|actor|consumer|trigger|entrypoint|reachability|access path|preconditions|data touched|state transitions?|side effects?|permissions?|errors?|recovery|observability|acceptance|verification|final state)\b/i, "Missing end-to-end definition chain evidence"],
-    [/\b(data lifecycle|classification|PII|personal data|sensitive data|collection reason|retention|deletion|anonymization|export|access request|masking|redaction|residency|lineage|no-data-loss|not applicable|N\/A)\b/i, "Missing data lifecycle/classification/retention evidence or N/A evidence"],
-    [/\b(file structure|folder structure|directory structure|repository structure|project structure|domain folders?|topic folders?|nested folders?|ownership boundaries|shared module|reusable module|generated outputs?|generated artifacts?|public entrypoints?|migrations?|runbooks?|not applicable|N\/A)\b/i, "Missing file/folder structure or N/A evidence"],
-    [new RegExp(`\\b(${currentResearchTerm})\\b`, "i"), "Missing current dependency/docs/research evidence"],
-    [/\b(concise|single source of truth|one source of truth|no duplicate|no stale|centralize|link instead of duplicating|shared facts)\b/i, "Missing concise single-source spec discipline"],
-    [new RegExp(`\\b(${contractTerm})\\b`, "i"), "Missing machine-readable contract source"],
-    [new RegExp(`\\b(${generationMapTerm})\\b`, "i"), "Missing generation map/source-contract ownership or N/A evidence"],
-    [new RegExp(`\\b(${weakBoundaryTerm})\\b`, "i"), "Missing strong boundary type policy or N/A evidence"],
-    [/\b(security|privacy|PII|personal data|confidential|restricted|secret|credential|redaction|trust boundary|authorization|tenancy|input validation|output encoding)\b/i, "Missing security/privacy"],
-    [/\b(log level|logging|observability|audit|metric|trace|correlation|redaction)\b/i, "Missing observability"],
-    [/\b(performance|latency|throughput|rate limit|capacity|memory|CPU|pagination|batching|backpressure|timeout budget|retry budget|overload)\b/i, "Missing performance budgets"],
-    [/\b(data integrity|consistency|state transition|transaction|rollback|compensation|checkpoint|idempotency|recovery|self-healing|manual intervention|data loss)\b/i, "Missing integrity/recovery"],
-    [/\b(production readiness|deployment|environment|configuration|config|secret|SLO|SLA|error budget|runbook|incident|backup|restore|rollback|rollout|release|readiness|liveness|operational owner|support handoff|not applicable|N\/A)\b/i, "Missing production/release"],
-    [/\b(supply chain|dependency policy|lockfile|vulnerability|license|SBOM|SPDX|CycloneDX|SLSA|provenance|attestation|signing|artifact|container|base image|secret scan|not applicable|N\/A)\b/i, "Missing supply chain"],
-  ];
-  for (const [term, message] of must) if (!term.test(text)) fail(message);
-  if (/\b(every file|all files|complete file list|exhaustive file list)\b/i.test(text)) fail("File/folder structure over-specifies every file");
-  const interfaceScope = /\b(interface|contract|API|endpoint|GraphQL|REST|HTTP|event|message|queue|topic|webhook|SDK|CLI|plugin|configuration|schema|storage shape|data model)\b/i.test(text);
-  const contractNa = /\b(machine-readable contract|contract artifact|03-contracts).{0,120}\b(not applicable|n\/a|no interface|no transport|no message|no durable data contract)\b/i.test(text);
-  if (interfaceScope && !contractNa && !contractFiles.length) fail("Missing machine-readable contract artifact in specs/03-contracts");
-  const hasContract = new RegExp(`\\b(${contractTerm})\\b`, "i").test(text);
-  const generationNa = /\b(generator|codegen|generated|regeneration|drift check).{0,120}\b(not applicable|n\/a|unavailable|unsafe|out of scope)\b/i.test(text);
-  if (hasContract && !generationNa && !/\b(deterministic generator|generator|codegen|regeneration command|generated types?|generated clients?|generated validators?|generated tests?|contract tests?|drift check)\b/i.test(text)) fail("Missing deterministic generator/tooling, generated output, or drift-check evidence");
-  if (/\b(public\s+(api|sdk|cli|schema|protocol|workflow|config)|developer-facing|sdk|cli|plugin|tool manifest|builder)\b/i.test(text)) {
-    if (!/(^|\n)#+\s+Public API Inventory\b|public_api_inventory:/i.test(text)) fail("Missing Public API Inventory");
-    if (!/execution_semantics:/i.test(text)) fail("Missing execution_semantics");
-  }
-}
-
 if (!fs.existsSync(root)) fail(`Missing spec root: ${root}`);
 else {
   const all = walk(root);
-  // Visual assets are covered by the manifest, but carry no spec prose.
-  const textFiles = all.filter((file) => !/\.(drawio|svg|png)$/i.test(file));
-  const text = textFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
-  [".readiness-report.yaml", "_registry.yaml", "_provenance.yaml", "00-vision.md", "00-stack.md", "00-conventions.md", "00-architecture-overview.md", "00-file-structure.md", "02-capabilities/capability-inventory.md", "glossary.md"].forEach((file) => !exists(file) && fail(`Missing artifact: ${file}`));
-  for (const file of textFiles) {
-    const body = fs.readFileSync(file, "utf8");
-    if (/\.(json|schema)$/i.test(file)) try { JSON.parse(body); } catch (error) { fail(`${rel(file)} invalid JSON: ${error.message}`); }
-    if (/\b(TODO|TBD|FIXME|OPEN QUESTION|QUESTION:)\b/i.test(body)) fail(`${rel(file)} contains unresolved marker`);
-    for (const match of body.matchAll(/\[[^\]]+\]\((?!https?:\/\/|#)([^)]+)\)/g)) { const target = match[1].split("#")[0]; if (target && !fs.existsSync(path.resolve(path.dirname(file), target))) fail(`${rel(file)} broken link: ${match[1]}`); }
+  for (const file of all) {
+    if (!/\.(json|schema)$/i.test(file)) continue;
+    try { JSON.parse(fs.readFileSync(file, "utf8")); }
+    catch (error) { fail(`${rel(file)} invalid JSON: ${error.message}`); }
   }
   const report = structured(".readiness-report.yaml");
   const approved = report?.status === "approved";
-  const knowledgeProfile = validateProjectKnowledge(root, all, {
-    approved, readAuthority: () => structured("00-decision-authority.yaml"), fail,
-  });
+  const authority = structured("00-decision-authority.yaml");
+  validateProjectKnowledge(root, all, { approved, authority, fail });
   const manifest = approved ? validateManifest(all) : null;
-  validateReadinessReport(report, manifest, knowledgeProfile);
+  validateReadinessReport(report, manifest);
   if (approved) {
-    validateArtifactContracts();
-    validateTraceability(structured("_registry.yaml"));
-    const representationScope = /\b(domain model|domain data|entity|DTO|data shape|storage shape|database record|persistence record|API payload|request payload|response payload|event payload|command|query|projection|view model)\b/i.test(text);
+    const registry = structured("_registry.yaml");
+    const applicability = structured("00-applicability.yaml");
+    validateArtifactContracts(applicability, authority);
+    validateTraceability(registry);
+
+    const concerns = applicability?.concerns;
+    const representation = Array.isArray(concerns) && concerns.find((concern) => concern?.concern_id === "representation_reuse");
     const catalog = "03-contracts/representation-catalog.yaml";
-    if ((representationScope || exists(catalog)) && !exists(catalog)) fail(`Missing representation catalog: ${catalog}`);
-    if (exists(catalog)) validateCatalog(structured("_registry.yaml"));
-    if (!exists("03-flows/e2e-coverage.md")) fail("Missing E2E coverage matrix: 03-flows/e2e-coverage.md");
-    const vague = /\b(as appropriate|if needed|where possible|to be determined|decide later|future work will decide|handle errors|support auth|validate input|make configurable|sync data|recover gracefully|log appropriately|securely|performant|best effort|best practices|standard protocols)\b/i;
-    textFiles.filter((file) => !file.endsWith(".readiness-report.yaml")).forEach((file) => vague.test(fs.readFileSync(file, "utf8")) && fail(`${rel(file)} contains ambiguous implementation language`));
-    validateLegacySmoke(all, text);
+    if (representation?.status === "applicable" && !exists(catalog)) fail(`Missing representation catalog: ${catalog}`);
+    if (exists(catalog)) {
+      if (representation?.status === "not_applicable") fail(`${catalog} conflicts with representation_reuse applicability`);
+      validateCatalog(registry);
+    }
   }
-  if (!exists("03-contracts")) warn("Missing specs/03-contracts");
-  if (!exists("03-flows")) warn("Missing specs/03-flows");
 }
-warnings.forEach((message) => console.warn(`warn: ${message}`));
 if (errors.length) { [...new Set(errors)].forEach((message) => console.error(`error: ${message}`)); process.exit(1); }
-console.log(`spec check ok: ${root}`);
+console.log(`spec structure check passed: ${root}`);

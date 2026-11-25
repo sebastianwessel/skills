@@ -18,8 +18,8 @@ Send the result to `spec-readiness-review` for approval before planning.
    policy, applicability, and decision authority. Record a gap when a choice
    lacks authority and continue only with independent authoring work.
 2. **Find or establish the owning page.** Apply
-   [Project knowledge](references/project-knowledge.md) for new spec sets,
-   expansion into the profile, and updates to a set that already declares it.
+   [Project knowledge](references/project-knowledge.md) to establish and
+   maintain the canonical spec set.
    Update the owner and dependents whose semantics, coverage, or links change.
    If an edit affects only wording, confirm existing behavior, traceability,
    and visuals remain accurate. Edit the owner, then go to step 7.

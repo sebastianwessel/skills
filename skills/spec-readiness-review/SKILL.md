@@ -14,8 +14,8 @@ or technical choices and broad authoring to `spec-architect`.
 
 1. **Establish the review scope.** Confirm the canonical source exists. Use
    [Artifact shapes](references/artifact-shapes.md) for the spec tree and
-   readiness report. Start from `specs/index.md` when the knowledge profile is
-   declared. Run the spec checker against existing records or a draft report
+   readiness report. Start from `specs/index.md`. Run the spec checker
+   against existing records or a draft report
    for structural feedback. If a previous approval covers an older digest,
    record it as stale and return the report to draft before reviewing the new source.
 2. **Review the sources.** Apply [Readiness gates](references/readiness-gates.md).
@@ -25,8 +25,8 @@ or technical choices and broad authoring to `spec-architect`.
    contracts through success, failure, and recovery paths to acceptance.
    Check authority, scope, security, data integrity, operational outcomes,
    dependency research, and any applicable generation or migration evidence.
-   For a profiled project, verify direct discovery, ADRs, gaps, and actual
-   diagram exports using the project knowledge gate.
+   Verify direct discovery, ADRs, gaps, and actual diagram exports using
+   the project knowledge gate.
 3. **Resolve or route blockers.** Record the affected requirement, owner,
    evidence, and missing decision or verification. Use `blocked` while a
    blocker remains. Resume from the revised canonical sources after repair.

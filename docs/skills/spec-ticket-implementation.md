@@ -15,8 +15,8 @@ The CLI and public skill directory are introduced in Vercel's
 
 ## What It Does
 
-- Confirms the ticket's pinned spec-manifest digest matches current approved
-  readiness before editing.
+- Checks that the plan manifest binds the current ticket to approved specs
+  before editing.
 - Runs configured spec and plan checkers.
 - Reads only ticket `spec_refs` and `read_scope`.
 - Writes only files listed by `write_scope`.

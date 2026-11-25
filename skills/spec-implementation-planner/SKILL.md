@@ -10,25 +10,12 @@ tickets agents can execute in isolation without guessing.
 
 ## Hard Gate
 
-Read `specs/.readiness-report.yaml`. Run
-`node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`
-to verify the current source bytes against approval. Stop unless it passes and:
-
-- `status: approved`
-- `human_approval.status: approved`
-- `approval_evidence.manifest_digest` equals `spec-manifest.yaml.content_digest`
-- readiness/gate simulation passed or can be rerun successfully
-- `checklist_walk_gate.status: passed` with zero blocking findings
-- `end_to_end_definition_gate.status: passed`
-- `current_dependency_research_gate.status: passed`
-- `representation_reuse_gate.status: passed` when data shapes are in scope
-- `language: en` and `semantic_judge_gate.status: passed` when deterministic
-  English smoke checks are used
-
-If blocked, write a spec gap/readiness note. Do not create executable tickets.
-
-Plan only from approved specs, ticket rules, contracts, and verification.
-Otherwise create a spec/plan gap.
+Require an approved `specs/.readiness-report.yaml` and run
+`node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`.
+It verifies source bytes, recorded human and judge evidence, and structural
+controls. Stop before planning if evidence is missing or stale. Route it to
+`spec-readiness-review`. Use approved definitions and verification to
+derive the plan.
 
 ## Workflow
 
@@ -67,11 +54,9 @@ Otherwise create a spec/plan gap.
    write scope, exact prerequisite artifacts, and a numbered action plan with
    files/commands/proof for every step. Use phase-gated exceptions only when
    the approved work is atomic and each phase blocks on explicit evidence.
-10. Require ticket sections for spec-drift controls, generator-first artifacts,
-   representation catalog/reuse, TDD including unhappy paths, strict typing,
-   modular domain structure, reuse/no-duplication, and review against ticket
-   plus specs. Domain structure and dependency choices must follow the approved
-   readiness evidence.
+10. Cover drift controls, generated artifacts, scoped reuse, boundary typing,
+    and unhappy-path tests in the structured handoff and concise ticket body.
+    Cite evidence where the frontmatter or approved spec already provides it.
 11. Track the lifecycle `planned -> ready -> in_progress -> implemented ->
    review_pending -> accepted`; use `partial`, `blocked`, and `skipped` only as
    explicit side states. Maintain exact `depends_on`, `blocked_by`, and
@@ -87,8 +72,8 @@ Otherwise create a spec/plan gap.
 
 `references/planning-gates.md` owns the exact structural ticket contract,
 autonomy, command, traceability, generated-contract, reuse, action-step,
-acceptance, lifecycle, and anti-pattern rules. Tickets pin both content digests
-and may authorize only D0/D1 work. Missing semantic evidence is a spec gap;
+acceptance, lifecycle, and anti-pattern rules. The plan manifest binds the
+tickets to approved specs. Tickets may authorize only D0/D1 work. Missing semantic evidence is a spec gap;
 never emit a ticket that asks an implementer to decide, infer, or invent.
 
 After `accepted`, keep work historical. New gates create remediation/migration
