@@ -45,8 +45,12 @@ If the record fails validation, withdraw acceptance. With unresolved
 findings, keep the work unaccepted and route the cause to the rule, approval,
 plan or code that needs repair. A changed implementation requires new review.
 
-For a wave or release, link the current acceptance of each in-scope ticket
-and verify the combined outcome on the integration or release revision.
+For a wave or release, compare the approved slice scenarios with the union of
+the current in-scope tickets and their acceptance evidence. Identify any
+unassigned or unverified scenario as a blocking finding. Link each accepted
+ticket and verify the combined outcome on the integration or release revision.
+The ticket checker validates each ticket’s scenario membership. The reviewer
+must establish coverage across the full slice.
 Record the integrated scenario, affected consumers, and applicable operational
 and rollback proof. An unverified combined outcome blocks wave or release
 acceptance.

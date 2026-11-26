@@ -20,7 +20,10 @@ page, write the policy and the outcomes it governs.
 
 A member can cancel a confirmed reservation they own. After the first
 request its state is cancelled. Repeating the cancellation leaves it
-cancelled. Source: approved support policy, “Member cancellations.”
+cancelled. If a different member requests cancellation, deny the request
+and leave the reservation unchanged.
+
+The approved support policy defines this rule under “Member cancellations.”
 ```
 
 Give those outcomes stable scenario IDs in `specs/acceptance.yaml`.
@@ -35,6 +38,10 @@ scenarios:
     source: reservations.md#cancel-a-reservation
     verify:
       - "Repeat the cancellation and verify that the reservation stays cancelled."
+  - id: AC-CANCEL-OTHER-MEMBER
+    source: reservations.md#cancel-a-reservation
+    verify:
+      - "Request cancellation as a different member. Verify denial and that the reservation stays confirmed."
 ```
 
 Keep independent behavior under a separate heading. Suppose the policy says
@@ -45,14 +52,15 @@ confirms it has no dependency on that decision.
 
 If you ask the agent to implement this behavior, it prepares the
 `member-cancellation` slice. The reviewer checks
-`AC-CANCEL` and `AC-CANCEL-REPEAT` in
+`AC-CANCEL`, `AC-CANCEL-REPEAT` and `AC-CANCEL-OTHER-MEMBER` in
 `reviews/readiness/member-cancellation.yaml`, together with the governing
 decision, affected contracts and failure paths. The agent uses existing
 approval for the reviewed scope or asks for your decision. It then handles
 the ticket, verification and independent review at the implemented revision.
 
-As the support policy becomes clearer, revise that section in place. The member
-cancellation approval and its accepted ticket stay current. If a later policy
+As the support policy becomes clearer, revise the support-assisted cancellation
+section in place. Changes confined to that independent section leave the member
+cancellation approval and its accepted ticket current. If a later policy
 change alters a rule both paths depend on, review the slices that cite that rule
 and revisit affected unfinished tickets. For work already accepted, plan a
 follow-up wave that verifies the changed behavior against the current code.

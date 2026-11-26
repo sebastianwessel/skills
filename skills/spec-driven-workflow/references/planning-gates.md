@@ -36,8 +36,10 @@ rules printed by the ticket checker.
 A ticket inherits the slice’s acceptance IDs. When splitting a slice, use
 `acceptance_ids: [CREATE, DUPLICATE]` to name the scenarios that ticket
 verifies. Include all affected tests, generated files and docs in
-`write_scope`. Use literal repository-relative files or directories.
-Evidence-only work can use `[]`.
+`write_scope`. Use literal repository-relative files or directories. Canonical spec changes
+are refined and approved before ticket execution. Spec, plan and review
+records are maintained separately from ticket write scopes. Evidence-only
+work can use `[]`.
 
 Estimate relative complexity and uncertainty. **XS** is localized with focused
 proof. **S** is bounded to a component. **M** crosses related boundaries or

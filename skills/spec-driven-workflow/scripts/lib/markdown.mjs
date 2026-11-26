@@ -1,6 +1,7 @@
 // Use ATX headings and optional HTML anchors for stable spec references.
 function visibleLines(markdown) {
   let fence = null;
+  let inList = false;
   const visible = markdown.replace(/<!--[\s\S]*?(?:-->|$)/g, (comment) => comment.replace(/[^\r\n]/g, " "));
   return visible.split(/\r?\n/).map((line) => {
     const delimiter = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
@@ -9,7 +10,9 @@ function visibleLines(markdown) {
       return "";
     }
     if (delimiter) fence = delimiter[1];
-    return delimiter || /^(?: {4}|\t)/.test(line) ? "" : line;
+    if (/^ {0,3}(?:[-+*]|\d+[.)])\s/.test(line)) inList = true;
+    else if (line.trim() && !/^(?: {2}|\t)/.test(line)) inList = false;
+    return delimiter || (!inList && /^(?: {4}|\t)/.test(line)) ? "" : line;
   });
 }
 
@@ -63,7 +66,8 @@ export function markdownSection(markdown, anchor) {
 export function markdownLinks(markdown) {
   const prose = proseWithoutExamples(markdownBody(markdown)).replace(/(`+)[^`\n]+?\1/g, "");
   const links = [];
-  for (const [, image, label, target] of prose.matchAll(/(!?)\[([^\]\n]*)\]\(<?([^()<>\s]+)>?(?:\s+["'][^"']*["'])?\)/g)) {
+  for (const [, image, label, enclosed, plain] of prose.matchAll(/(!?)\[([^\]\n]*)\]\((?:<([^<>\n]+)>|([^()<>\s]+))(?:\s+["'][^"']*["'])?\)/g)) {
+    const target = enclosed ?? plain;
     if (!/^[a-z][a-z0-9+.-]*:/i.test(target)) links.push({ image: Boolean(image), label, target });
   }
   return links;

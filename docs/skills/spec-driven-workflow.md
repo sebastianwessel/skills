@@ -6,10 +6,11 @@ from an idea, an existing spec, a ready ticket or a change awaiting review.
 ## Installation
 
 ```bash
-npx skills add sebastianwessel/skills --skill spec-driven-workflow
+npx skills add sebastianwessel/skills
 ```
 
-Choose your agent during setup.
+Select `spec-driven-workflow` and your agent during setup. To select the
+workflow from the command line, append `--skill spec-driven-workflow`.
 
 ## Try it
 
@@ -30,6 +31,8 @@ records the decision and continues when the inputs are current.
 - A delivery request can start with an idea or resume from existing evidence.
   The agent prepares the files, runs the checks and arranges an independent
   review when available.
+- Resuming from recorded progress requires this workflow's slice approvals
+  and ticket format. Earlier stage-specific skills used incompatible records.
 - If the spec changes after delivery, the agent plans a follow-up against the
   current code and keeps earlier reviews as history.
 

@@ -197,3 +197,21 @@ test("shared decision backlinks do not bind a slice to every affected rule", (t)
   f.check(null, "--approved", "denial");
   f.check(/stale or missing slice approval/, "--approved", "format");
 });
+
+test("nested list links bind governing dependencies", (t) => {
+  const f = fixture(t);
+  f.spec("index.md", f.index.replace("Return 403 without queueing work.", "- Authorization\n    - Apply [the policy](policy.md#access)."));
+  f.spec("policy.md", "## Access\nDeny unauthorized requests.\n");
+  f.approve();
+  f.spec("policy.md", "## Access\nDeny all requests.\n");
+  f.check(/stale or missing slice approval/, "--approved", "denial");
+});
+
+test("angle-bracket links with spaces bind governing dependencies", (t) => {
+  const f = fixture(t);
+  f.spec("index.md", f.index.replace("queueing work.", "queueing work. [Policy](<access policy.md#access>)."));
+  f.spec("access policy.md", "## Access\nDeny unauthorized requests.\n");
+  f.approve();
+  f.spec("access policy.md", "## Access\nDeny all requests.\n");
+  f.check(/stale or missing slice approval/, "--approved", "denial");
+});
