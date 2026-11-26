@@ -1,86 +1,47 @@
 ---
 name: spec-driven-workflow
-description: Coordinates the spec-driven lifecycle. Use when choosing order across specs, plans, tickets, reviews, feedback routing, or pause/resume.
+description: Carries product and engineering changes from a living spec to verified code. Use when turning an idea or requirement into a project spec, changing business or system behavior, planning or completing a delivery slice, resuming work in a spec-driven repo, or checking if a change is ready to ship. Routine edits outside a spec-driven project use the normal development process.
 ---
 
-# Spec Driven Workflow
+# Spec-driven workflow
 
-Use this skill to choose the next spec-driven skill and enforce lifecycle order.
-It orchestrates; it does not replace the specialized skills.
+Take the user's request as the outcome. Handle the workflow files, stage
+selection, checks and handoffs yourself. Open `specs/index.md` and relevant
+existing evidence, or start with one page if the request needs a new spec.
+Use the smallest coherent outcome the user asked for.
 
-## Core Rule
+1. **Start where evidence is missing.** Read only the relevant references.
+   A request for a draft, plan, status or review ends with that deliverable.
+   A request to build, fix or finish authorizes the applicable stages within
+   that scope. Resume from verified records and advance in the same turn.
+2. **Use established decisions.** Check the conversation, governing sources
+   and existing review before asking. Apply repository conventions to
+   delegated implementation details. When a material decision or required
+   approval is missing, prepare what you can and keep independent work
+   moving. Present the decision once at the checkpoint, in plain language
+   about the affected behavior and its impact.
+3. **Arrange independent review.** If available, delegate required independent
+   review to a fresh reviewer with the exact scope, sources and evidence.
+   Verify the result. Otherwise use existing independent evidence or report
+   what review is still needed. Record actual authority and earned states.
+4. **Close the loop.** Run the packaged checks and project verification
+   yourself. Report the outcome, concrete proof and any user decision
+   that still blocks the requested work. Keep spec, code and evidence in sync.
 
-Move forward only when the current gate is complete. If a gate fails, route the
-work backward to the owning skill instead of letting agents decide or invent.
+| What needs work | Read |
+| --- | --- |
+| Define or refine behavior, decisions or open questions | [Writing project knowledge](references/project-knowledge.md) |
+| Review defined behavior and record its approval | [Slice records](references/artifact-shapes.md) and [Readiness review](references/readiness-review.md) |
+| Plan a slice, prepare a ticket or requeue unfinished work | [Planning and progress](references/planning-gates.md) |
+| Implement and verify a ticket | [Execution and evidence](references/execution-evidence.md) |
+| Review implementation, integration or release | [Implementation review](references/implementation-review.md) |
+| Draw or publish project knowledge | [Diagrams and publishing](references/diagram-and-publishing.md) |
 
-## Workflow
+Use a new follow-up wave for a behavior change after acceptance. Preserve the
+earlier implementation and reviews as history. Requeue affected unfinished
+work against the new inputs.
 
-1. **Orient**
-   - Identify current artifacts: `specs/`, `.readiness-report.yaml`, `plans/`,
-     ticket status, implementation diff, review findings.
-   - Decide whether the work is an incremental patch/refactor or a
-     contract-first clean rebuild by boundary. If compatibility debt,
-     overlapping contract surfaces, stale mirrors, or generator opportunity
-     dominate, route to specs/planning before implementation.
-   - Verify the spec-manifest digest, decision/policy authority, and current
-     lifecycle state before selecting a stage. Select the current stage from
-     `references/process-checklist.md`.
-
-2. **Specify**
-   - Use `spec-architect` for new specs, spec updates, gap repair, contracts,
-     interface definitions, UX, NFRs, release, and supply chain.
-   - Gate: canonical specs have source/rationale, a bounded reuse/module
-     inventory, approved decision/policy records, no authoring gaps, and are
-     ready for readiness review.
-
-3. **Readiness Review**
-   - Use `spec-readiness-review` after specs are authored or repaired.
-   - Gate: approved readiness is content-bound to the current spec digest,
-     human/semantic evidence is attributable, deterministic checks pass, and
-     no open implementation decisions remain.
-
-4. **Plan**
-   - Use `spec-implementation-planner` after approved specs.
-   - Gate: vertical-slice waves or justified horizontal exceptions, digest-pinned
-     tickets, ready
-     contracts/codegen, generation-map ownership, test-first order,
-     dependencies, scopes, bounded parallel work, status tracking.
-
-5. **Implement**
-   - Use `spec-ticket-implementation` for exactly one ready ticket.
-   - Gate: test/contract artifacts exist before business logic, scoped
-     verification passes, implementation evidence and changed symbols are
-     recorded, and status advances only to `implemented`/`review_pending`.
-
-6. **Review**
-   - Use `spec-implementation-review` after a ticket set, wave, partial wave,
-     or before acceptance/merge/release.
-   - Gate: end-to-end path matrix and impacted-consumer scope complete,
-     findings persisted, no blocking issues; independent review alone may mark
-     a ticket or wave `accepted`.
-
-7. **Route Feedback**
-   - Implementation defects return to `spec-ticket-implementation`.
-   - Dependency/scope/order gaps return to `spec-implementation-planner`.
-   - Missing, contradictory, or ambiguous normative requirements return to
-     `spec-architect`. Failed, stale, or insufficient readiness evidence returns
-     to `spec-readiness-review`; that skill may repair only explicit evidence gaps.
-
-8. **Self-Audit**
-   - Verify the selected stage, gate evidence, routed owner, blocked items, and
-     skipped checks.
-   - Report uncertainty honestly; do not move forward on assumed readiness.
-
-## Stop Conditions
-
-Stop and route backward when specs are unapproved, tickets are not ready,
-dependencies are inactive/accepted as required, tests would be written after business logic, feedback
-has no owner, or any agent would need to decide behavior, interfaces, UX,
-security, recovery, release, tests, acceptance, generation mapping, clean-rebuild
-  strategy, closed-boundary type semantics, decision authority, or a required
-  reuse/module boundary.
-
-## Reference
-
-- `references/process-checklist.md`: ordered checklist, gates, handoffs, and
-  pause/resume rules.
+Before finishing, verify the governing rules, checked paths, applicable risks,
+and source and dependency revisions. Surface contradictions, missing proof
+and uncertainty. Restrict changes, reviews, and publication to the requested
+scope and available authority.

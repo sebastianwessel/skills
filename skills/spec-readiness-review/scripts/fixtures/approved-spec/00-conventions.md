@@ -1,3 +1,0 @@
-# Conventions
-
-Fixture conventions.

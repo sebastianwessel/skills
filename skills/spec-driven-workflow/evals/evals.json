@@ -2,40 +2,59 @@
   "skill_name": "spec-driven-workflow",
   "evals": [
     {
-      "id": 1,
-      "prompt": "We have a rough product idea and want autonomous agents to build it. What should happen first and what blocks implementation?",
-      "expected_output": "Routes to spec-architect first, then spec-readiness-review for approval gates before planning or implementation.",
-      "files": []
+      "id": "idea",
+      "prompt": "We want to shorten how long it takes to register a new supplier. Finance still needs to decide how changes to bank details will be approved. Capture what we know and what needs a decision.",
+      "expected_output": "Creates or refines a one-page living spec and records the approval question beside the affected behavior. Stops after the requested draft and avoids invented acceptance or implementation."
     },
     {
-      "id": 2,
-      "prompt": "Specs are approved, but there is no plan and the user asks to start coding with multiple agents.",
-      "expected_output": "Routes to spec-implementation-planner, requires vertical-slice waves, ticket scopes, dependencies, status, and test-first order before implementation.",
-      "files": []
+      "id": "deliver",
+      "prompt": "Our support policy permits members to cancel their own confirmed reservations. We have verified outcomes for the first and repeat requests and an approved spec. Build the change and tell me how you tested it.",
+      "expected_output": "Finds and verifies existing approval, plans and claims a bounded ticket, implements and tests the scoped behavior, then obtains independent review when available. Handles files and check commands without asking the user to identify a skill, ticket number or stage."
     },
     {
-      "id": 3,
-      "prompt": "A wave is partially implemented and review found a missing frontend failure state plus an unclear spec requirement.",
-      "expected_output": "Routes implementation defects to spec-ticket-implementation and the unclear requirement through spec-readiness-review for spec gap repair or authoring, with persisted findings and status updates before resuming.",
-      "files": []
+      "id": "approval-conversation",
+      "prompt": "The retry flow is already specified and independently reviewed. Can you take it through implementation? Tell me what you need from me.",
+      "expected_output": "Presents the reviewed behavior and key failure outcome if approval is missing. A later clear approval from an authorized user over the unchanged proposal is linked to the reviewed digest and work continues. Does not ask the user to calculate a digest, write a record, request another stage or repeat recorded approval."
     },
     {
-      "id": 4,
-      "prompt": "we paused halfway thru a plan, not sure what skill is next. specs approved, two tickets done, one blocked by review feedback",
-      "expected_output": "Inspects status/review findings, routes the blocked ticket feedback to the owning skill, and requires resume proof before continuing implementation.",
-      "files": []
+      "id": "subtle-retry-gap",
+      "prompt": "A worker retry is causing duplicate notifications. Fix the settled idempotency behavior. Nobody has decided what to do if every retry fails.",
+      "expected_output": "Checks whether the two paths are independent, records the final-failure question beside its rule, and proceeds where current approval and dependencies permit. Avoids inventing a recovery policy."
     },
     {
-      "id": 5,
-      "prompt": "Implement this one ready ticket; dependencies are done and write_scope is fixed.",
-      "expected_output": "Treats this as a near miss for orchestration and routes directly to spec-ticket-implementation instead of re-planning the lifecycle.",
-      "files": []
+      "id": "resume",
+      "prompt": "Keep going on the approved borrower renewal. We paused after the tests last week.",
+      "expected_output": "Finds the actual current ticket and evidence, checks source and dependency freshness, and resumes from the first missing stage without asking the user to choose it or recreating current records."
     },
     {
-      "id": 6,
-      "prompt": "A backend rebuild has GraphQL, AsyncAPI, JSON Schema entities, error taxonomy, database records, stale aliases, and compatibility fallbacks. The user asks agents to refactor the old backend.",
-      "expected_output": "Routes to spec-readiness-review for a patch-vs-clean-rebuild readiness decision, generation map, source-contract inventory, and strong boundary type policy before planning or coding; broad missing authoring routes to spec-architect.",
-      "files": []
+      "id": "follow-up",
+      "prompt": "The first wave passed review. Our new approved retention policy changes stored records and rollback. Make the implementation match the new rule.",
+      "expected_output": "Uses a new follow-up wave with fresh IDs and scope against the shipped baseline. Verifies new failure, rollback and consumer paths. Keeps original acceptance as historical evidence."
+    },
+    {
+      "id": "narrow-deliverable",
+      "prompt": "Give me the plan for the approved dashboard filter. Hold off on code until I have read it.",
+      "expected_output": "Delivers bounded, relatively sized and verifiable work with dependency and readiness information. Leaves production code untouched."
+    },
+    {
+      "id": "stale-approval",
+      "prompt": "The contract gained a required field after review. An agent says it can start from yesterday's ready ticket. Can it?",
+      "expected_output": "Reports stale current approval or progress and the affected paths. Requests review and approval of the relevant revision and keeps independent work moving."
+    },
+    {
+      "id": "independent-proof",
+      "prompt": "The implementer says everything passes, but the only green CI run refers to the previous revision. Can this ship?",
+      "expected_output": "Checks actual current revision, acceptance, downstream behavior and required operational proof. Reports the unresolved evidence instead of accepting the change or publishing it."
+    },
+    {
+      "id": "parallel-claims",
+      "prompt": "Finish the approved API and UI changes. Both tickets edit the same generated client.",
+      "expected_output": "Sequences the overlapping writes and verifies generation and current prerequisite proof. Avoids concurrent claims on the shared client."
+    },
+    {
+      "id": "near-miss",
+      "prompt": "In this repo with no project specs, rename a local helper variable for readability. Leave behavior unchanged.",
+      "expected_output": "Uses the normal bounded coding workflow and repository checks. Creates no spec, acceptance scenario, plan or progress records."
     }
   ]
 }

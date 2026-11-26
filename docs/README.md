@@ -1,29 +1,24 @@
-# Documentation
+# Get started
 
-Human-facing documentation for the skills in this repository.
+Install the workflow in the project where you work.
 
-## Skills
+```bash
+npx skills add sebastianwessel/skills --skill spec-driven-workflow
+```
 
-- [agent-skill-architect](skills/agent-skill-architect.md)
-- [spec-architect](skills/spec-architect.md)
-- [spec-driven-workflow](skills/spec-driven-workflow.md)
-- [spec-implementation-planner](skills/spec-implementation-planner.md)
-- [spec-implementation-review](skills/spec-implementation-review.md)
-- [spec-readiness-review](skills/spec-readiness-review.md)
-- [spec-ticket-implementation](skills/spec-ticket-implementation.md)
+After setup, tell your agent what you want to accomplish in your own words.
 
-## Pattern
+| What you can ask | What the agent does |
+| --- | --- |
+| “We want members to cancel their own reservations. Write down the rule and flag decisions we still owe.” | Starts or updates the project spec and records open questions |
+| “Customers are seeing a different result the second time they cancel. Fix it so the reservation stays cancelled.” | Checks the governing rule and takes the requested change through delivery as far as the evidence permits |
+| “What can we finish next?” | Reads the spec, approvals and ticket progress and reports the next available outcome |
+| “Can this change ship?” | Reviews the actual change against the agreed behavior, risks and proof |
 
-Skill documentation pages live in `docs/skills/<skill-name>.md` and use a
-consistent short structure:
+The agent handles the stages, files and checks. If an authorized decision is
+needed, it will show you the affected behavior and ask about that decision.
+To keep working after a pause, say what you want to continue.
 
-1. Summary
-2. Installation
-3. What it does
-4. How it works
-5. Workflow or modes
-6. Included files
-7. Validation and safety notes
+[How the workflow works](skills/spec-driven-workflow.md) · [Worked example](project-knowledge.md#cancelling-a-reservation)
 
-Keep these pages user-facing. Detailed agent instructions stay in each
-`skills/<skill-name>/SKILL.md`.
+If you maintain agent skills, see the [Agent Skill Architect guide](skills/agent-skill-architect.md).

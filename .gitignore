@@ -147,3 +147,6 @@ exports/
 .aider*
 .agent/tmp/
 .agent/cache/
+
+# MkDocs build output
+/site/
