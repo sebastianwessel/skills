@@ -36,7 +36,6 @@ const checks = {
       run(`skill ${entry.name}`, process.execPath, [checker, path.join(root, "skills", entry.name)]);
     }
   },
-  evals() { run("eval manifests", process.execPath, [path.join(root, "scripts", "check-evals.mjs"), root]); },
   links() { run("resource links", process.execPath, [path.join(root, "scripts", "check-resource-links.mjs"), root]); },
   readme() { run("README generated state", python, [path.join(root, "scripts", "update-readme.py"), "--check"]); },
 };

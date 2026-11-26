@@ -1,32 +1,33 @@
-# Documentation
+# Choose a skill
 
-Human-facing documentation for the skills in this repository.
+Start with the question you need answered. You can enter at any stage where
+the required evidence already exists.
 
-Start with the [project knowledge guide](project-knowledge.md) for business
-rules, solution design, flows, decisions, gaps, diagrams, and site publishing.
+| What you need | Skill | What to look for |
+| --- | --- | --- |
+| “We paused last week. What can move forward?” | [Spec Driven Workflow](skills/spec-driven-workflow.md) | The next owner, evidence and any blocker |
+| “What should happen when a customer cancels twice?” | [Spec Architect](skills/spec-architect.md) | A governing rule in `specs/` and testable outcomes |
+| “Can the team plan against these requirements?” | [Spec Readiness Review](skills/spec-readiness-review.md) | Findings or approval tied to the reviewed source |
+| “Which parts can we build independently?” | [Spec Implementation Planner](skills/spec-implementation-planner.md) | Tickets with fixed scope, dependencies and acceptance IDs |
+| “Implement this ready ticket.” | [Spec Ticket Implementation](skills/spec-ticket-implementation.md) | A scoped change and verification evidence |
+| “Can we accept this change?” | [Spec Implementation Review](skills/spec-implementation-review.md) | An independent decision backed by path and consumer evidence |
+| “How can I make my own reusable skill reliable?” | [Agent Skill Architect](skills/agent-skill-architect.md) | A skill package, checks and realistic evaluations |
 
-## Skills
+## Your first run
 
-- [agent-skill-architect](skills/agent-skill-architect.md)
-- [spec-architect](skills/spec-architect.md)
-- [spec-driven-workflow](skills/spec-driven-workflow.md)
-- [spec-implementation-planner](skills/spec-implementation-planner.md)
-- [spec-implementation-review](skills/spec-implementation-review.md)
-- [spec-readiness-review](skills/spec-readiness-review.md)
-- [spec-ticket-implementation](skills/spec-ticket-implementation.md)
+Install the skill collection in your project and select the six `spec-*` skills
+if you want the full development workflow.
 
-## Pattern
+```bash
+npx skills add sebastianwessel/skills
+```
 
-Skill documentation pages live in `docs/skills/<skill-name>.md` and use a
-consistent short structure:
+> Use Spec Architect. Our approved support policy allows a member to cancel a
+> confirmed reservation they own. If they repeat the request, the reservation
+> stays cancelled. Document the rule, the repeat request and any unanswered
+> questions.
 
-1. Summary
-2. Installation
-3. What it does
-4. How it works
-5. Workflow or modes
-6. Included files
-7. Validation and safety notes
-
-Keep these pages user-facing. Detailed agent instructions stay in each
-`skills/<skill-name>/SKILL.md`.
+Open the project map at `specs/index.md` and follow the rule into its
+acceptance scenarios. When you agree on what happens, ask for a readiness
+review. The reviewer will identify the exact revision that needs your approval.
+[Follow the cancellation example](project-knowledge.md#cancelling-a-reservation)

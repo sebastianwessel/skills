@@ -38,8 +38,6 @@ jobs:
         run: node scripts/check-all.mjs tests
       - name: Skill package validation
         run: node scripts/check-all.mjs skills
-      - name: Evaluation manifest validation
-        run: node scripts/check-all.mjs evals
       - name: Resource-link validation
         run: node scripts/check-all.mjs links
       - name: README generated-state validation

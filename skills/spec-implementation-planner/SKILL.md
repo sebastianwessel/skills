@@ -1,83 +1,45 @@
 ---
 name: spec-implementation-planner
-description: Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks.
+description: Turns approved specs into scoped, dependency-ordered tickets. Use when creating or repairing a delivery plan, assigning acceptance scenarios, sizing work, or deciding which ticket can start.
 ---
 
 # Spec Implementation Planner
 
-Turn approved specs into vertical-slice waves and implementation-ready AFK
-tickets agents can execute in isolation without guessing.
+Start with the requested outcome in `specs/index.md`. Run the readiness
+package's `scripts/check_specs.mjs <repo-root>/specs --approved` with Node.
+A missing approval, conflicting requirement or undefined failure outcome goes
+back to the source owner. Stop the affected planning work until the gate passes.
 
-## Hard Gate
+1. Read `specs/acceptance.yaml`, the governing definitions it cites and the
+   project conventions that constrain this change. Group the scenarios into
+   waves that each deliver a working, verifiable outcome. A small change can
+   use one wave and one ticket. Explain any foundation wave by naming the
+   first scenario it unblocks and the proof its consumers need.
+2. Write a short `plans/wave_01_slug/plan.md` for each wave and one ticket per
+   independently verifiable outcome. Use the [ticket and progress format](references/planning-gates.md).
+   Declare a dependency once, on the ticket that needs its result. Split
+   work when separate outcomes, shared writes or unresolved prerequisites
+   prevent one agent from finishing the ticket. Size each ticket XS through XL.
+3. Specify the governing sources, test-first steps, exact commands and expected
+   proof in the ticket body. Name generated interfaces, existing modules and
+   consumers where relevant. Schedule contract generation, compilation and
+   drift checks before dependent handwritten work. Give scoped failure,
+   security/privacy, data integrity, recovery, performance, accessibility,
+   operations, release/rollback and supply-chain scenarios an owner.
+4. After reviewing the definition changes and their impact, run both commands
+   below, substituting the installed planner directory and target repository.
+   A ticket with accepted prerequisites can move to `ready` after its handoff
+   passes semantic review. Record that decision in its progress file. Run the
+   checker again after changing progress. Only independent review accepts work.
 
-Require an approved `specs/.readiness-report.yaml` and run
-`node <spec-readiness-review-skill-root>/scripts/check_specs.mjs <spec-root>`.
-It verifies source bytes, recorded human and judge evidence, and structural
-controls. Stop before planning if evidence is missing or stale. Route it to
-`spec-readiness-review`. Use approved definitions and verification to
-derive the plan.
+```sh
+node <planner>/scripts/generate_plan_manifest.mjs <repo-root>
+node <planner>/scripts/check_plan.mjs <repo-root>
+```
 
-## Workflow
-
-1. Verify all ticket fields and action-plan steps are fillable from approved
-   specs.
-2. Create `plans/implementation-plan.md`, `plan-manifest.yaml`, and structurally
-   reconciled `_registry`, `_status`, `_dependencies`, and `_scope`. Use only the strict
-   YAML subset in `references/planning-gates.md`; never rely on prose or a
-   global `N/A` to satisfy a ticket gate.
-3. Prefer vertical slices. Each wave ends with a working, testable end-to-end
-   increment. If too large for one agent, split isolated tickets that converge
-   into the same wave result.
-4. Use horizontal waves only for approved foundation/interface work or
-   reliability refactors; document rationale, unblocks, tests, and next vertical
-   slice.
-5. When specs select a contract-first clean rebuild, plan the generated
-   foundation next to the old boundary and block handwritten service work until
-   mapping metadata, generators, generated tests, compile checks, and drift
-   checks pass.
-6. Plan contract/codegen foundations before parallel backend/client/adapter
-   work; keep parallel writes isolated and sidecar agents read-only unless their
-   write scopes are disjoint.
-7. Plan test-driven order: derive unit, contract, integration, and E2E tests
-   from specs/contracts/acceptance/unhappy paths before business logic tickets
-   implement the behavior those tests prove.
-8. Map the approved `00-traceability.yaml` requirement, capability, path, and
-   acceptance IDs into tickets and local testable acceptance rows; collectively
-   cover every non-N/A source ID. Map capability inventory rows and end-to-end
-   definition chains into tickets:
-   actor/consumer, entrypoint/reachability, contracts, data lifecycle, states,
-   side effects, permissions, recovery, observability, acceptance,
-   verification, NFRs, operations, supply chain, frontend/client UX,
-   design/component reuse, tests, and coverage. Cite exact governing rule,
-   flow, contract, and decision refs as applicable. Use indexes for discovery.
-9. Give each ticket a relative `size` of `XS`, `S`, `M`, `L`, or `XL`
-   using [Relative sizing](references/planning-gates.md#relative-sizing).
-   Use scope, coordination, and verification effort. Keep sizes unitless.
-   Split work until each active ticket has one bounded deliverable, exact
-   scope, prerequisites, and action steps. Use phase-gated exceptions for
-   approved atomic work with explicit blocking evidence at each phase.
-10. Cover drift controls, generated artifacts, scoped reuse, boundary typing,
-    and unhappy-path tests in the structured handoff and concise ticket body.
-    Cite evidence where the frontmatter or approved spec already provides it.
-11. Track the lifecycle `planned -> ready -> in_progress -> implemented ->
-   review_pending -> accepted`; use `partial`, `blocked`, and `skipped` only as
-   explicit side states. Maintain exact `depends_on`, `blocked_by`, and
-   `unblocks` in the ticket and every plan index.
-12. Self-audit vertical-slice completeness, generation-map coverage, strong
-    boundary types, path/NFR/frontend/release ownership, parallel risk,
-    fake-work risk, and blockers.
-13. Run `references/planning-gates.md`, then
-   `node <spec-implementation-planner-skill-root>/references/generate_plan_manifest.mjs <repo-root> [plans-root] [specs-root]`, then
-   `node <spec-implementation-planner-skill-root>/references/check_plan.mjs <repo-root> [plans-root] [specs-root]`.
-
-## Ticket Contract And Handoff
-
-`references/planning-gates.md` owns the exact structural ticket contract,
-autonomy, command, traceability, generated-contract, reuse, action-step,
-acceptance, lifecycle, and anti-pattern rules. The plan manifest binds the
-tickets to approved specs. Tickets may authorize only D0/D1 work. Missing semantic evidence is a spec gap;
-never emit a ticket that asks an implementer to decide, infer, or invent.
-
-After `accepted`, keep work historical. New gates create remediation/migration
-tickets; use `blocked`, `partial`, `skipped`, `superseded_by`, and resume notes
-explicitly. Ready tickets go to implementation; waves go to independent review.
+**Self-audit.** Trace each approved scenario from its source to a bounded
+ticket and an observable result. Check the wave outcome, test-first order,
+command effects, dependency graph, scope, impacted consumers and applicable
+reliability controls. Record assumptions, skipped checks and unresolved gaps
+in the wave plan. Route definition gaps to the spec owner and ordering or
+coverage gaps back into the plan before handing off a ticket.

@@ -4,203 +4,174 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
+import { parseYaml } from "./lib/simple-yaml.mjs";
 
-const fixture = path.join(import.meta.dirname, "fixtures", "approved-spec");
-
-function write(root, file, content) {
-  const target = path.join(root, file);
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, content);
-}
-
-function change(root, file, before, after) {
-  const original = fs.readFileSync(path.join(root, file), "utf8");
-  assert.ok(typeof before === "string" ? original.includes(before) : before.test(original), `${file} should contain ${before}`);
-  write(root, file, original.replace(before, after));
-}
-
-function run(script, ...args) {
+function execute(script, ...args) {
   return spawnSync(process.execPath, [path.join(import.meta.dirname, script), ...args], { encoding: "utf8" });
 }
 
-function makeProfile(root) {
-  write(root, "index.md", `---
-okf_version: "0.3"
-x-project-knowledge-version: 1
----
-# Project map
-
-- [Vision](00-vision.md)
-- [Solution design](00-architecture-overview.md)
-- [Capabilities](02-capabilities/capability-inventory.md)
-- [Coverage](03-flows/e2e-coverage.md)
-- [Decisions](decisions/index.md)
-- [Gaps](gaps/index.md)
-- [Components](components/index.md)
-`);
-  write(root, "components/index.md", "# Components\n\n- [Component](identity/identity.md)\n");
-  write(root, "components/identity/identity.md", `---
-type: Component
-title: Identity
-description: Owns the validation boundary.
-x-project-id: COMPONENT-IDENTITY
-x-project-owner: identity-team
----
-# Identity
-
-See [ADR-001](decisions/adr-001.md).
-
-![Boundary](../../visuals/boundary.svg)
-
-[Editable source](../../visuals/boundary.drawio)
-`);
-  write(root, "decisions/index.md", "# Decisions\n\n- [ADR-001](../components/identity/decisions/adr-001.md)\n");
-  write(root, "components/identity/decisions/adr-001.md", `---
-type: ADR
-title: Own verification
-description: Establishes the verification boundary.
-x-project-id: ADR-001
-x-project-owner: identity-team
-x-project-domain: mixed
-x-project-state: accepted
-x-project-scope: [components/identity/identity.md, 00-vision.md]
-x-project-evidence: FIXTURE-DECISION-001
----
-# Own verification
-
-Applies to [identity](../identity.md) and [vision](../../../00-vision.md).
-`);
-  write(root, "00-decision-authority.yaml", `decision_authority_version: 1
-default_allowed_classes: [D0, D1]
-decisions:
-  - decision_id: ADR-001
-    class: D3
-    authority: fixture-owner
-    scope_refs: [CAP-FIXTURE-001]
-    source_refs: [components/identity/decisions/adr-001.md]
-`);
-  write(root, "gaps/index.md", "# Gaps\n\n- [GAP-001](gap-001.md)\n");
-  write(root, "gaps/gap-001.md", `---
-type: Gap
-title: Verify ownership
-description: Records the ownership clarification.
-x-project-id: GAP-001
-x-project-owner: identity-team
-x-project-state: resolved
-x-project-scope: [00-vision.md]
-x-project-evidence: FIXTURE-DECISION-001
----
-# Verify ownership
-
-See [vision](../00-vision.md).
-`);
-  fs.appendFileSync(path.join(root, "00-vision.md"), "\nSee [GAP-001](gaps/gap-001.md).\n");
-  write(root, "visuals/boundary.drawio", "<mxfile/>\n");
-  write(root, "visuals/boundary.svg", '<svg xmlns="http://www.w3.org/2000/svg"></svg>\n');
+function fixture(t) {
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), "spec-bundle-"));
+  t.after(() => fs.rmSync(repo, { recursive: true, force: true }));
+  const root = path.join(repo, "specs");
+  function write(file, text) {
+    const target = path.join(repo, file);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, text);
+  }
+  const spec = (file, text) => write(path.join("specs", file), text);
+  spec("index.md", "# Export\n\nThe data owner authorizes team-scoped access.\n\n## Access denied\n\nReturn 403 without queueing work.\n");
+  const acceptance = "scenarios:\n  - id: EXPORT-DENIED\n    source: index.md#access-denied\n    verify: [\"Assert HTTP 403 and an empty queue\"]\n";
+  spec("acceptance.yaml", acceptance);
+  function generate() {
+    const generated = execute("generate_spec_manifest.mjs", root, "fixture-revision");
+    assert.equal(generated.status, 0, generated.stderr);
+    return parseYaml(fs.readFileSync(path.join(root, "spec-manifest.yaml"), "utf8")).content_digest;
+  }
+  function approve() {
+    const digest = generate();
+    write("reviews/semantic.md", `Assessed all scenarios in ${digest}.\n`);
+    write("reviews/approval.md", `Approved whole bundle ${digest}.\n`);
+    const report = `status: approved
+approval_evidence:
+  scope: whole_bundle
+  approver_id: fixture-owner
+  approved_at: "2026-08-15T12:05:00Z"
+  approval_ref: reviews/approval.md
+  manifest_digest: ${digest}
+semantic_judge_evidence:
+  status: passed
+  judge: fixture-reviewer
+  reviewed_at: "2026-08-15T12:00:00Z"
+  evidence_ref: reviews/semantic.md
+  manifest_digest: ${digest}
+`;
+    spec(".readiness-report.yaml", report);
+    return report;
+  }
+  function check(diagnostic, ...args) {
+    const run = execute("check_specs.mjs", root, ...args);
+    assert.equal(run.status, diagnostic ? 1 : 0, run.stderr);
+    if (diagnostic) assert.match(run.stderr, diagnostic);
+  }
+  return { root, write, spec, generate, approve, check, acceptance };
 }
 
-function pinFixtureApproval(root) {
-  const generated = run("generate_spec_manifest.mjs", root, "fixture-revision");
-  assert.equal(generated.status, 0, generated.stderr);
-  const manifest = fs.readFileSync(path.join(root, "spec-manifest.yaml"), "utf8");
-  const digest = manifest.match(/^content_digest: (sha256:[a-f0-9]{64})$/m)?.[1];
-  assert.ok(digest);
-  change(root, ".readiness-report.yaml", /manifest_digest: sha256:[a-f0-9]{64}/, `manifest_digest: ${digest}`);
-  change(root, ".readiness-report.yaml", "semantic_judge_evidence:\n", `semantic_judge_evidence:\n  manifest_digest: ${digest}\n`);
-}
-
-function checkProfile(name, mutate, diagnostic, afterApproval = () => {}) {
-  test(name, (context) => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "specs-knowledge-"));
-    context.after(() => fs.rmSync(root, { recursive: true, force: true }));
-    fs.cpSync(fixture, root, { recursive: true });
-    makeProfile(root);
-    mutate(root);
-    pinFixtureApproval(root);
-    afterApproval(root);
-    const checked = run("check_specs.mjs", root);
-    assert.equal(checked.status, diagnostic ? 1 : 0, checked.stderr);
-    if (diagnostic) assert.match(checked.stderr, diagnostic);
-  });
-}
-
-checkProfile("profile allows one owner backlink and preserves a small editorial diff", (root) => {
-  change(root, "components/identity/identity.md", "Owns the validation boundary.", "Owns user validation.");
-});
-checkProfile("open gap blocks approval", (root) => {
-  change(root, "gaps/gap-001.md", "x-project-state: resolved", "x-project-state: open");
-}, /open Gap blocks readiness/);
-checkProfile("open gap can be recorded during drafting", (root) => {
-  change(root, ".readiness-report.yaml", "status: approved", "status: draft");
-  change(root, "gaps/gap-001.md", "x-project-state: resolved", "x-project-state: open");
-});
-checkProfile("proposed decision blocks approval", (root) => {
-  change(root, "components/identity/decisions/adr-001.md", "x-project-state: accepted", "x-project-state: proposed");
-}, /proposed ADR blocks readiness/);
-checkProfile("ADR approval is tied to exact source path in authority", (root) => {
-  change(root, "00-decision-authority.yaml", "components/identity/decisions/adr-001.md", "00-vision.md");
-}, /accepted ADR requires approval evidence and a matching decision authority entry/);
-checkProfile("retired decision cannot remain an active authority source", (root) => {
-  change(root, "components/identity/decisions/adr-001.md", "x-project-state: accepted", "x-project-state: rejected");
-}, /decision authority must reference an accepted ADR with the matching ID/);
-checkProfile("supersession must end in an accepted decision", (root) => {
-  const record = "components/identity/decisions/adr-001.md";
-  change(root, record, "x-project-state: accepted", `x-project-state: superseded\nx-project-replacement: ${record}`);
-}, /replacement chain ending in an accepted ADR/);
-checkProfile("fenced example does not satisfy a required direct owner link", (root) => {
-  const link = "See [ADR-001](decisions/adr-001.md).";
-  change(root, "components/identity/identity.md", link, "\x60\x60\x60md\n" + link + "\n\x60\x60\x60");
-}, /identity\.md: missing direct project knowledge link to .*adr-001\.md/);
-checkProfile("diagram export requires an editable source link", (root) => {
-  change(root, "components/identity/identity.md", "[Editable source](../../visuals/boundary.drawio)", "");
-}, /diagram must link its editable source/);
-checkProfile("hidden component fails the discovery bound", (root) => {
-  change(root, "components/index.md", "- [Component](identity/identity.md)", "");
-}, /identity\.md: link from index\.md or a section index/);
-checkProfile("untyped record cannot escape the knowledge checker", (root) => {
-  write(root, "gaps/unresolved.md", "# Missing timeout terminal state\n");
-}, /unresolved\.md: expected project knowledge type Gap/);
-checkProfile("a diagram change invalidates the old approval", () => {}, /hash does not match: visuals\/boundary\.svg/, (root) => {
-  write(root, "visuals/boundary.svg", '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>\n');
+test("one-page spec runs as draft and needs current full-bundle approval for planning", (t) => {
+  const f = fixture(t);
+  f.check(null);
+  f.check(/requires approved readiness/, "--approved");
+  f.approve();
+  f.check(null, "--approved");
+  f.spec("index.md", "# Export\n## Access denied\nThe behavior changed.\n");
+  f.check(/no longer matches/, "--approved");
 });
 
-checkProfile("knowledge entry point is required", (root) => {
-  fs.unlinkSync(path.join(root, "index.md"));
-}, /index.md: x-project-knowledge-version must be 1/);
-checkProfile("figurative language in source evidence is not an approval gate", (root) => {
-  fs.appendFileSync(path.join(root, "00-vision.md"), '\nThe old notes said "TBD" and "handle errors"; that history is superseded.\n');
-});
-checkProfile("catalog applicability comes from the central register", (root) => {
-  change(root, "00-applicability.yaml", "status: applicable", "status: not_applicable\n    rationale: Fixture excludes representations");
-}, /representation-catalog.yaml conflicts with representation_reuse applicability/);
-checkProfile("applicable representations require a catalog", (root) => {
-  fs.unlinkSync(path.join(root, "03-contracts/representation-catalog.yaml"));
-}, /Missing representation catalog/);
-checkProfile("a mapping must link registered shapes", (root) => {
-  change(root, "03-contracts/representation-catalog.yaml", "to_shape: identity.user-read", "to_shape: identity.unknown");
-}, /must link two distinct registered shapes/);
-checkProfile("traceability catches a dangling capability ID", (root) => {
-  change(root, "00-traceability.yaml", "capability_ids: [CAP-FIXTURE-001]", "capability_ids: [CAP-UNKNOWN-001]");
-}, /capability_ids has unknown ID/);
-checkProfile("human approval also needs to match current source", () => {}, /approval_evidence.manifest_digest must match/, (root) => {
-  change(root, ".readiness-report.yaml", /manifest_digest: sha256:[a-f0-9]{64}/, "manifest_digest: sha256:" + "b".repeat(64));
+test("a waiting or blocked decision cannot start planning", (t) => {
+  const f = fixture(t);
+  const report = f.approve();
+  for (const state of ["draft", "blocked", "needs_human_review"]) {
+    f.spec(".readiness-report.yaml", report.replace("status: approved", `status: ${state}`));
+    f.check(null);
+    f.check(/requires approved readiness/, "--approved");
+  }
 });
 
-checkProfile("approval requires the source manifest on disk", () => {}, /Missing spec-manifest.yaml for approved readiness/, (root) => {
-  fs.unlinkSync(path.join(root, "spec-manifest.yaml"));
+test("both evidence records bind the current digest and human approval covers the entire bundle", (t) => {
+  const f = fixture(t);
+  const report = f.approve();
+  for (const [before, after, diagnostic] of [
+    ["whole_bundle", "one_scenario", /scope must be whole_bundle/],
+    ["reviews/semantic.md", "reviews/missing.md", /missing evidence file/],
+    ["reviews/approval.md", "specs/index.md", /outside the spec bundle/],
+    ["2026-08-15T12:05:00Z", "yesterday", /ISO 8601/],
+    [/manifest_digest: sha256:[a-f0-9]+/, "manifest_digest: stale-human", /approver_id: manifest_digest/],
+    [/manifest_digest: sha256:[a-f0-9]+\n$/, "manifest_digest: stale-judge\n", /judge: manifest_digest/],
+  ]) {
+    f.spec(".readiness-report.yaml", report.replace(before, after));
+    f.check(diagnostic, "--approved");
+  }
 });
-checkProfile("a report must be a map with an explicit readiness state", () => {}, /readiness-report.yaml must be a map/, (root) => {
-  write(root, ".readiness-report.yaml", "- approved\n");
+
+test("acceptance IDs must be unique and each proof and source must resolve", (t) => {
+  const f = fixture(t);
+  for (const [body, diagnostic] of [
+    [f.acceptance + f.acceptance.split("scenarios:\n")[1], /duplicate scenario/],
+    [f.acceptance.replace("access-denied", "missing"), /unique Markdown anchor/],
+    [f.acceptance.replace("index.md#", "../private.md#"), /unique Markdown anchor/],
+    [f.acceptance.replace(/verify: .*/, "verify: []"), /verification reference/],
+    [f.acceptance.replace("    source:", "    id: CONFLICT\n    source:"), /duplicate key/],
+  ]) {
+    f.spec("acceptance.yaml", body);
+    f.check(diagnostic);
+  }
 });
-checkProfile("semantic judge evidence must match the reviewed manifest", () => {}, /semantic_judge_evidence.manifest_digest must match/, (root) => {
-  change(root, ".readiness-report.yaml", /semantic_judge_evidence:\n  manifest_digest: sha256:[a-f0-9]{64}/,
-    "semantic_judge_evidence:\n  manifest_digest: sha256:" + "a".repeat(64));
+
+test("headings and links inside examples cannot supply scenario evidence", (t) => {
+  const f = fixture(t);
+  f.spec("index.md", "# Index\n\n````md\n## Access denied\n```\n<a id=\"access-denied\"></a>\n````\n");
+  f.check(/unique Markdown anchor/);
+  f.spec("index.md", '# Index\n\n<a id="access-denied"></a>\nDenied.\n');
+  f.check(null);
+  f.spec("index.md", "## Access denied\n## Access denied\n");
+  f.check(/unique Markdown anchor/);
 });
-checkProfile("one decision ID cannot grant competing authority", (root) => {
-  fs.appendFileSync(path.join(root, "00-decision-authority.yaml"), `  - decision_id: ADR-001
-    class: D2
-    authority: another-owner
-    scope_refs: [CAP-FIXTURE-001]
-    source_refs: [components/identity/decisions/adr-001.md]
-`);
-}, /duplicate decision_id ADR-001/);
+
+test("links to governing headings must survive renames", (t) => {
+  const f = fixture(t);
+  f.spec("index.md", "## Access denied\nSee [authorization](policy.md#access).\n");
+  f.spec("policy.md", "## Authorization\n");
+  f.check(/link must target a unique Markdown anchor/);
+  f.spec("policy.md", "## Access\n");
+  f.check(null);
+});
+
+test("optional decisions and gaps have one owner and authority checks", (t) => {
+  const f = fixture(t);
+  const index = "## Access denied\n[Export policy](topics/decisions/export.md) [Question](gaps/owner.md)\n";
+  f.spec("index.md", index);
+  const decision = "---\nowner: identity-team\nstatus: accepted\nevidence: POLICY-PR-17\n---\n# Export scope\n";
+  const gap = "---\nowner: export-team\nstatus: deferred\nevidence: SCOPE-PR-20\nrevisit: Launch of cross-team sharing\n---\n# Sharing\n";
+  f.spec("topics/decisions/export.md", decision);
+  f.spec("gaps/owner.md", gap);
+  f.approve();
+  f.check(null, "--approved");
+  for (const [file, source, before, after, diagnostic] of [
+    ["topics/decisions/export.md", decision, "accepted", "proposed", /proposed blocks/],
+    ["topics/decisions/export.md", decision, "evidence: POLICY-PR-17", "", /requires evidence/],
+    ["topics/decisions/export.md", decision, "accepted", "superseded\nreplacement: topics/decisions/export.md", /replacement must lead/],
+    ["gaps/owner.md", gap, "deferred", "open", /open blocks/],
+    ["gaps/owner.md", gap, "revisit: Launch of cross-team sharing", "", /revisit trigger/],
+  ]) {
+    f.spec(file, source.replace(before, after));
+    f.approve();
+    f.check(diagnostic, "--approved");
+    f.spec(file, source);
+  }
+  f.spec("index.md", index.replace("[Question](gaps/owner.md)", "`[Question](gaps/owner.md)`"));
+  f.check(/unreachable/);
+});
+
+test("changed diagram, stale manifest, wrong path or invalid contract bytes fail", (t) => {
+  const f = fixture(t);
+  const index = '## Access denied\n![Denial flow](visuals/access.svg) [Editable](visuals/access.drawio)\n';
+  f.spec("index.md", index);
+  f.spec("visuals/access.svg", "<svg/>");
+  f.spec("visuals/access.drawio", "<mxfile/>");
+  f.approve();
+  f.check(null, "--approved");
+  f.spec("visuals/access.svg", "<svg><g/></svg>");
+  f.check(/no longer matches/, "--approved");
+  f.approve();
+  const manifest = fs.readFileSync(path.join(f.root, "spec-manifest.yaml"), "utf8");
+  f.spec("spec-manifest.yaml", manifest.replace('path: "index.md"', 'path: "unknown.md"'));
+  f.check(/path or hash mismatch/, "--approved");
+  f.spec("index.md", index.replace("[Editable](visuals/access.drawio)", ""));
+  f.check(/link the editable source/);
+  fs.unlinkSync(path.join(f.root, "visuals/access.drawio"));
+  f.check(/missing editable diagram source/);
+  f.spec("visuals/access.drawio", "<mxfile/>");
+  f.spec("index.md", index);
+  f.spec("export.schema.json", "{\"bad\":");
+  f.check(/invalid JSON/);
+});

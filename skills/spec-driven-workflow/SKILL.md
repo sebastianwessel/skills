@@ -1,35 +1,28 @@
 ---
 name: spec-driven-workflow
-description: Coordinates the spec-driven lifecycle. Use when choosing the next stage, routing feedback, or resuming work across specs, plans, tickets, and reviews.
+description: Routes work through project knowledge, approval, planning, implementation, and review. Use when starting a spec-driven project, resuming work, or choosing which stage owns a blocker.
 ---
 
 # Spec Driven Workflow
 
-Select the earliest incomplete stage affecting the requested work. Use
-[stage selection and handoffs](references/process-checklist.md) to route it
-to the specialist that owns the gate.
+Start at `specs/index.md`. Select the earliest stage whose evidence is missing
+for the requested work. Load that skill and only the references it needs.
 
-| Stage | Owner | Exit evidence |
+| Situation | Use | Evidence before moving forward |
 | --- | --- | --- |
-| Author | `spec-architect` | Canonical scope and sources, authority, traceability, and explicit gaps |
-| Approve specs | `spec-readiness-review` | Current source digest, completed readiness gates and attributable judge and human approval |
-| Plan | `spec-implementation-planner` | A content-bound plan, ticket scopes, dependencies, and contract/test-first order |
-| Implement | `spec-ticket-implementation` | One ready ticket, scoped verification and implementation evidence |
-| Accept | `spec-implementation-review` | End-to-end and consumer evidence, resolved blockers and independent acceptance |
+| Project intent or governing behavior is missing, unclear, or changing | `spec-architect` | Owning pages, source evidence, and acceptance scenarios |
+| Specs are complete but lack current approval | `spec-readiness-review` | Human and judge evidence for the current spec digest |
+| Approved scenarios need executable work, or a ticket needs a new scope or prerequisites | `spec-implementation-planner` | Scoped tickets and a current plan manifest |
+| One ticket is ready and its dependencies are accepted | `spec-ticket-implementation` | Verified scoped change and current implementation evidence |
+| One or more tickets are implemented | `spec-implementation-review` | Independent acceptance or a precise finding routed to its owner |
 
-1. Locate the current spec, report, plan, ticket state, and review findings.
-   Start at `specs/index.md`. Follow direct links to the governing
-   definitions and exact approval evidence. Use existing canonical sources to
-   determine the approved incremental or clean-rebuild strategy.
-2. Check the exit evidence for each preceding stage before proceeding.
-   Route missing or conflicting requirements, authority, or strategy to
-   authoring. Route stale approval, failed checks, or missing judge evidence
-   to readiness. Route ticket scope and ordering defects to planning. Route
-   implementation defects to the affected ticket.
-3. Pause or resume with the proof, blockers, and next command in the owning
-   artifact. Self-audit the stage, source revision, evidence, and owner.
-   Report any unverified gate and stop the affected downstream work.
-
-A tracked authoring gap can go to readiness for triage. An unresolved
-in-scope gap blocks approval and downstream work. Only independent
-implementation review can set a ticket or wave to `accepted`.
+1. Verify the spec digest, plan, and current ticket progress at the selected
+   stage. A work item without a progress record is planned. Resume from the
+   verified evidence in `plans/progress/<ticket-id>.json`.
+2. Route missing intent and contradictions to authoring, approval problems
+   to readiness, and ticket scope or dependency problems to planning. Route
+   code failures back to the ticket through an authorized requeue. Only
+   independent review accepts implementation.
+3. Stop affected downstream work on an unresolved blocker. Persist the
+   finding, evidence, owner, and next action in its owning record. Self-audit
+   the selected stage, source revision, dependencies, and unverified claims.

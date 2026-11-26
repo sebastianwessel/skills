@@ -1,94 +1,37 @@
 # Spec Readiness Review
 
-`spec-readiness-review` is the approval gate between spec authoring and
-implementation planning. It reviews canonical specs, repairs explicit readiness
-gaps, runs deterministic and semantic checks, and records whether specs are
-ready for planning.
+Use this skill when you need to know whether the team may plan against a
+particular revision of the specs. Bring the project map, acceptance scenarios,
+governing sources and any prior findings.
 
 ## Installation
-
-Install this skill package with the open skills ecosystem CLI:
 
 ```bash
 npx skills add sebastianwessel/skills
 ```
 
-## What It Does
+## Try it
 
-- Reviews specs after `spec-architect` authors or updates them.
-- Runs the approval-time judge loop and deterministic spec checker.
-- Binds human approval and semantic judge evidence to the exact
-  `spec-manifest.yaml` digest.
-- Requires structured applicability/N/A, decision-authority, policy-profile,
-  reuse-inventory, module-boundary, and reciprocal traceability artifacts before
-  approval.
-- Repairs explicit spec gaps and reruns readiness checks.
-- Blocks planning when behavior, contracts, failures, security, recovery,
-  release, tests, generation mapping, or strong boundary type policy is missing.
-- Blocks planning when in-scope data representations lack a catalogued canonical
-  owner, allowed mapping, or proof that an intentionally different projection or
-  persistence record is not a semantic duplicate.
-- Blocks planning when specs lack a capability inventory, a relational graph
-  from requirement through capability and path to testable acceptance, or end-to-end
-  definition chains for UX/client, API, data lifecycle, state transition,
-  async/integration, operational, acceptance, and verification paths.
-- Blocks planning when specs omit the general file/folder structure by
-  domain/topic, including ownership boundaries, shared/reusable module
-  placement, generated artifacts, and public entrypoint or operational asset
-  locations.
-- Links directly to baseline and scoped topic checklists. Blocks approval for
-  gaps in topics such as database
-  indexes, auth flows, permissions, secret handling, generated contracts,
-  unhappy-path tests, release, or operations are gaps.
-- Blocks approval when dependency versions or third-party implementation
-  guidance rely on model memory instead of current primary docs,
-  package/release metadata, or dated research evidence.
-- Verifies contract-first clean rebuild decisions before planning starts.
+> Review the cancellation flow before we plan it. Follow the rule and each
+> acceptance scenario, including the repeat request. Tell me which revision
+> needs my approval and what still blocks it.
 
-## How It Works
+The reviewer follows each material path to its final state. It checks the
+applicable security, privacy, recovery, data integrity, performance and release
+requirements against the sources. For example, if a non-owner can call the
+cancellation endpoint, the reviewer checks what that person may learn and how
+the team will verify it.
 
-Review the [project knowledge](../project-knowledge.md) for direct discovery,
-decision authority, gap disposition, and rendered diagrams. Record human and
-judge evidence in one readiness report.
+## Read the result
 
-The skill loads readiness gates and artifact-shape references only when review
-is requested. It regenerates the spec manifest after every canonical-source
-change. The checker verifies file integrity, links, and structured records.
-The reviewer evaluates meaning, completeness, and evidence.
+A finding names the affected source, impact and owner. Ask Spec Architect to
+correct a missing rule. For a complete spec, the reviewer records the semantic
+review and asks the authorized human to approve the same whole-spec digest.
+The readiness report lives in `specs/.readiness-report.yaml`. The packaged
+checker, `scripts/check_specs.mjs <spec-root> --approved`, verifies that the
+recorded approvals cover the current bytes. Any subsequent edit to a governing
+source requires fresh review and approval.
 
-## Workflow
+[Resolve a spec finding](spec-architect.md) · [Plan from approved specs](spec-implementation-planner.md)
 
-1. Confirm spec scope and source artifacts.
-2. Run readiness gates, capability/end-to-end definition review, checklist
-   walk, current dependency research review, representation-catalog review, and
-   semantic review.
-3. Regenerate the spec manifest and run the deterministic spec checker.
-4. Repair explicit gaps when requested, then rerun review.
-5. Write approved readiness only when all gates pass, approval evidence is
-   attributable and digest-bound, and human approval exists.
-6. Hand off digest-pinned approved specs to `spec-implementation-planner`.
-
-## Included Files
-
-| Path | Purpose |
-| --- | --- |
-| `skills/spec-readiness-review/SKILL.md` | Executable review and approval instructions. |
-| `skills/spec-readiness-review/references/readiness-gates.md` | Approval gates and judge loop. |
-| `skills/spec-readiness-review/references/artifact-shapes.md` | Expected spec tree and readiness report fields. |
-| `skills/spec-readiness-review/references/representation-catalog.md` | Canonical shape ownership, mapping, and reuse requirements. |
-| `skills/spec-readiness-review/scripts/check_specs.mjs` | Deterministic spec-shape checker. |
-| `skills/spec-readiness-review/scripts/generate_spec_manifest.mjs` | Rebuilds the authoritative spec manifest and content digest. |
-| `skills/spec-readiness-review/evals/evals.json` | Evaluation scenarios for readiness review. |
-
-## Validation And Safety
-
-Run the checker when a spec tree exists:
-
-```bash
-node <spec-readiness-review-skill-root>/scripts/generate_spec_manifest.mjs specs <source-revision>
-node <spec-readiness-review-skill-root>/scripts/check_specs.mjs specs
-```
-
-A passing deterministic check is not semantic approval. Planning is allowed only
-after the readiness report is approved, human approval is recorded, required
-judge evidence passes, and no blocking findings remain.
+[Agent instructions](https://github.com/sebastianwessel/skills/blob/main/skills/spec-readiness-review/SKILL.md)

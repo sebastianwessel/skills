@@ -3,74 +3,38 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Create specs for a SaaS workflow that backend and frontend agents implement in parallel.",
-      "expected_output": "Creates concise canonical specs with contracts, E2E matrix, UX reuse, happy/unhappy paths, NFRs, source/rationale, traceability, and hands off to spec-readiness-review for approval.",
+      "prompt": "Product says only a team member may export a report. Add this to our one-page spec. We already have an export schema.",
+      "expected_output": "Updates the owning section in index.md, cites the approved policy and existing schema, and adds stable acceptance rows for allowed and denied behavior with observable data effects and verification. Escalates undefined behavior to the owner.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "Update one draft spec section during authoring.",
-      "expected_output": "Updates the canonical spec source, relinks dependents when needed, records assumptions, and does not run approval or mark readiness approved.",
+      "prompt": "The audit found that the retry after a partial charge is unspecified. Repair the spec; nobody has decided whether a second authorization is permitted.",
+      "expected_output": "Records the blocked branch and decision owner, clarifies side effects and recovery evidence that the decision needs, and continues independent source work without inventing a retry or promising approval.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "Repair explicit findings where Go, TypeScript, and protobuf null/omitted/enum semantics drift.",
-      "expected_output": "Updates canonical type semantics and contract refs from the findings, records impact, and sends the spec set to spec-readiness-review.",
+      "prompt": "Our customer-visible export explanation has a typo. Correct the wording while keeping all linked behavior and the reviewed diagram accurate.",
+      "expected_output": "Edits the owner, checks dependents and scenario anchors, leaves unrelated documents alone, and reports that changed bytes need fresh review.",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "Draft backend rebuild specs for GraphQL, AsyncAPI, entity JSON Schemas, errors.yaml, service manifests, and database record mappings where old code has stale aliases and fallback synthesis.",
-      "expected_output": "Defines incremental-vs-clean-rebuild strategy, source-contract inventory, generation map, generated packages/checks, strong boundary type policy, handwritten remainder, and compatibility/migration stance without self-approving readiness.",
+      "prompt": "Turn the product meeting into a discoverable record. Finance approved one option and proposed a second; notes contain internal customer information.",
+      "expected_output": "Keeps raw meeting records private, records the approved decision with its authority and affected rule, and distinguishes the proposal and any blocking question. Links relevant records from the owning topic.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "Approve these specs for planning after authoring them.",
-      "expected_output": "Refuses self-approval and routes to spec-readiness-review for judge loop, deterministic checks, human approval evidence, and readiness report.",
+      "prompt": "Here is an approved service schema. The server and client have invented slightly different DTOs and the UI hides forbidden fields. Define the boundary and safe release outcome.",
+      "expected_output": "Inspects current consumers, reuses the authoritative schema and defines projection, loss/redaction, contract-native validation, consumer proof and rollback. Describes which actor observes which final state.",
       "files": []
     },
     {
       "id": 6,
-      "prompt": "Create specs for a feature where implementation agents need backend, frontend, generated clients, migrations, and runbooks, but the request does not mention exact files.",
-      "expected_output": "Defines the general file/folder structure by domain/topic, ownership boundaries, nested structure expectations, generated-artifact locations, shared/reusable module placement, and public entrypoint or operational asset locations without enumerating every implementation file, then hands off to spec-readiness-review.",
-      "files": []
-    },
-    {
-      "id": 7,
-      "prompt": "Create specs for account login, projects, and API keys where the request only describes the happy path.",
-      "expected_output": "Loads baseline and relevant topic checklists directly from the readiness skill, fills or records gaps for auth login/signup/recovery, permissions/roles, database indexes and constraints, credential and secret storage, generated contracts, unhappy-path tests, observability, release, and operations, then hands off to readiness review without self-approval.",
-      "files": []
-    },
-    {
-      "id": 8,
-      "prompt": "Create specs for a project API using a Postgres ORM and hosted auth provider, but no dependency versions or docs are supplied.",
-      "expected_output": "Researches current stable versions and current primary docs/package metadata for the ORM, Postgres provider, and auth provider; uses docs for schema, indexes, query/performance guidance, security config, migrations, and operational limits; records rationale or blocks if evidence cannot be checked.",
-      "files": []
-    },
-    {
-      "id": 9,
-      "prompt": "Create specs for a customer dashboard where the user mentions exports, profile data, notifications, and background sync, but does not describe how users reach each feature or how data states and retention work.",
-      "expected_output": "Creates a capability inventory and fills or records gaps for each capability's actor, entrypoint, reachability path, frontend states, contracts, data touched, state transitions, PII classification, retention, deletion/export, side effects, permissions, recovery, observability, acceptance, and verification before readiness review.",
-      "files": []
-    },
-    {
-      "id": 10,
-      "prompt": "Create specs for a user API, event stream, database record, and dashboard projection where implementers often add renamed copies of the user shape.",
-      "expected_output": "Creates an in-scope representation catalog with canonical shape ownership, boundary/persistence/projection classes, explicit mappings, permitted differences, generated/shared outputs, and verification; it does not require one DTO across every layer.",
-      "files": []
-    },
-    {
-      "id": 11,
-      "prompt": "Turn product rules, a shared service design and several failure variants into human-readable project knowledge. We have optional workshop notes and an undecided recovery limit.",
-      "expected_output": "Creates a versioned entry point with direct routes to domain, component, flow, decision and gap owners. Clusters variants by shared behavior, captures the undecided recovery limit as a blocking gap, keeps optional notes outside the spec tree and leaves readiness pending.",
-      "files": []
-    },
-    {
-      "id": 12,
-      "prompt": "Correct wording in a component page. Its stable title, ID, contract, outcomes and diagram are still correct.",
-      "expected_output": "Edits the canonical owner without rewriting neighboring pages, indexes, backlinks or diagrams. Inspects dependents, refreshes canonical digest evidence and reports the need for fresh readiness approval.",
+      "prompt": "Can we start planning from these existing specs? Confirm approval without changing any requirements.",
+      "expected_output": "Routes to spec-readiness-review for digest-bound evidence and the approved check.",
       "files": []
     }
   ]

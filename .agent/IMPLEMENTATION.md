@@ -77,20 +77,10 @@ the index links it in the `Human docs` column.
 
 ## Human Skill Docs
 
-Each maintained skill should have a concise human-facing page at
-`docs/skills/<skill-name>.md` using this structure:
-
-1. Title and one-paragraph summary.
-2. Installation.
-3. What it does.
-4. How it works.
-5. Workflow or modes.
-6. Files included.
-7. Validation or safety notes.
-
-These docs explain the skill to repository users and maintainers. They should
-not duplicate the full `SKILL.md`; link to the executable skill and summarize
-the behavior in stable user language.
+Give each maintained skill a page at `docs/skills/<skill-name>.md`. Explain when
+to use it, what inputs to supply, an example request, and what evidence or
+handoff to expect. Use the workflow guide for common setup and routing. Keep
+detailed checks and agent instructions in the executable packages.
 
 Use this installation section for each skill doc unless the package name
 changes:

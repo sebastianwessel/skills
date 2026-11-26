@@ -1,168 +1,101 @@
 import fs from "node:fs";
 import path from "node:path";
+import { markdownAnchors, proseWithoutExamples } from "./markdown.mjs";
 import { parseYaml } from "./simple-yaml.mjs";
 
-const profileKey = "x-project-knowledge-version";
-const frontmatterPattern = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
-const recordIndexes = { ADR: "decisions/index.md", Gap: "gaps/index.md" };
-const projectTypes = new Set(["Business Domain", "Component", "Flow", ...Object.keys(recordIndexes)]);
 const present = (value) => typeof value === "string" && value.trim().length > 0;
-const plainPath = /^[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*$/;
 
-function readPage(source, file) {
-  const frontmatter = frontmatterPattern.exec(source);
-  if (!frontmatter && /^---\r?\n/.test(source)) throw new Error(`${file}: unclosed frontmatter`);
-  const meta = frontmatter ? parseYaml(frontmatter[1], file) : {};
-  if (!meta || typeof meta !== "object" || Array.isArray(meta)) throw new Error(`${file}: frontmatter must be a map`);
-  const body = frontmatter ? source.slice(frontmatter[0].length) : source;
-  const prose = body
-    .replace(/^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*\r?$/gm, "")
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/^(?: {4}|\t).*$/gm, "")
-    .replace(/(`+)[^`\n]+\1/g, "");
-  const links = new Set();
-  const images = new Set();
-  for (const [, image, label, ref] of prose.matchAll(/(!?)\[([^\]]+)\]\(([^)\s]+)\)/g)) {
-    const [target] = ref.split("#", 1);
-    if (!target || /^(?:[a-z][a-z0-9+.-]*:)/i.test(target)) continue;
-    const resolved = target.startsWith("/") ? target : path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
-    if (image && present(label)) images.add(resolved);
-    else if (!image) links.add(resolved);
+function page(root, file) {
+  const text = fs.readFileSync(path.join(root, file), "utf8");
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
+  if (!frontmatter && /^---\r?\n/.test(text)) throw new Error(`${file}: unclosed frontmatter`);
+  const recordType = file.split("/").slice(0, -1).findLast((segment) => ["decisions", "gaps"].includes(segment));
+  const isRecord = recordType && path.posix.basename(file) !== "index.md";
+  const meta = isRecord && frontmatter ? parseYaml(frontmatter[1], file) : {};
+  const body = frontmatter ? text.slice(frontmatter[0].length) : text;
+  const anchors = markdownAnchors(body);
+  const prose = proseWithoutExamples(body).replace(/(`+)[^`\n]+?\1/g, "");
+  const links = [];
+  for (const [, image, label, target] of prose.matchAll(/(!?)\[([^\]\n]*)\]\(<?([^()<>\s]+)>?(?:\s+["'][^"']*["'])?\)/g)) {
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(target)) links.push({ image: Boolean(image), label, target });
   }
-  return { meta, links, images };
+  return { anchors, links, meta, recordType: isRecord ? recordType : undefined };
 }
 
-function requiredType(file) {
-  if (["index.md", "log.md"].includes(path.posix.basename(file))) return undefined;
-  const directories = file.split("/").slice(0, -1);
-  if (directories.includes("decisions")) return "ADR";
-  if (directories.includes("gaps")) return "Gap";
-  if (directories[0] === "components") return "Component";
-}
-
-function hasAcceptedReplacement(pages, file) {
-  const visited = new Set();
-  while (file && !visited.has(file)) {
-    visited.add(file);
-    const meta = pages.get(file)?.meta;
-    if (meta?.type !== "ADR") return false;
-    if (meta["x-project-state"] === "accepted") return true;
-    if (meta["x-project-state"] !== "superseded") return false;
-    file = meta["x-project-replacement"];
-  }
-  return false;
-}
-
-export function validateProjectKnowledge(root, files, { approved, authority, fail }) {
-  const localFiles = new Set();
+export function checkKnowledge(root, files, finalCandidate) {
+  const available = new Set(files);
   const pages = new Map();
-  for (const file of files) {
-    const rel = path.relative(root, file).split(path.sep).join("/");
-    if (!fs.lstatSync(file).isFile()) {
-      fail(`${rel}: project knowledge requires regular files`);
-      continue;
-    }
-    localFiles.add(rel);
-    if (!rel.endsWith(".md")) continue;
-    try {
-      pages.set(rel, readPage(fs.readFileSync(file, "utf8"), rel));
-    } catch (error) {
-      fail(error.message);
-    }
-  }
-
-  function directLink(from, to) {
-    if (!pages.get(from)?.links.has(to) || !pages.has(to)) {
-      fail(`${from}: missing direct project knowledge link to ${to}`);
-    }
-  }
-
-  if (pages.get("index.md")?.meta[profileKey] !== 1) fail(`index.md: ${profileKey} must be 1`);
-  for (const file of ["00-vision.md", "00-architecture-overview.md", "02-capabilities/capability-inventory.md", "03-flows/e2e-coverage.md", ...Object.values(recordIndexes)]) {
-    directLink("index.md", file);
-  }
-
-  const visible = new Set(pages.get("index.md")?.links);
-  for (const first of [...visible]) {
-    if (first.endsWith("/index.md")) {
-      for (const second of pages.get(first)?.links || []) visible.add(second);
-    }
-  }
-  const ids = new Set();
-  const publishedImages = new Set();
-  const decisions = Array.isArray(authority?.decisions) ? authority.decisions : [];
-  for (const [file, { meta, links, images }] of pages) {
-    for (const target of [...links, ...images]) {
-      if (target.startsWith("../") || !localFiles.has(target)) fail(`${file}: knowledge link must resolve inside specs to a file: ${target}`);
+  for (const file of files.filter((name) => name.endsWith(".md"))) pages.set(file, page(root, file));
+  if (!pages.has("index.md")) throw new Error("Missing project entry point: index.md");
+  const adjacent = new Map();
+  const drawn = new Set();
+  for (const [file, { links, meta, recordType }] of pages) {
+    const neighbors = [];
+    const images = [];
+    const localTargets = new Set();
+    for (const { image, label, target } of links) {
+      const [raw, fragment] = target.split("#");
+      const href = decodeURIComponent(raw);
+      const ref = href ? path.posix.normalize(path.posix.join(path.posix.dirname(file), href)) : file;
+      if (href.startsWith("/") || href.includes("\\") || !available.has(ref)) throw new Error(`${file}: missing or outside link ${target}`);
+      if (fragment && pages.has(ref) && pages.get(ref).anchors.get(decodeURIComponent(fragment)) !== 1) {
+        throw new Error(`${file}: link must target a unique Markdown anchor: ${target}`);
+      }
+      if (image && !label.trim()) throw new Error(`${file}: image requires a text alternative: ${target}`);
+      if (image) images.push(ref);
+      else {
+        localTargets.add(ref);
+        if (pages.has(ref)) neighbors.push(ref);
+      }
     }
     for (const image of images) {
-      if (!/^visuals\/.+\.(svg|png)$/.test(image)) continue;
-      publishedImages.add(image);
-      const source = image.replace(/\.(svg|png)$/, ".drawio");
-      if (!localFiles.has(source) || !links.has(source)) fail(`${file}: diagram must link its editable source ${source}`);
-    }
-
-    const expected = requiredType(file);
-    if (expected && meta.type !== expected) fail(`${file}: expected project knowledge type ${expected}`);
-    const index = Object.hasOwn(recordIndexes, meta.type) ? recordIndexes[meta.type] : undefined;
-    const id = meta["x-project-id"];
-    if (!projectTypes.has(meta.type) && id === undefined) continue;
-    if (!present(id) || !/^[A-Z][A-Z0-9-]+$/.test(id) || ids.has(id)) fail(`${file}: missing, invalid or duplicate x-project-id`);
-    ids.add(id);
-    for (const field of ["type", "title", "description", "x-project-owner"]) {
-      if (!present(meta[field])) fail(`${file}: ${field} is required`);
-    }
-    if (!visible.has(file)) fail(`${file}: link from index.md or a section index linked by it`);
-    if (!index) continue;
-
-    directLink(index, file);
-    const scope = meta["x-project-scope"];
-    if (!Array.isArray(scope) || !scope.length || new Set(scope).size !== scope.length || scope.some((ref) => typeof ref !== "string" || !plainPath.test(ref) || ref === file || !pages.has(ref))) {
-      fail(`${file}: x-project-scope must name affected Markdown pages relative to specs`);
-    } else {
-      for (const ref of scope) directLink(file, ref);
-      directLink(scope[0], file);
-    }
-
-    const state = meta["x-project-state"];
-    const evidence = meta["x-project-evidence"];
-    if (meta.type === "ADR") {
-      if (!["business", "technical", "mixed"].includes(meta["x-project-domain"])) fail(`${file}: x-project-domain must be business, technical or mixed`);
-      if (!["proposed", "accepted", "rejected", "superseded"].includes(state)) fail(`${file}: invalid ADR state`);
-      if (state === "accepted" && (!present(evidence) || !decisions.some((decision) => decision?.decision_id === id && Array.isArray(decision.source_refs) && decision.source_refs.includes(file)))) {
-        fail(`${file}: accepted ADR requires approval evidence and a matching decision authority entry with this source path`);
-      }
-      if (state === "superseded") {
-        const replacement = meta["x-project-replacement"];
-        if (!hasAcceptedReplacement(pages, file)) fail(`${file}: superseded ADR requires a replacement chain ending in an accepted ADR`);
-        else {
-          directLink(file, replacement);
-          directLink(replacement, file);
-        }
-      }
-      if (approved && state === "proposed") fail(`${file}: proposed ADR blocks readiness`);
-    } else {
-      if (!["open", "deferred", "resolved"].includes(state)) fail(`${file}: invalid Gap state`);
-      if (["deferred", "resolved"].includes(state) && !present(evidence)) fail(`${file}: ${state} Gap requires disposition evidence`);
-      if (approved && state === "open") fail(`${file}: open Gap blocks readiness`);
-    }
-  }
-
-  for (const decision of decisions) {
-    if (!Array.isArray(decision?.source_refs)) continue;
-    for (const ref of decision.source_refs) {
-      const adr = pages.get(ref)?.meta;
-      if (adr?.type === "ADR" && (adr["x-project-id"] !== decision.decision_id || adr["x-project-state"] !== "accepted")) {
-        fail(`${ref}: decision authority must reference an accepted ADR with the matching ID`);
+      const source = image.replace(/\.(svg|png)$/i, ".drawio");
+      if (source !== image && (image.startsWith("visuals/") || available.has(source))) {
+        if (!available.has(source)) throw new Error(`${file}: missing editable diagram source ${source}`);
+        if (!localTargets.has(source)) throw new Error(`${file}: link the editable source ${source}`);
+        drawn.add(source);
       }
     }
+    adjacent.set(file, neighbors);
+    if (!recordType) continue;
+    const states = recordType === "decisions" ? ["accepted", "proposed", "superseded", "rejected"] : ["open", "resolved", "deferred"];
+    if (!present(meta?.owner) || !states.includes(meta?.status)) throw new Error(`${file}: record requires owner and status (${states.join(", ")})`);
+    if (["accepted", "resolved", "deferred"].includes(meta.status) && !present(meta.evidence)) throw new Error(`${file}: ${meta.status} requires evidence`);
+    if (meta.status === "deferred" && !present(meta.revisit)) throw new Error(`${file}: deferred gap requires a revisit trigger`);
+    if (finalCandidate && ["open", "proposed"].includes(meta.status)) throw new Error(`${file}: ${meta.status} blocks readiness`);
   }
-
-  for (const file of localFiles) {
-    if (!file.startsWith("visuals/")) continue;
-    if (/\.(svg|png)$/.test(file) && !publishedImages.has(file)) fail(`${file}: diagram export must be embedded with alt text on an owning page`);
-    if (file.endsWith(".drawio") && !publishedImages.has(file.replace(/\.drawio$/, ".svg")) && !publishedImages.has(file.replace(/\.drawio$/, ".png"))) {
-      fail(`${file}: editable diagram needs an embedded SVG or PNG export`);
+  for (const file of files) {
+    if (file.endsWith(".drawio") && !drawn.has(file)) throw new Error(`${file}: embed a matching SVG or PNG export and link its source`);
+  }
+  const reachable = new Set(["index.md"]);
+  for (const file of reachable) for (const link of adjacent.get(file)) reachable.add(link);
+  for (const [file, record] of pages) {
+    if (!reachable.has(file)) throw new Error(`${file}: unreachable from index.md`);
+    if (record.meta?.status !== "superseded") continue;
+    const visited = new Set([file]);
+    let next = record.meta.replacement;
+    while (!visited.has(next) && pages.get(next)?.recordType === "decisions") {
+      if (pages.get(next).meta.status === "accepted") break;
+      visited.add(next);
+      if (pages.get(next).meta.status !== "superseded") break;
+      next = pages.get(next).meta.replacement;
+    }
+    if (pages.get(next)?.recordType !== "decisions" || pages.get(next).meta.status !== "accepted") {
+      throw new Error(`${file}: replacement must lead to an accepted decision`);
     }
   }
+  return pages;
+}
+
+export function checkAcceptance(value, pages) {
+  if (!Array.isArray(value?.scenarios) || !value.scenarios.length) throw new Error("acceptance.yaml requires a nonempty scenarios list");
+  const ids = new Set();
+  for (const row of value.scenarios) {
+    if (!present(row?.id) || !/^[a-z][a-z0-9_.-]*$/i.test(row.id) || ids.has(row.id)) throw new Error(`acceptance.yaml: invalid or duplicate scenario ID ${row?.id}`);
+    ids.add(row.id);
+    if (!Array.isArray(row.verify) || !row.verify.length || !row.verify.every(present)) throw new Error(`${row.id}: verify requires at least one nonempty verification reference or instruction`);
+    const [file, anchor, ...extra] = present(row.source) ? row.source.split("#") : [];
+    if (extra.length || !anchor || pages.get(file)?.anchors.get(anchor) !== 1) throw new Error(`${row.id}: source must target a unique Markdown anchor: ${row.source}`);
+  }
+  return ids;
 }

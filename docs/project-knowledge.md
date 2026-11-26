@@ -1,133 +1,109 @@
 # Project knowledge
 
-Use one versioned set of Markdown pages to explain what the project does, how
-it works, who owns its rules, and where decisions are still needed. Start at
-`specs/index.md`. The same pages work in GitHub, in an editor, and as a
-documentation site. Agents use the owning pages and exact contract references
-when planning or implementing work.
+Start with `specs/index.md`. Link from it to the pages where people define
+business rules, describe system boundaries and explain flows. An engineer
+debugging a repeat request and a product owner checking policy should be able to
+find the same rule. Follow those links before opening tickets or review history.
 
-![Project entry point links to the business, structure, and process views. Owning pages link to decisions and gaps.](assets/project-knowledge.svg)
+![The project map links to business rules, solution design and processes. The owning page leads to decisions and gaps.](assets/project-knowledge.svg)
 
 [Full-size diagram](assets/project-knowledge.svg) · [Editable Draw.io source](assets/project-knowledge.drawio)
 
+## Cancelling a reservation
+
+An approved support policy allows a member to cancel their own confirmed
+reservation. Link to `reservations.md` from `specs/index.md`. On the linked
+page, write the policy and the outcomes it governs.
+
+```markdown
+## Cancel a reservation
+
+A member can cancel a confirmed reservation they own. After the first
+request its state is cancelled. Repeating the cancellation leaves it
+cancelled. Source: approved support policy, “Member cancellations.”
+```
+
+Give those outcomes stable scenario IDs in `specs/acceptance.yaml`.
+
+```yaml
+scenarios:
+  - id: AC-CANCEL
+    source: reservations.md#cancel-a-reservation
+    verify:
+      - "Observe the member's confirmed reservation change to cancelled."
+  - id: AC-CANCEL-REPEAT
+    source: reservations.md#cancel-a-reservation
+    verify:
+      - "Repeat the cancellation and verify that the reservation stays cancelled."
+```
+
+Suppose the policy leaves the response to another member's request unspecified.
+Record the privacy question in a linked `gaps/` record, name the decision owner,
+and keep affected work blocked. The owner can settle the
+response and what may be disclosed. The author then updates the rule and
+adds the corresponding acceptance scenario. Readiness review checks these
+outcomes against the source and asks for approval of that revision.
+
+An implementation ticket cites the approved scenarios. During review, someone
+independent of the implementer follows the cancellation through the real entry
+point, checks the resulting state and examines the verification for each
+outcome. A passing test for the first request alone leaves the repeat
+scenario unverified.
+
 ## Organize around ownership
 
-| View | What belongs here |
+| Reader's question | Owning page |
 | --- | --- |
-| Business vision and domains | Goals, scope, success measures, actors, vocabulary and governing business rules. Each rule has one owner. |
-| Solution design | System boundary, external dependencies, major design constraints and a map of how components fit together. |
-| Components | Responsibilities, interfaces, dependencies, data ownership and operational boundaries for a service, module, package or integration. |
-| Processes and flows | End-to-end outcomes, triggers, guards, variants, ordered handoffs, failure and recovery behavior, and linked acceptance criteria. |
+| What business outcome, terms and policy apply? | Vision or domain |
+| Which boundaries and constraints shape the system? | Solution design |
+| Who owns this interface, data or operational boundary? | Component |
+| What starts the process, what can fail and how does it end? | Flow |
 
-The entry point links to vision, solution design, the capability inventory,
-end-to-end coverage, decisions, and gaps. Link to the individual domain,
-component, and flow pages from there or from one clearly labeled section
-index. From a flow, a reader should reach its governing business rule and
-interface contract directly.
+Use a single topic page when it answers the question. Split it when the
+ownership, recovery behavior or outcome diverges. Group comparable variants
+under stable headings. Link directly to the governing rule and interface.
+When wording changes, edit its owner and inspect the links, scenarios and
+diagrams whose meaning could change. Review and human approval cover the
+whole spec revision, including editorial changes.
 
-Group related variants on the same flow page when readers can compare them
-without losing the shared sequence. Give each material variant a stable ID.
-Split a view when boundaries, ownership, outcomes, or recovery diverge.
+## Decisions, gaps and meetings
 
-## Keep changes small
+Use an architectural decision record (ADR) when people need to understand
+why a choice was made. Put it beside its owner, record its scope, options,
+consequences and approval evidence, and apply the chosen behavior to the
+governing page. Link to an overview when several records need a common entry
+point. For an open gap, give the affected scope, decision owner and next
+action. When it closes, link the resolved rule and how it will be verified.
 
-Start with the page that owns the changed fact. Inspect the dependent flows,
-contracts, trace, and diagrams, and edit those whose meaning or coverage
-changes. A terminology correction inside a page leaves its indexes and
-neighboring pages intact. A change in an externally visible outcome
-can require updates to affected definitions and verification in the same PR.
+Record applicable failure paths through their final outcomes. For a retriable
+operation, cover duplicate protection, retry limits, escalation and the last
+observable state. Where automated recovery may stop, say who takes over.
 
-Use stable titles and IDs in indexes. Keep status and rationale on the page
-that owns them. Build search indexes and derived navigation outside the
-canonical tree. The current manifest covers the full tree, so even an
-editorial edit there requires a new content-bound approval. That cost buys
-a simple rule about which revision was reviewed. Scoped approval would need a
-separate change that preserves cross-flow impact checks.
-
-## Record decisions and questions
-
-Place a decision record (ADR) beside its primary owner. Give it a stable ID,
-scope, context, options, decision, consequences, and approval evidence. Make
-it directly discoverable in the decisions overview and from the primary owning
-page. Link from the ADR to every affected definition. Use the subject
-`business`, `technical`, or `mixed`. The decision authority registry says
-who can approve each decision. Apply the accepted outcome in the owning rule
-so readers can find current behavior without reading decision history.
-
-Record unanswered questions, contradictions, and missing edge or recovery
-paths in the gaps overview. Give each gap an owner, affected scope, evidence,
-and a next action. A documented open gap keeps work visible and blocks
-readiness. A deferred gap needs an approved scope exclusion and a revisit trigger.
-A resolved gap links to the definition or verification that closes it.
-
-Walk the failure paths as well as success. For a retriable operation, for
-example, document retry preconditions, limits, duplicate protection,
-observable status, escalation, and the final state after exhaustion. Define
-what automated recovery may safely do and when it must stop. Verify each
-material branch against an acceptance criterion. Record scoped applicability
-for paths that cannot occur.
-
-Meeting notices, agendas, and notes are optional. Keep them in an
-access-controlled area when needed. A concise notice can include purpose,
-time zone, attendees, prereads, and decisions requested. Notes can capture
-outcomes, actions, and unresolved items. Transfer durable outcomes into the
-owning rules, ADRs, or gaps with appropriate evidence.
+Meeting notices, agendas and notes are optional. Keep them in the appropriate
+access-controlled workspace. Record purpose, date and time zone, decisions
+sought and next actions as appropriate. Transfer decisions into the owning
+rule after confirming authority. If your project exchanges knowledge via OKF,
+use its metadata conventions on the relevant Markdown pages. [OKF specification](https://github.com/open-knowledge-format/open-knowledge-format/blob/527e81aff55992be21507e97004286789126f88c/SPEC.md)
 
 ## Draw and publish
 
-Pick a visual for one question. A context map shows the system boundary and
-neighbors. A structural view shows ownership. A flow or state view shows
-handoffs, branches, and recovery. Keep the editable Draw.io source, exported
-image, and owning prose synchronized. Inspect the export at normal and
-narrow widths for legible labels, clear direction, contrast, unclipped text,
-and crossings. Put the important paths in nearby Markdown and provide a
-full-size link when the image needs zoom.
+Choose the diagram for the reader's question. A context view shows neighboring
+systems. A state or sequence view can make retries, ordering and recovery
+clearer. Keep the editable Draw.io source and exported SVG or PNG beside the
+owning explanation or in its linked assets. Check the export at normal and
+narrow widths for legible labels, clear direction, contrast and unclipped text.
+Describe the important paths in nearby Markdown and provide a full-size link.
 
-This repository includes a MkDocs configuration for its own human guides.
-From the repository root, use MkDocs 1.6.1 to build or preview them. CI runs the
-strict build on Linux.
+This repository's human guides can be previewed locally with MkDocs 1.6.1.
+From the repository root, build or start the preview:
 
 ```bash
 mkdocs build --strict
 mkdocs serve
 ```
 
-In a consuming project, use `docs_dir: specs` for a full internal preview.
-For public or limited audiences, build from an explicit selection of reviewed
-pages and assets. Inspect the final HTML, static assets, and search index.
-MkDocs copies files in its source directory even when they are absent from the
-sidebar. Keep restricted meetings, evidence, internal contracts, and diagrams
-outside the publication input. [MkDocs configuration](https://www.mkdocs.org/user-guide/configuration/#exclude_docs)
-
-## Adopt and verify
-
-1. Use `specs/index.md` with `x-project-knowledge-version: 1` as the entry
-   point. Use the current report and manifest formats when updating an existing
-   spec set.
-2. Use [Spec Architect](skills/spec-architect.md) to add owners, direct links,
-   decisions, gaps, and valuable visuals. The profile uses OKF v0.3 Markdown
-   and frontmatter conventions with project-specific fields under
-   `x-project-*`. Approval still comes from your decision and readiness
-   records. [OKF v0.3 specification](https://github.com/open-knowledge-format/open-knowledge-format/blob/527e81aff55992be21507e97004286789126f88c/SPEC.md)
-3. Use [Spec Readiness Review](skills/spec-readiness-review.md) to test links,
-   compare the governing sources, trace one success and each material failure
-   branch, and inspect the rendered diagrams. Try finding a business rule, a
-   contract, a recovery outcome, and an ADR from the project entry point.
-
-This is the frontmatter for a draft decision near its component. In the body,
-link the affected definition and write the context, options, and consequences.
-At acceptance, record the immutable approval and add the matching authority
-entry. Add the decision to the central overview when you create it.
-
-```yaml
----
-type: ADR
-title: Ownership of eligibility rules
-description: Records where eligibility rules are defined and maintained.
-x-project-id: ADR-014
-x-project-owner: policy-team
-x-project-domain: mixed
-x-project-state: proposed
-x-project-scope: [components/eligibility/eligibility.md]
----
-```
+For a full internal preview in your own project, point `docs_dir` at `specs`.
+For a public or limited audience, stage only reviewed pages and assets and
+build from that directory. MkDocs copies files outside the sidebar too. Check
+the built HTML, search index and static files for private meeting notes,
+approval evidence, restricted contracts and embedded diagram data. [MkDocs configuration](https://www.mkdocs.org/user-guide/configuration/#exclude_docs)

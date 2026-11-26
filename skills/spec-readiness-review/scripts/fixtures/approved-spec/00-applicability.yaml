@@ -1,5 +1,0 @@
-applicability_version: 1
-concerns:
-  - concern_id: representation_reuse
-    status: applicable
-    scope_refs: [CAP-FIXTURE-001]

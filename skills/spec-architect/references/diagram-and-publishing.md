@@ -20,7 +20,9 @@ compromise reading. A simple table can be enough for a short mapping.
 2. Use short labels using canonical names. Label actions, direction,
    asynchronous handoffs, guards, error branches, and terminal states where
    relevant. Make meaning visible in text as well as color.
-3. Save an editable `.drawio` and a same-stem SVG or PNG in `specs/visuals/`.
+3. Save Draw.io diagrams in `specs/visuals/` as an editable `.drawio` and a
+   same-stem SVG or PNG. Put photographs and standalone illustrations in
+   `specs/assets/` or beside their owning page.
    Embed the export with useful alt text, scope/caption, and an editable-source
    link on the owning page. Give a full-size link when dense views need zoom.
    Describe important paths in nearby Markdown. Use a static export without

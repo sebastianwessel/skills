@@ -1,99 +1,38 @@
 # Spec Implementation Review
 
-`spec-implementation-review` reviews completed or partial implementation waves at the solution level. It checks whether the implemented system follows approved specs end to end, across tickets, interfaces, success paths, failure paths, security, performance, tests, and maintainability.
+Use this skill to make an independent acceptance decision for an implemented
+ticket or a set of tickets. Supply the requested scope and open the ticket,
+its progress record and the implementation revision.
 
 ## Installation
-
-Install this skill package with the open skills ecosystem CLI:
 
 ```bash
 npx skills add sebastianwessel/skills
 ```
 
-The CLI and public skill directory are introduced in Vercel's
-[`skills` announcement](https://vercel.com/changelog/introducing-skills-the-open-agent-skills-ecosystem).
+## Try it
 
-## What It Does
+> Review the cancellation ticket. Follow the original and repeated requests
+> through the real entry point and persistence. Check affected consumers and
+> say whether this revision meets both acceptance scenarios.
 
-- Reviews a wave or plan-level implementation before acceptance, merge, release, or handoff.
-- Traces request, command, event, job, UI, frontend/client, and async paths from entry point to final output.
-- Checks success, validation failure, authorization failure, downstream failure, timeout, retry, cancellation, rollback, idempotency, cleanup, and observability paths when relevant.
-- Checks reachable access, screens/surfaces, user flows, loading/empty/error/
-  success/permission states, accessibility/responsiveness, design source reuse,
-  shared style reuse, framework/component-library reuse, and reusable component
-  reuse when frontend/client work is in scope.
-- Enforces spec conformance, interface correctness, test coverage, security, privacy, log redaction, data integrity, recovery, performance, robustness, maintainability, and public API/documentation quality.
-- Verifies generated types, validators, clients, stubs, fixtures, docs, and
-  contract tests derive from approved machine-readable contract/IDL/schema
-  artifacts through deterministic generators/tools when approved tooling or
-  project configuration supports generation, and rejects stale or hand-edited
-  generated shapes.
-- Rejects contract-first clean rebuild waves that skip generation-map evidence,
-  generator tests, compile checks, drift checks, or strong boundary type checks
-  before handwritten implementation.
-- Rejects weak closed-boundary types, handwritten contract mirrors, stale
-  aliases, compatibility wrappers, fallback synthesis, and storage-era shapes
-  when specs selected a generated clean boundary without migration scope.
-- Rejects unregistered exported data representations, semantic duplicates, and
-  mappers whose catalogued mapping does not permit the implemented differences.
-- Expands review scope to consumers of changed public contracts, shared assets,
-  generated artifacts, and module boundaries; it requires compatibility,
-  migration, and affected-test evidence.
-- Flags tenant isolation false positives where middleware sets tenant context
-  but resource adapters do not constrain reads/writes.
-- Flags monolithic composition drift when provider, persistence, security,
-  session, tenant, workspace, invitation, or domain logic lands in composition
-  files without approval.
-- Verifies tests were derived from approved specs, contracts/schemas,
-  acceptance criteria, and unhappy-path definitions before the business logic
-  they prove was accepted.
-- Enforces requirement traceability plus production readiness, release/rollback,
-  runbook handoff, dependency policy, SBOM/provenance, vulnerability, license,
-  and supply-chain evidence when in scope.
-- Rejects drift, missing tests, false completion, unapproved mocks/fakes/placeholders, and unresolved ownership.
-- Flags stale, duplicate, or contradictory spec/plan text that would mislead
-  later implementation agents.
-- Persists findings, plan status handoff, and per-ticket feedback so implementation agents can resume with complete context.
-- Classifies finding root cause as spec gap, plan gap, implementation drift, or
-  tooling gap and routes it to the owning skill/checker.
+The reviewer traces each affected path from input through the observable
+result. This includes applicable denial, retry, data integrity, redaction,
+recovery and rollback behavior. For a public interface change, it also checks
+the consumers and user-facing documents affected by that change. It compares
+the diff and project verification with the approved scenarios.
 
-## How It Works
+## Read the decision
 
-The skill verifies the approved spec and plan manifests, reads the
-implementation-evidence and consumer-impact set, then reads the approved specs,
-implementation plan, wave plan, tickets, changed files, verification evidence,
-and prior review artifacts. It builds a path matrix, checks each path against
-specs and tests, then writes structured review artifacts under
-`plans/reviews/<wave-or-plan-id>/<review-id>/`.
+On acceptance, the ticket's progress record identifies the independent
+reviewer, the revision and the review evidence. A finding identifies the
+unverified path or defect, the source or scenario involved, and who can fix
+it. A partial review tells you exactly which work it covered.
 
-## Workflow
+For a wave or release, the review also records the integrated outcome, current
+member ticket decisions, affected consumers, and operational and rollback
+evidence for the exact candidate revision.
 
-1. Confirm approved specs, matching digests, valid plan, impact scope, ticket
-   lifecycle state, and verification evidence.
-2. Build an end-to-end path matrix for every relevant entry point and failure mode.
-3. Review spec conformance, requirement traceability, generated artifacts,
-   generation-map coverage, strong boundary types, interfaces, frontend/client
-   UX and reuse, test-first evidence, security/privacy, observability, data
-   integrity, recovery, performance, production/release, supply-chain,
-   robustness, maintainability, and docs.
-4. Persist `review.md`, `findings.yaml`, and `agent-feedback/<ticket-id>.md`.
-5. Update plan status metadata for partial tickets, blocked spec gaps, blocked
-   plan gaps, or independently accepted work when a tracker exists.
-6. Route implementation findings to tickets, plan gaps to `spec-implementation-planner`, and spec gaps to `spec-readiness-review`.
-7. Return a decision: `pass`, `needs_fixes`, `blocked_spec_gap`, `blocked_plan_gap`, or `partial`.
+[Fix a ticket](spec-ticket-implementation.md) · [Route a spec or plan gap](spec-driven-workflow.md)
 
-## Included Files
-
-| Path | Purpose |
-| --- | --- |
-| `skills/spec-implementation-review/SKILL.md` | Executable agent instructions and trigger metadata. |
-| `skills/spec-implementation-review/references/path-tracing.md` | End-to-end solution path review checklist. |
-| `skills/spec-implementation-review/references/review-gates.md` | Spec, generated-contract, interface, test, security, performance, robustness, and maintainability gates. |
-| `skills/spec-implementation-review/references/implementation-evidence.md` | Machine-readable changed-symbol, command-effect, architecture, and consumer-impact evidence. |
-| `skills/spec-implementation-review/scripts/check_implementation_evidence.mjs` | Deterministic implementation-evidence manifest checker. |
-| `skills/spec-implementation-review/references/findings-format.md` | Required persisted review artifact and feedback formats. |
-| `skills/spec-implementation-review/evals/evals.json` | Evaluation scenarios for the skill. |
-
-## Validation And Safety
-
-The review skill does not implement fixes. It writes persisted findings with exact ownership, evidence, expected behavior, actual behavior, fix boundaries, required verification, and status handoff. If ownership or expected behavior is missing, it blocks and routes the gap to planning or specs instead of letting an implementation agent decide.
+[Agent instructions](https://github.com/sebastianwessel/skills/blob/main/skills/spec-implementation-review/SKILL.md)

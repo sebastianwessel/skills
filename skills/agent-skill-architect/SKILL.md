@@ -1,71 +1,29 @@
 ---
 name: agent-skill-architect
-description: Creates, reviews, repairs, and optimizes agent skills. Use when a skill needs authoring, trigger tuning, evals, checks, packaging readiness, or drift controls.
+description: Creates and improves Agent Skills packages. Use when writing a skill, fixing trigger overlap, shortening instructions, testing scenario behavior, or checking a skill before distribution.
 ---
 
 # Agent Skill Architect
 
-Create and improve reusable agent skills without colliding with default skill
-creators.
+Keep each skill focused on one outcome and make the critical path easy to
+find. Use the published Agent Skills metadata and the target repository's
+package conventions.
 
-## Standard
+1. Identify the trigger, near-miss requests, intended output, owner, tools,
+   and failure points. Compare existing skills before adding a new one.
+2. Write realistic eval cases using [Eval design](references/eval-design.md).
+   Include a normal request, a real blocker, and a request that belongs to
+   another skill. Prefer inputs that exercise the actual work.
+3. Put the workflow, exit criteria, and blocker routing in `SKILL.md`.
+   Link directly to focused references. Keep fragile mechanical checks in
+   small scripts and use semantic review for judgment. Apply
+   [Quality gates](references/quality-gates.md).
+4. Run `node <agent-skill-architect>/scripts/check_skill.mjs <skill-directory>`.
+   Run the package's tests and scenario evals where the runner is available.
+   Fix failures and rerun. Record which scenarios ran and what they proved.
+5. Self-audit against the request, observed behavior, references, and skipped
+   verification. Stop approval when a critical dependency, ambiguous trigger,
+   unsafe behavior, or unverified required check remains.
 
-A skill is ready only when trigger, workflow, resources, checks, evals, and stop
-conditions prevent drift, hidden assumptions, and project-specific hardcoding.
-
-## Invariants
-
-- Unique lowercase hyphenated name; no `skill-creator`, reserved, vague, or
-  existing names.
-- Description is the trigger surface: third person, concise, specific, and
-  includes `Use when ...`.
-- `SKILL.md` stays procedural; details live in one-level `references/`, checks
-  in `scripts/`.
-- Risk decides strictness: fragile tasks need exact gates and stop conditions;
-  flexible tasks get defaults with bounded escape hatches.
-- No inference through missing behavior, resources, validation, or boundaries.
-- New or changed skills need realistic evals, including near misses when the
-  harness supports them.
-- Self-audit against evidence; report missing checks or evals.
-
-## Workflow
-
-1. Identify mode: `Create`, `Review`, `Repair`, `Optimize Description`, or
-   `Package Readiness`.
-2. Read repository rules and inspect existing skill names to avoid collisions.
-3. Capture intent, trigger contexts, non-trigger boundaries, outputs, tools,
-   resources, stop conditions, and verification evidence.
-4. Draft or update `SKILL.md`, references, scripts, docs, and evals.
-5. Apply `references/quality-gates.md`.
-6. Create or update `evals/evals.json` using `references/eval-design.md`.
-7. Add deterministic scripts only for fragile/repeated checks.
-8. Run `node <agent-skill-architect-skill-root>/scripts/check_skill.mjs <skill-dir>`.
-9. Run `plugin-eval analyze <skill-dir> --format markdown` when available.
-10. Self-audit trigger fit, ambiguity, disclosure, security, eval coverage,
-    deterministic checks, and residual risk.
-
-## Stop Conditions
-
-Stop instead of writing or approving a skill when:
-
-- behavior is unsafe, deceptive, secret-extracting, or outside user intent
-- the name collides with an existing skill or reserved term
-- trigger and non-trigger boundaries cannot be stated precisely
-- workflow depends on missing files, unavailable tools, private data, or
-  unapproved services
-- eval expectations cannot be made observable enough for review
-- required checks fail and the fix would change user intent
-
-## Reference Map
-
-- `references/quality-gates.md`: skill structure, trigger, strictness,
-  progressive disclosure, security, and packaging gates.
-- `references/eval-design.md`: eval prompt design, near-miss tests,
-  description optimization, and benchmark evidence.
-- `scripts/check_skill.mjs`: deterministic local skill-shape checker.
-
-## Approval Rule
-
-Do not approve a skill on prose quality alone. Approval requires deterministic
-checks, realistic evals or an explicit N/A reason, concise self-audit, and a
-clear statement of any remaining risk.
+Use static analysis to spot package problems. Claim improved task quality or
+token use only when comparative runs measure it.

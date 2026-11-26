@@ -48,11 +48,13 @@ function scalar(raw, line) {
   }
   if (value.startsWith("[") && value.endsWith("]")) return splitInline(value.slice(1, -1)).map((item) => scalar(item, line));
   if (value.startsWith("{") && value.endsWith("}")) {
-    const object = {};
+    const object = Object.create(null);
     for (const part of splitInline(value.slice(1, -1))) {
       const match = part.match(/^([^:]+):\s*(.*)$/);
       if (!match) throw new Error(`Invalid inline map at line ${line}`);
-      object[match[1].trim()] = scalar(match[2], line);
+      const key = match[1].trim();
+      if (!identifier.test(key) || Object.hasOwn(object, key)) throw new Error(`Invalid or duplicate key ${key} at line ${line}`);
+      object[key] = scalar(match[2], line);
     }
     return object;
   }
@@ -64,7 +66,7 @@ export function parseYaml(source, label = "YAML") {
   const lines = source.split(/\r?\n/).map((raw, index) => {
     const clean = stripComment(raw).replace(/\s+$/, "");
     const match = clean.match(/^( *)(.*)$/);
-    if (match[1].includes("\t")) throw new Error(`${label}: tabs are not supported (line ${index + 1})`);
+    if (/^ *\t/.test(clean)) throw new Error(`${label}: tabs are not supported (line ${index + 1})`);
     return { indent: match[1].length, text: match[2], line: index + 1 };
   }).filter((line) => line.text !== "");
   let index = 0;
@@ -75,7 +77,7 @@ export function parseYaml(source, label = "YAML") {
     if (first.indent < indent) return null;
     if (first.indent > indent) throw new Error(`${label}: unexpected indentation at line ${first.line}`);
     const isList = first.text === "-" || first.text.startsWith("- ");
-    const result = isList ? [] : {};
+    const result = isList ? [] : Object.create(null);
     while (index < lines.length && lines[index].indent === indent) {
       const current = lines[index];
       const listItem = current.text === "-" || current.text.startsWith("- ");
@@ -87,15 +89,16 @@ export function parseYaml(source, label = "YAML") {
           if (index >= lines.length || lines[index].indent <= indent) throw new Error(`${label}: list item needs a value at line ${current.line}`);
           result.push(parseBlock(lines[index].indent));
         } else {
-          const keyValue = tail.match(/^([^:]+):(?:\s*(.*))?$/);
+          const keyValue = tail.match(/^([^:]+):(?:\s+(.*))?$/);
           if (keyValue && identifier.test(keyValue[1].trim())) {
-            const item = {};
+            const item = Object.create(null);
             const key = keyValue[1].trim(), rawValue = keyValue[2] ?? "";
             item[key] = rawValue ? scalar(rawValue, current.line) : null;
             if (!rawValue && index < lines.length && lines[index].indent > indent) item[key] = parseBlock(lines[index].indent);
             if (index < lines.length && lines[index].indent > indent) {
               const extra = parseBlock(lines[index].indent);
               if (Array.isArray(extra) || !extra || typeof extra !== "object") throw new Error(`${label}: list map item expected at line ${current.line}`);
+              if (Object.hasOwn(extra, key)) throw new Error(`${label}: duplicate key '${key}' at line ${current.line}`);
               Object.assign(item, extra);
             }
             result.push(item);
@@ -122,11 +125,4 @@ export function parseYaml(source, label = "YAML") {
   const result = parseBlock(lines[0].indent);
   if (index !== lines.length) throw new Error(`${label}: unsupported trailing content at line ${lines[index].line}`);
   return result;
-}
-
-export function yamlStrings(value, out = []) {
-  if (typeof value === "string") out.push(value);
-  else if (Array.isArray(value)) value.forEach((item) => yamlStrings(item, out));
-  else if (value && typeof value === "object") Object.values(value).forEach((item) => yamlStrings(item, out));
-  return out;
 }

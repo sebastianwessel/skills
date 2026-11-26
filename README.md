@@ -1,140 +1,58 @@
-# AI Skills
+# Spec-driven development skills
 
-Reusable AI agent skills maintained in this repository. The work is shaped by
-Sebastian Wessel's article
-[Spec-Driven Development](https://sebastianwessel.de/articles/spec-driven-development/),
-which explains this repository's spec-first approach for keeping autonomous AI
-agents aligned from business intent through implementation and review. Each
-skill lives in its own subdirectory under `skills/` and follows Anthropic's
-[Agent Skills best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices).
-
-## Contents
-
-- [Skill Index](#skill-index)
-- [Project Knowledge](#project-knowledge)
-- [Spec-Driven Workflow](#spec-driven-workflow)
-- [Spec-Driven Development](#spec-driven-development)
-- [Installation](#installation)
-- [Repository Layout](#repository-layout)
-- [Documentation Pattern](#documentation-pattern)
-- [Adding a Skill](#adding-a-skill)
-- [Verification](#verification)
-- [Maintainer Notes](#maintainer-notes)
-
-## Skill Index
-
-<!-- skills-index:start -->
-| Skill | Description | Human docs |
-| --- | --- | --- |
-| [agent-skill-architect](skills/agent-skill-architect/SKILL.md) | Creates, reviews, repairs, and optimizes agent skills. Use when a skill needs authoring, trigger tuning, evals, checks, packaging readiness, or drift controls. | [docs](docs/skills/agent-skill-architect.md) |
-| [spec-architect](skills/spec-architect/SKILL.md) | Creates and updates canonical project knowledge and implementation specs. Use when defining business rules, solution design, components, flows, ADRs, gaps, interfaces, UX, reliability, or release requirements. | [docs](docs/skills/spec-architect.md) |
-| [spec-driven-workflow](skills/spec-driven-workflow/SKILL.md) | Coordinates the spec-driven lifecycle. Use when choosing the next stage, routing feedback, or resuming work across specs, plans, tickets, and reviews. | [docs](docs/skills/spec-driven-workflow.md) |
-| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns approved specs into waves, dependency indexes, AFK tickets, and status tracking. Use when specs need parallel-agent planning, ticket readiness, blockers/unblocks, or plan gap checks. | [docs](docs/skills/spec-implementation-planner.md) |
-| [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Reviews implementation waves against approved specs and tickets. Use when completed or partial work needs acceptance, merge, release, or handoff review with path tracing and persisted findings. | [docs](docs/skills/spec-implementation-review.md) |
-| [spec-readiness-review](skills/spec-readiness-review/SKILL.md) | Reviews and approves project knowledge and implementation specs for planning. Use when checking completeness, contradictions, decision authority, readiness evidence, or repairing a targeted spec gap. | [docs](docs/skills/spec-readiness-review.md) |
-| [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Implements exactly one approved spec plan ticket in fixed scope. Use when a ready ticket needs code changes with contract/codegen-first, test-first, verification, and no invention. | [docs](docs/skills/spec-ticket-implementation.md) |
-<!-- skills-index:end -->
-
-## Project Knowledge
-
-Use the [project knowledge guide](docs/project-knowledge.md) to organize business
-rules, solution design, components, flows, decisions, and gaps for human and
-agent readers. The guide includes the MkDocs preview and publishing workflow.
-
-## Spec-Driven Workflow
-
-Use [`spec-driven-workflow`](skills/spec-driven-workflow/SKILL.md) when a task
-spans more than one lifecycle stage or when the next step is unclear.
-
-1. Specify with `spec-architect`.
-2. Review and approve with `spec-readiness-review`.
-3. Plan with `spec-implementation-planner` until waves, tickets, dependencies,
-   scopes, status, and test-first order are ready.
-4. Implement one ready ticket with `spec-ticket-implementation`.
-5. Review ticket sets or waves with `spec-implementation-review`.
-6. Route findings back to the owning skill and repeat until no blocking findings
-   remain.
-
-## Spec-Driven Development
-
-Read
-[Spec-Driven Development](https://sebastianwessel.de/articles/spec-driven-development/)
-for the rationale behind this repository. The article describes how clear specs,
-implementation plans, ticket execution, and review gates work together so AI
-agents can build production-ready systems without drifting from the intended
-business outcome.
+Use these skills to turn a product decision into software you can review. People
+and agents read the same project specs. Each ticket names the behavior it
+implements and the evidence a reviewer needs to accept it.
 
 ## Installation
 
-Install this skill package with the open skills ecosystem CLI:
+In the project where you want to use the skills, run:
 
 ```bash
 npx skills add sebastianwessel/skills
 ```
 
-See Vercel's announcement of
-[`skills`](https://vercel.com/changelog/introducing-skills-the-open-agent-skills-ecosystem)
-and [skills.sh](https://skills.sh/) for the package ecosystem.
+Select the six `spec-*` skills for the development workflow. The seventh,
+`agent-skill-architect`, is for people who build reusable skills.
 
-## Repository Layout
+## Try it in your project
 
-```text
-skills/
-└── <skill-name>/
-    └── SKILL.md
-```
+Give your agent a business rule and its source. For example:
 
-Optional per-skill directories include `references/`, `scripts/`, `assets/`,
-and `agents/`.
+> Our approved support policy says a member can cancel their own confirmed
+> reservation. Repeating a cancellation leaves it cancelled. Use Spec Architect
+> to document this flow. Flag any decisions the policy leaves open.
 
-Human-facing skill documentation lives outside the executable skill package:
+Open `specs/index.md`. Follow the link to the cancellation rule and check what
+happens on a repeat request. When the rule matches your intent, ask for a
+readiness review. You approve the reviewed revision before an agent plans
+implementation. If your project already has tickets, ask Spec Driven Workflow
+which ticket can run next and what evidence supports that choice.
 
-```text
-docs/
-└── skills/
-    └── <skill-name>.md
-```
+[Choose a skill](docs/README.md) · [Worked acceptance example](docs/project-knowledge.md#cancelling-a-reservation) · [Spec-driven development rationale](https://sebastianwessel.de/articles/spec-driven-development/)
 
-## Documentation Pattern
+## Skill index
 
-Each skill should have a concise human docs page with the same structure:
+<!-- skills-index:start -->
+| Skill | Description | Human docs |
+| --- | --- | --- |
+| [agent-skill-architect](skills/agent-skill-architect/SKILL.md) | Creates and improves Agent Skills packages. Use when writing a skill, fixing trigger overlap, shortening instructions, testing scenario behavior, or checking a skill before distribution. | [docs](docs/skills/agent-skill-architect.md) |
+| [spec-architect](skills/spec-architect/SKILL.md) | Writes and revises project specs. Use when defining a business rule, system behavior, component boundary, failure path, decision, or acceptance scenario, or repairing a finding in a spec. | [docs](docs/skills/spec-architect.md) |
+| [spec-driven-workflow](skills/spec-driven-workflow/SKILL.md) | Routes work through project knowledge, approval, planning, implementation, and review. Use when starting a spec-driven project, resuming work, or choosing which stage owns a blocker. | [docs](docs/skills/spec-driven-workflow.md) |
+| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns approved specs into scoped, dependency-ordered tickets. Use when creating or repairing a delivery plan, assigning acceptance scenarios, sizing work, or deciding which ticket can start. | [docs](docs/skills/spec-implementation-planner.md) |
+| [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Independently reviews code and evidence against approved specs and tickets. Use when implemented work needs acceptance, merge review, or release verification. | [docs](docs/skills/spec-implementation-review.md) |
+| [spec-readiness-review](skills/spec-readiness-review/SKILL.md) | Reviews a spec bundle and verifies approval for planning. Use when checking a draft, resolving review findings against revised sources, or deciding whether planning can begin. | [docs](docs/skills/spec-readiness-review.md) |
+| [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Implements one ready ticket against approved project specs. Use when a specific ticket can be executed within its write scope with test-first verification. | [docs](docs/skills/spec-ticket-implementation.md) |
+<!-- skills-index:end -->
 
-1. What the skill is for.
-2. Installation.
-3. What it does.
-4. How it works.
-5. Workflow or modes.
-6. Included files.
-7. Validation and safety notes.
+## Maintaining this collection
 
-## Adding a Skill
-
-1. Create `skills/<skill-name>/SKILL.md`.
-2. Use concise YAML frontmatter with `name` and `description`.
-3. Keep detailed reference material in files linked directly from `SKILL.md`.
-4. Add `docs/skills/<skill-name>.md` for human-facing documentation.
-5. Refresh this table of contents:
-
-   ```bash
-   python3 scripts/update-readme.py
-   ```
-
-## Verification
-
-Run the non-mutating repository check before publishing skill changes:
+Each installable package lives in `skills/<name>/`. Human guides live in
+`docs/skills/`. After changing an entry, refresh the index and run the checks.
 
 ```bash
+python3 scripts/update-readme.py
 node scripts/check-all.mjs
 ```
 
-It validates skill packages, JavaScript syntax, checker tests, eval manifests,
-local resource links, and generated README state. Checker tests exercise a valid
-baseline and specific failure cases.
-GitHub Actions runs the same checks independently on Linux and Windows so each
-failed category is immediately visible. Run a single category locally with,
-for example, `node scripts/check-all.mjs tests`.
-
-## Maintainer Notes
-
-Repository instructions for agents are in [AGENTS.md](AGENTS.md). Claude reads
-[CLAUDE.md](CLAUDE.md), which points back to the same shared guidance.
+[Repository conventions](AGENTS.md) · [Skill authoring guidance](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
