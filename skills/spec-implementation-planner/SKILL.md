@@ -50,10 +50,12 @@ derive the plan.
    verification, NFRs, operations, supply chain, frontend/client UX,
    design/component reuse, tests, and coverage. Cite exact governing rule,
    flow, contract, and decision refs as applicable. Use indexes for discovery.
-9. Split tickets until each active ticket has one bounded deliverable, exact
-   write scope, exact prerequisite artifacts, and a numbered action plan with
-   files/commands/proof for every step. Use phase-gated exceptions only when
-   the approved work is atomic and each phase blocks on explicit evidence.
+9. Give each ticket a relative `size` of `XS`, `S`, `M`, `L`, or `XL`
+   using [Relative sizing](references/planning-gates.md#relative-sizing).
+   Use scope, coordination, and verification effort. Keep sizes unitless.
+   Split work until each active ticket has one bounded deliverable, exact
+   scope, prerequisites, and action steps. Use phase-gated exceptions for
+   approved atomic work with explicit blocking evidence at each phase.
 10. Cover drift controls, generated artifacts, scoped reuse, boundary typing,
     and unhappy-path tests in the structured handoff and concise ticket body.
     Cite evidence where the frontmatter or approved spec already provides it.

@@ -165,6 +165,7 @@ function uniqueIds(items, label) {
 
 const lifecycle = ["planned", "ready", "in_progress", "partial", "blocked", "implemented", "review_pending", "accepted", "skipped"];
 const executableLifecycle = new Set(["ready", "in_progress"]);
+const ticketSizes = new Set(["XS", "S", "M", "L", "XL"]);
 const sliceTypes = new Set(["vertical_slice", "foundation_exception", "refactor_exception", "remediation", "migration"]);
 const unsafeCommand = /[;&|`$()<>]|^\s*(?:sh|bash|zsh|fish|cmd|powershell)\b|^\s*[A-Za-z_][A-Za-z0-9_]*=|\b(?:curl|wget|ssh|scp)\b|\bgit\s+(?:clone|fetch|pull|push)\b|\b(?:npm|pnpm|yarn)\s+(?:install|add|upgrade)\b|\b(?:pip|pip3)\s+install\b|\bgo\s+get\b|\bcargo\s+(?:install|add)\b/i;
 
@@ -243,7 +244,7 @@ for (const { path: relative } of planArtifacts.filter(({ path }) => /(?:^|\/)tic
   let data, body;
   try { ({ data, body } = frontmatter(read(file), relative)); }
   catch (error) { fail(error.message); continue; }
-  const fields = ["id", "title", "wave", "lifecycle", "parallel_group", "depends_on", "blocked_by", "spec_refs", "traceability", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
+  const fields = ["id", "title", "wave", "lifecycle", "size", "parallel_group", "depends_on", "blocked_by", "spec_refs", "traceability", "write_scope", "read_scope", "contract_readiness", "generated_contracts", "ticket_readiness", "slice_type", "phase_gate_exception", "representation_reuse", "autonomy", "verification_commands", "action_steps", "acceptance"];
   requireFields(data, fields, relative);
   noUnknownFields(data, fields, relative);
   const id = asString(data.id);
@@ -251,6 +252,9 @@ for (const { path: relative } of planArtifacts.filter(({ path }) => /(?:^|\/)tic
   const active = executableLifecycle.has(state);
   if (!/^TICKET-\d{3,}$/.test(id)) fail(`${relative}: id must be TICKET-NNN`);
   if (!lifecycle.includes(state)) fail(`${relative}: invalid lifecycle ${state}`);
+  if (Object.hasOwn(data, "size") && !ticketSizes.has(data.size)) {
+    fail(`${relative}: size must be XS, S, M, L, or XL`);
+  }
   if (!sliceTypes.has(data.slice_type)) fail(`${relative}: invalid slice_type ${data.slice_type}`);
   if (typeof data.phase_gate_exception !== "boolean") fail(`${relative}: phase_gate_exception must be boolean`);
   if (active && data.phase_gate_exception && !/Phase Gate:/i.test(section(body, "Action Plan"))) fail(`${relative}: phase_gate_exception requires explicit Phase Gate proof points in Action Plan`);

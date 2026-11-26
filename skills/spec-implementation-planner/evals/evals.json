@@ -144,6 +144,12 @@
             "prompt": "Review a plan whose ticket frontmatter and registry agree, but _scope has an extra ticket, an acceptance row has no action step, and the dependency graph is cyclic.",
             "expected_output": "Rejects the plan with exact structural diagnostics: all plan indexes must reconcile exactly, every acceptance row maps to actions/tests/commands, and dependencies are acyclic.",
             "files": []
+        },
+        {
+            "id": 25,
+            "prompt": "Size an approved local validation change and a much larger multi-system workflow with several separable outcomes. Someone asks for hours per ticket.",
+            "expected_output": "Records a proportionate XS–XL size on each ticket, explains relative scope and verification effort, proposes splitting the separable work, and omits elapsed-time estimates.",
+            "files": []
         }
     ]
 }

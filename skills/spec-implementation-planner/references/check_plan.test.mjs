@@ -21,6 +21,7 @@ id: ${id}
 title: User boundary
 wave: 1
 lifecycle: ready
+size: S
 parallel_group: ""
 depends_on: ${dependsOn}
 blocked_by: []
@@ -135,6 +136,20 @@ try {
   indexes();
   generate();
   assert.equal(run().ok, true, "valid structural plan should pass");
+
+  for (const size of ["XS", "M", "L", "XL"]) {
+    write(ticketPath, ticket().replace("size: S", `size: ${size}`));
+    generate();
+    assert.equal(run().ok, true, `a ticket can record size ${size}`);
+  }
+  write(ticketPath, ticket().replace("size: S\n", ""));
+  generate();
+  assert.match(run().output, /missing size/, "every ticket has a size");
+  write(ticketPath, ticket().replace("size: S", "size: 2 hours"));
+  generate();
+  assert.match(run().output, /size must be XS, S, M, L, or XL/, "size is a relative label");
+  write(ticketPath, ticket());
+  generate();
 
   const representationBlock = /representation_reuse:\n[\s\S]*?(?=^autonomy:)/m;
 

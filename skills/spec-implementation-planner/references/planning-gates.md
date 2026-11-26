@@ -3,6 +3,7 @@
 ## Contents
 
 - Output
+- Relative Sizing
 - Split And Phase Gates
 - Ticket Shape
 - Drift, Generation, Typing, And Reuse
@@ -34,6 +35,27 @@ For contract-first clean rebuilds, the generated foundation may be an approved
 horizontal foundation wave when it produces a compilable, drift-checked boundary
 that unblocks the next vertical slice.
 
+## Relative Sizing
+
+Set `size` once in the ticket frontmatter. Compare tickets within the project
+using scope, number of handoffs, complexity of the change, and what it takes to
+verify success, failure, and recovery. Use a comparable approved ticket where
+helpful.
+
+| Size | Typical scope |
+| --- | --- |
+| `XS` | A localized change with a clear existing pattern and focused verification. |
+| `S` | One bounded outcome within a component, with understood behavior and tests. |
+| `M` | One bounded outcome across related boundaries, or work that needs integration and failure-path verification. |
+| `L` | One outcome with substantial coordination, contract, migration, or verification work. Review it for a split. |
+| `XL` | Several separable outcomes or a large atomic change that needs independently verified phases. Split separable work and use the existing phase gate for approved atomic work. |
+
+Use the label for scope and sequencing conversations. Omit elapsed-time
+estimates, including ranges, and keep the labels separate from deadlines.
+Review the size after a split or a material change in scope or verification.
+A size conveys relative effort. Route missing behavior and test expectations
+through the existing readiness gates before making a ticket executable.
+
 ## Split And Phase Gates
 
 A ticket is implementation-ready only when one agent can finish one bounded
@@ -62,7 +84,7 @@ phase that remains blocked until the proof exists.
 
 ## Ticket Shape
 
-Frontmatter: `id`, `title`, `wave`, `lifecycle`, `parallel_group`, `depends_on`,
+Frontmatter: `id`, `title`, `wave`, `lifecycle`, `size`, `parallel_group`, `depends_on`,
 `blocked_by`, `spec_refs`, `write_scope`, `read_scope`, `contract_readiness`,
 `traceability`,
 `generated_contracts`, `ticket_readiness`, `slice_type`,
@@ -105,7 +127,7 @@ node references/check_plan.mjs <repo-root> [plans-root] [specs-root]
 ### Plan Indexes
 
 All four index files have the same complete ticket-ID set. Each row must match
-the ticket frontmatter exactly:
+the fields it indexes. The ticket frontmatter owns its size:
 
 ```yaml
 # _registry.yaml

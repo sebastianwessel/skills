@@ -83,6 +83,8 @@ The CLI and public skill directory are introduced in Vercel's
   records, projections, or mappers.
 - Binds tickets to the approved spec through the central plan manifest. Each
   ticket gives its autonomy, reuse and module refs, and verification commands.
+- Sizes each ticket `XS`, `S`, `M`, `L`, or `XL` based on scope,
+  coordination, and verification effort. These are relative labels.
 - Flags tickets that are too broad for autonomous agents and requires split
   tickets when one ticket spans independently shippable behaviors, unrelated
   layers, or generator/backend/frontend/release work without frozen
