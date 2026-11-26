@@ -215,3 +215,11 @@ test("angle-bracket links with spaces bind governing dependencies", (t) => {
   f.spec("access policy.md", "## Access\nDeny all requests.\n");
   f.check(/stale or missing slice approval/, "--approved", "denial");
 });
+
+test("nested list code examples do not create governing dependencies", (t) => {
+  const f = fixture(t);
+  f.spec("index.md", f.index.replace("Return 403 without queueing work.",
+    "- Example\n\n        [sample](gaps/missing.md)\n\n    ```md\n    [sample](gaps/missing.md)\n    ```"));
+  f.check(null);
+  f.approve();
+});

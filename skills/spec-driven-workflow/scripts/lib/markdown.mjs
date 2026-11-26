@@ -4,7 +4,7 @@ function visibleLines(markdown) {
   let inList = false;
   const visible = markdown.replace(/<!--[\s\S]*?(?:-->|$)/g, (comment) => comment.replace(/[^\r\n]/g, " "));
   return visible.split(/\r?\n/).map((line) => {
-    const delimiter = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    const delimiter = (inList ? /^ {0,6}(`{3,}|~{3,})(.*)$/ : /^ {0,3}(`{3,}|~{3,})(.*)$/).exec(line);
     if (fence) {
       if (delimiter && delimiter[1][0] === fence[0] && delimiter[1].length >= fence.length && !delimiter[2].trim()) fence = null;
       return "";
@@ -12,7 +12,7 @@ function visibleLines(markdown) {
     if (delimiter) fence = delimiter[1];
     if (/^ {0,3}(?:[-+*]|\d+[.)])\s/.test(line)) inList = true;
     else if (line.trim() && !/^(?: {2}|\t)/.test(line)) inList = false;
-    return delimiter || (!inList && /^(?: {4}|\t)/.test(line)) ? "" : line;
+    return delimiter || (inList ? /^(?: {8}|\t\t)/.test(line) : /^(?: {4}|\t)/.test(line)) ? "" : line;
   });
 }
 
