@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "A two-file spec defines a one-page feature and both acceptance scenarios. Decide if we can plan. Human approval expressly covers only the success scenario.",
-      "expected_output": "Accepts the small project layout, traces both scenarios and withholds approval until attributable human evidence covers the entire current bundle.",
+      "prompt": "The requested change needs both the success and denied behavior, but someone approved the success case only. The same spec page has an unrelated draft flow. Can we plan?",
+      "expected_output": "Blocks the requested slice until review and human approval cover both connected scenarios. Leaves the unrelated draft flow outside the approval. Obtains a digest for the exact governing scope.",
       "files": []
     },
     {
@@ -22,7 +22,7 @@
     {
       "id": 4,
       "prompt": "The evidence URL says the latest version is approved but has no digest or accountable identity. Can you fill those fields from our chat?",
-      "expected_output": "Does not fabricate authority; requests attributable evidence for the complete candidate digest, records what is missing and withholds planning.",
+      "expected_output": "Withholds planning and requests attributable evidence for the selected slice and exact digest. Reports which evidence is missing.",
       "files": []
     },
     {
@@ -35,6 +35,12 @@
       "id": 6,
       "prompt": "Rewrite the refund rules and decide whether disputes cancel a payout, then approve your own changes.",
       "expected_output": "Routes the governing rules and authorization question to spec-architect and the business decision owner. Performs only independent review of the resolved candidate.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "The new report format is undecided, but the rule preventing cross-team access is approved and testable. Both headings are on a page. What can work proceed on?",
+      "expected_output": "Traces access control to its precise sources, checks whether it depends on format, and scopes approval to the access-control behavior and verification. Keeps the open format question visible.",
       "files": []
     }
   ]

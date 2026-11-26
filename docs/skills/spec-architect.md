@@ -1,7 +1,7 @@
 # Spec Architect
 
-Use this skill to turn product decisions into the rules that govern a project.
-It also handles a change to an existing rule or a gap raised by a reviewer.
+Use this skill to start with a product idea or revise a rule already in use.
+Keep open questions visible as the team learns and builds.
 
 ## Installation
 
@@ -12,8 +12,7 @@ npx skills add sebastianwessel/skills
 ## Try it
 
 > Our policy allows a member to cancel their own confirmed reservation.
-> Document the first cancellation and a repeated request. Ask who owns any
-> policy decision the source leaves open.
+> Document the first cancellation and a repeated request. Record any open policy choice next to the behavior it affects.
 
 Give the agent the policy, approved decision or other source it should use.
 Open `specs/index.md` to find the resulting topic page. Look for the actor,
@@ -23,10 +22,10 @@ and says what someone can verify.
 
 ## What happens next
 
-The author owns changes to specs. For an uncertain decision, it records the
-affected scope, owner and missing evidence. When a rule changes, it updates
-the affected scenarios, contracts or diagrams. The readiness reviewer checks
-the revised source and obtains approval before planning begins.
+On a rule change, update the relevant scenario, contract or diagram. Record
+unanswered decisions next to their rule and name a decision-maker when useful.
+When enough is defined for one outcome, ask for readiness review of that slice.
+Keep the rest of the project open for refinement.
 
 [Worked example](../project-knowledge.md#cancelling-a-reservation) · [Review the spec](spec-readiness-review.md)
 

@@ -1,6 +1,10 @@
 # Reviewing behavior and risk
 
-Start at the project entry point. Pick a business question, a component boundary, a failure scenario, and a decision. Find their owners and compare them with authorized sources. Inspect every acceptance scenario and walk each material entrypoint in the other direction to discover missing scenarios. Make a finding when a responder would have to invent behavior.
+Start at the project entry point. Follow the selected outcome to its rules,
+interfaces and decisions. Compare the digest input list with the sources that
+actually govern it. Inspect the selected acceptance scenarios and walk their
+material entry points in the other direction to discover missing scenarios.
+Make a finding where an implementer would have to invent behavior.
 
 ## Review every change
 
@@ -23,4 +27,4 @@ Start at the project entry point. Pick a business question, a component boundary
 | Build, deployment, operations or release | Reproducible build, locked dependencies, vulnerability/license checks, signing or provenance where required, deployment gates, secrets rotation, monitoring, capacity, staged rollout and tested rollback or recovery. |
 | Material diagrams or publishing | Inspect the rendered artifact at normal and narrow widths. Compare paths, actors, boundaries and terminal outcomes with the owning source. Verify labels, contrast, text alternative and authorized publication scope. |
 
-In the semantic review, cite the exact scenario, rule or artifact inspected and the checks performed. Give a scoped reason when a material risk is excluded. A checklist tick or keyword match cannot establish a semantic pass.
+In the semantic review, cite the digest, exact scenarios, rules or artifacts inspected and the checks performed. Give a scoped reason when a material risk is excluded. A checklist tick or keyword match cannot establish a semantic pass.

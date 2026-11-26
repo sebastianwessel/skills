@@ -1,8 +1,9 @@
 # Spec Readiness Review
 
 Use this skill when you need to know whether the team may plan against a
-particular revision of the specs. Bring the project map, acceptance scenarios,
-governing sources and any prior findings.
+defined slice of behavior. Bring the project map, acceptance scenarios,
+governing sources and any prior findings. Other parts of the spec can still
+contain open questions.
 
 ## Installation
 
@@ -13,8 +14,8 @@ npx skills add sebastianwessel/skills
 ## Try it
 
 > Review the cancellation flow before we plan it. Follow the rule and each
-> acceptance scenario, including the repeat request. Tell me which revision
-> needs my approval and what still blocks it.
+> acceptance scenario, including the repeat request. Tell me what the approval covers
+> and what still blocks it.
 
 The reviewer follows each material path to its final state. It checks the
 applicable security, privacy, recovery, data integrity, performance and release
@@ -24,13 +25,13 @@ the team will verify it.
 
 ## Read the result
 
-A finding names the affected source, impact and owner. Ask Spec Architect to
-correct a missing rule. For a complete spec, the reviewer records the semantic
-review and asks the authorized human to approve the same whole-spec digest.
-The readiness report lives in `specs/.readiness-report.yaml`. The packaged
-checker, `scripts/check_specs.mjs <spec-root> --approved`, verifies that the
-recorded approvals cover the current bytes. Any subsequent edit to a governing
-source requires fresh review and approval.
+A finding names the affected rule, impact and decision needed. When the slice
+is complete, the independent reviewer and authorized human review the same
+digest. The record is `reviews/readiness/<slice-id>.yaml`. The packaged
+checker, `scripts/check_specs.mjs <spec-root> --approved <slice-id>`, verifies
+that the selected scenarios and governing inputs still match it. The reviewer
+checks the evidence and all dependencies. A refinement outside those inputs
+leaves this approval current.
 
 [Resolve a spec finding](spec-architect.md) · [Plan from approved specs](spec-implementation-planner.md)
 

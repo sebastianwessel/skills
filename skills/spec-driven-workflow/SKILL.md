@@ -1,28 +1,30 @@
 ---
 name: spec-driven-workflow
-description: Routes work through project knowledge, approval, planning, implementation, and review. Use when starting a spec-driven project, resuming work, or choosing which stage owns a blocker.
+description: Finds the next step for a change in a living spec. Use when starting or resuming spec-driven work, handling a refinement, or routing a blocker.
 ---
 
 # Spec Driven Workflow
 
-Start at `specs/index.md`. Select the earliest stage whose evidence is missing
-for the requested work. Load that skill and only the references it needs.
+Start at `specs/index.md` and choose one outcome to move forward. Different
+parts of the same project can be explored, approved, built and refined in
+parallel. Load the skill for the missing evidence.
 
-| Situation | Use | Evidence before moving forward |
+| Situation | Use | Evidence |
 | --- | --- | --- |
-| Project intent or governing behavior is missing, unclear, or changing | `spec-architect` | Owning pages, source evidence, and acceptance scenarios |
-| Specs are complete but lack current approval | `spec-readiness-review` | Human and judge evidence for the current spec digest |
-| Approved scenarios need executable work, or a ticket needs a new scope or prerequisites | `spec-implementation-planner` | Scoped tickets and a current plan manifest |
-| One ticket is ready and its dependencies are accepted | `spec-ticket-implementation` | Verified scoped change and current implementation evidence |
-| One or more tickets are implemented | `spec-implementation-review` | Independent acceptance or a precise finding routed to its owner |
+| Behavior or authority is unknown or changing | `spec-architect` | Governing section, open questions and testable outcomes |
+| A defined slice needs current approval | `spec-readiness-review` | Human approval and independent review of the slice digest |
+| An approved slice needs work organized or requeued | `spec-implementation-planner` | Bounded tickets with accepted prerequisites before execution |
+| One ticket is ready | `spec-ticket-implementation` | Scoped changes and verification at an exact revision |
+| Work is implemented | `spec-implementation-review` | Independent acceptance or an evidenced finding |
 
-1. Verify the spec digest, plan, and current ticket progress at the selected
-   stage. A work item without a progress record is planned. Resume from the
-   verified evidence in `plans/progress/<ticket-id>.json`.
-2. Route missing intent and contradictions to authoring, approval problems
-   to readiness, and ticket scope or dependency problems to planning. Route
-   code failures back to the ticket through an authorized requeue. Only
-   independent review accepts implementation.
-3. Stop affected downstream work on an unresolved blocker. Persist the
-   finding, evidence, owner, and next action in its owning record. Self-audit
-   the selected stage, source revision, dependencies, and unverified claims.
+Read the current ticket progress, when it exists, and use the planner's
+selected ticket check before acting on an approved handoff. A missing progress
+record means planned. When governing behavior changes, reapprove the affected slice. Requeue
+unfinished tickets that depend on it. If the work was already accepted,
+start a follow-up wave against the current code and keep the prior tickets
+and reviews as history. Keep independent work moving. Record a blocker near
+its cause with the next decision or action.
+
+Before handing off, verify authority, selected scope, dependency revisions and
+available proof. Name any uncertainty so the next agent can resume without
+assuming a decision was made.

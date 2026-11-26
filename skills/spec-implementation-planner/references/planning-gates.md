@@ -1,120 +1,100 @@
 # Ticket and progress format
 
-## Contents
-
-- [Plan definitions](#plan-definitions)
-- [Progress and acceptance](#progress-and-acceptance)
-
-## Plan definitions
-
-A wave directory such as `plans/wave_01_identity/` contains `plan.md` and a
-`tickets/` directory. Put the wave outcome, sequencing rationale, verification
-and any shared risks in its plan. The optional `plans/implementation-plan.md`
-can explain cross-wave decisions. The manifest hashes the bytes of these
-files and each ticket. Ticket paths determine wave membership. A ticket ID
-is unique across the plan.
-
-For example, `tickets/TICKET-001-create-user.md` could contain the following.
+Place a ticket in a wave directory, for example
+`plans/wave_01_identity/tickets/TICKET-001-create-user.md`. An optional
+`plan.md` in the wave can explain shared sequencing, proof or risk.
+Ticket IDs are unique across the project. Dependencies name earlier or
+same-wave tickets.
 
 ```markdown
 ---
 id: TICKET-001
+slice: create-user
 size: S
 depends_on: []
 write_scope: [src/identity, tests/identity]
-spec_refs: [identity.md#create-user]
-acceptance_ids: [AC-CREATE, AC-DUPLICATE]
 ---
 # Create a user
 
-Return the user from the public create operation. Reuse the approved User
-type and identity repository. Keep uniqueness in the existing transaction.
+Use the existing public handler and identity repository. Read the governing
+rules printed by the ticket checker.
 
-1. Read the transaction and error rules under the cited section. Verify
-   that generated User types match the contract with npm run contracts:check.
-2. Add public-handler tests for creation and duplicate email. Run
-   npm run test:identity and capture the failing assertions.
-3. Implement the operation in src/identity. The duplicate response must
-   preserve the original record and omit email from error logs.
-4. Run the same tests and the contract check. Record the revision, changed
-   files and passing evidence for both scenarios.
+1. Verify generated types with npm run contracts:check.
+2. Add public-handler tests for creation and duplicate email. Capture failing
+   behavior with npm run test:identity.
+3. Implement with the existing transaction. Rerun the tests and contract check
+   and record the proof for each scenario.
 ```
 
-Use simple YAML mappings and lists in frontmatter. Cite spec-root-relative
-Markdown paths with a stable heading or explicit anchor. `acceptance_ids`
-refers to scenarios in `specs/acceptance.yaml`. Use literal repository-relative
-files or directories for write scope. An evidence-only ticket may use `[]`.
-Include intended tests, generation outputs and docs in write scope. The ticket's
-progress file and independent review records are workflow bookkeeping.
+A ticket inherits the slice’s acceptance IDs. When splitting a slice, use
+`acceptance_ids: [CREATE, DUPLICATE]` to name the scenarios that ticket
+verifies. Include all affected tests, generated files and docs in
+`write_scope`. Use literal repository-relative files or directories.
+Evidence-only work can use `[]`.
 
-Size within the project. XS is a localized change with focused proof, S is a
-bounded component change, and M crosses related boundaries or needs integration
-and recovery verification. L and XL signal substantial coordination or several
-outcomes. Split separable work. For genuinely atomic work such as a migration,
-name the proof that blocks each later step. Keep sizes independent of deadlines.
+Estimate relative complexity and uncertainty. **XS** is localized with focused
+proof. **S** is bounded to a component. **M** crosses related boundaries or
+needs integration or recovery proof. **L** and **XL** signal substantial
+coordination or multiple outcomes. Split independent outcomes and document
+the sequencing proof for genuinely atomic work.
 
-## Progress and acceptance
-
-A missing `plans/progress/TICKET-001.json` means `planned`. Only the progress
-file records current state. Use the following command to obtain its two digests
-and check the ticket and its dependencies. The full command checks every ticket.
+## Record the current state
 
 ```sh
 node <planner>/scripts/check_plan.mjs <repo-root> --ticket TICKET-001
 ```
 
-Start a progress record with `state`, `spec_digest`, and `ticket_digest`.
-Copy the entire digests printed by the checker. For a ticket with prerequisites
-in `ready`, `in_progress`, `implemented` or `accepted`, copy each prerequisite's
-accepted `implementation.revision` into `dependency_revisions`, keyed by ticket
-ID. For example, `{"TICKET-001": "commit-abc"}`. A root ticket omits this
-field or uses an empty object. The following example shows
-the additional fields in an accepted record. Evidence references must lead
-the reviewer to the actual results for that revision.
+The selected check resolves the approval, acceptance IDs, governing sources
+and prerequisites. It prints the current `slice_digest` and `ticket_digest`.
+Running without `--ticket` checks open work and its prerequisites. Accepted
+and blocked tickets outside that scope stay available as history or parked
+work. Selecting an old ticket explicitly asks whether its evidence still
+applies to current inputs. Read the printed state. A passing check can
+describe a planned or blocked ticket. Start execution from a current ready
+record or resume an authorized claim.
+
+Write `plans/progress/<ticket-id>.json` when execution has something to track.
+
+| State | Meaning |
+| --- | --- |
+| Planned | The ticket exists and has no progress record. |
+| `ready` | The handoff was reviewed and its prerequisites are accepted. |
+| `in_progress` | The controller or project lock has granted a claim. Recheck after claiming. |
+| `blocked` | Record a `note` with the reason, work already done and next action. This state needs no digests. |
+| `implemented` | The scoped change and required checks have concrete proof. |
+| `accepted` | An independent reviewer verified that same implementation revision. |
+
+For `ready`, `in_progress`, `implemented` and `accepted`, record both
+printed digests. When there are prerequisites, pin their accepted
+`implementation.revision` values in `dependency_revisions`, keyed by ticket
+ID. For example, `{"TICKET-001": "commit-abc"}`.
 
 ```json
 {
   "state": "accepted",
-  "spec_digest": "sha256:<approved source digest>",
+  "slice_digest": "sha256:<approved slice digest>",
   "ticket_digest": "sha256:<ticket definition digest>",
   "implementation": {
     "by": "contributor-a",
-    "revision": "implementation-commit-or-immutable-snapshot",
+    "revision": "immutable-code-revision",
     "changed_files": ["src/identity/create.ts", "tests/identity/create.test.ts"],
-    "acceptance": {"AC-CREATE": "CI run 24, create", "AC-DUPLICATE": "CI run 24, duplicate"},
+    "acceptance": {"CREATE": "CI run 24, create", "DUPLICATE": "CI run 24, duplicate"},
     "verification": ["CI run 24, identity tests and contracts check"],
     "test_first_ref": "CI run 23, failing public-handler assertions"
   },
   "review": {
     "reviewer": "reviewer-b",
-    "revision": "implementation-commit-or-immutable-snapshot",
-    "evidence_ref": "plans/reviews/identity-review.md"
+    "revision": "immutable-code-revision",
+    "evidence_ref": "plans/reviews/TICKET-001.md"
   }
 }
 ```
 
-- The planner or controller marks a bounded ticket `ready` only after its
-  handoff is complete and all dependencies have current independent acceptance.
-  Claim it as `in_progress` before editing. Coordinate claims through one
-  controller or the project's existing locking mechanism. Check again after
-  claiming. Concurrent writers need disjoint scopes.
-- For `blocked`, `partial` or `skipped`, add a nonempty `note` naming the
-  reason, owner and resumption condition. A skipped ticket cannot satisfy a
-  dependency or be the only owner of an approved scenario.
-- The implementer records `implemented` with every field under `implementation`.
-  Each scenario needs a result, and verification references need actual
-  command outcomes. Evidence-only work with no changed files needs a progress
-  `note` explaining why and a `test_first_ref` citing prior proof or explaining
-  why a failing code test does not apply.
-- Independent review alone records `accepted`. Check reviewer identity,
-  reviewed revision, changed files, verification and affected consumers against
-  the real diff and results. The checker verifies record structure and
-  references between records. Reviewers evaluate the linked evidence.
-- On a finding or changed prerequisite, the planner/controller identifies
-  affected dependents, records a hold, then requeues bounded work as `ready`
-  once prerequisites pass. Retire stale implementation/review fields on requeue.
-  At requeue, pin the current accepted prerequisite revisions. Verify
-  integration against those revisions during the new execution. Obtain fresh
-  independent review before accepting the result. Preserve prior records in
-  version history. For changed definitions, review the impact before
-  regenerating the manifest or refreshing any progress digest.
+When a governing input or prerequisite changes, requeue affected unfinished
+work with current inputs. When a later decision or refinement changes accepted
+behavior, keep the finished wave and its progress as evidence of that revision.
+Plan a new wave with fresh IDs that describes the delta from the current
+implementation and tests the affected consumers. Cite the earlier revision as
+baseline when useful. Declare a ticket dependency only on evidence the new work
+still needs to be current. If a shared boundary changed, use the follow-up
+ticket for that boundary as the prerequisite for dependent follow-up work.

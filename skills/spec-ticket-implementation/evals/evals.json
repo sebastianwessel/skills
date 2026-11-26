@@ -22,7 +22,13 @@
     {
       "id": 4,
       "prompt": "The scoped change needs a new public error default that no approved rule defines.",
-      "expected_output": "Records a blocked or partial progress note with exact spec refs and routes the decision to spec-architect without inventing behavior.",
+      "expected_output": "Records a blocked note with the exact governing rule and missing decision. Routes it to spec-architect without inventing behavior.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "The old ticket for export permissions was accepted. We now have a new approved slice revision and a ready follow-up ticket to change the permission.",
+      "expected_output": "Executes only the selected follow-up against the current code, tests the changed policy and affected paths, and records new evidence without rewriting earlier acceptance.",
       "files": []
     }
   ]

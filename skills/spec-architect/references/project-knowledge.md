@@ -1,38 +1,52 @@
 # Organizing project knowledge
 
-## Start with one page
+Start at `specs/index.md`. A small project can keep its goals, design and flows
+there. Add topic pages when readers need separate starting points or subjects
+change independently. Group related variants by shared rules, boundaries or
+recovery behavior. Give material topics a direct path from the index or
+their section overview.
 
-Use `specs/index.md` as the front door. For a small feature, it can own the business goal, behavior and scenarios. Add a page when a subject has its own reader, owner or change cadence. Link it from the index or a section index. Keep a rule at one location. Other pages can link to its heading. Name the project entry point in the target repository’s agent guidance when onboarding the workflow.
-
-| Subject | Questions the owner answers |
+| Subject | Questions its page answers |
 | --- | --- |
-| Business or domain | Who needs the outcome? What rule, limit, measure or exclusion applies? Which source and owner authorize it? |
-| Solution and components | Where is the system boundary? Which component owns the contract, data and operational responsibility? What can other modules depend on? |
-| Flow and acceptance | How does each actor reach the behavior? What preconditions, state transitions, side effects, responses, failure handling and final states can they observe? |
-| Contracts and representations | Which schema or public export owns the shape? Which consumers reuse it? Where two shapes genuinely differ, define conversion, null/defaults, allowed loss/redaction, and proof. Record project-native generation, type checks and drift commands when applicable. |
+| Business or domain | Who needs the outcome? What policy, terms, measures and exclusions apply? What authorizes them? |
+| Solution design | How do actors, systems and boundaries fit together? What shared constraints shape the design? |
+| Components | Which service, module or package owns an interface, data or operational responsibility? What can consumers depend on? |
+| Flows | What starts the process? What happens on success and failure, including state, side effects, recovery and escalation? |
+| Contracts | Which schema owns the representation? Which consumers reuse it? What do null values, conversions, permitted loss and redaction mean? |
 
-Use stable, clear headings and relative inline Markdown links with explicit filenames. Create new indexes only when they improve discovery. Keep protected meeting records outside the canonical and publication trees. An agenda can include purpose, requested decisions, roles and pre-reads. Notes can capture actions and owners. Promote confirmed outcomes to their governing sources and cite permissioned evidence.
+Write each rule in one place. Link directly to its stable heading from
+affected flows and consumers. Use an explicit HTML anchor directly above a
+heading when a stable address matters. Use plain Markdown with relative
+inline links and optional renderer metadata. Use OKF metadata where a project
+exchanges OKF documents. Keep meeting notices and private notes optional and
+access-controlled. Transfer confirmed decisions into the governing source.
 
-## Record acceptance once
+## Define acceptance as behavior settles
 
-Place the normative scenario on its owning page. For example, an export flow can have a heading `## Access denied` and this rule: “When a reader requests another team’s export, return 403, leave the job queue unchanged, and log the denial without recording the export payload.” Cite the approved access policy on that page.
+Put the behavior and final outcome on its governing page. Add
+`specs/acceptance.yaml` when there is a testable scenario. A row contains one
+stable `id`, the exact section `source` (such as
+`flows/export.md#access-denied`), and a `verify` list of tests, commands or
+precise observations that distinguish an incorrect implementation. Tests may
+be planned. Cite the IDs in reviews and tickets. When one outcome can mature
+independently, give it its own section so it can be approved on its own.
 
-Give each observable scenario a stable ID and a proof in `specs/acceptance.yaml`. The source is a spec-root-relative Markdown filename and an exact heading fragment. Prefer simple, unique headings such as `## Access denied` (`#access-denied`). An explicit HTML anchor such as `<a id="access-denied"></a>` also works. Keep the ID when the page moves. List a project-native command, test reference, or precise inspection that will distinguish a pass from a failure. Verification may describe planned tests.
+## Record decisions and questions where they matter
 
-```yaml
-scenarios:
-  - id: EXPORT-DENIED
-    source: flows/export.md#access-denied
-    verify:
-      - "Exercise the cross-team export request and inspect the response, queue and redacted audit event."
-```
+Keep routine choices on the governing page. For a material business,
+technical or mixed choice, store an ADR in a nearby `decisions/` directory
+or in `specs/decisions/` for a shared decision. Explain the scope, options,
+choice, consequences and links to affected rules. Mark ADRs `proposed`,
+`accepted`, or `superseded` in frontmatter. An accepted ADR adds `evidence`
+for the attributable approval. A superseded ADR adds the spec-root-relative
+`replacement` path. Obtain business and technical authority where needed.
+Use an overview for discovery and link active governing sections directly to
+the accepted ADRs they rely on.
 
-Include success, material error and recovery outcomes. Scenarios can share a source heading when distinct branches and their final outcomes are clear there. Tickets and review evidence cite the scenario IDs. The source owns the behavior and the row owns its verification.
-
-## Record decisions and open questions
-
-Keep routine choices on the owning page. For a material choice, put an ADR beside the subject in a `decisions/` directory or in `specs/decisions/` for project-wide choices. Give the file a stable name. Its frontmatter records `owner` and `status` (`proposed`, `accepted`, `rejected`, or `superseded`). An accepted decision adds `evidence` pointing to the attributable, dated approval of its exact scope. For a superseded decision use `replacement` with the spec-root-relative path to its successor. Its body explains the options, decision, consequences and affected rule. Link the rule to the ADR. Obtain both business and technical authority where ownership crosses teams.
-
-Record a blocking question, contradiction or unknown failure path in a similarly scoped `gaps/` record with `owner` and `status: open`. Describe its impact, evidence, affected rule and next action. Resolving it updates the rule and adds `status: resolved` and `evidence`. Deferral requires `status: deferred`, evidence of an authorized exclusion, and a `revisit` trigger. Verify approved scenarios can operate independently. A proposed decision or open gap in the approval bundle blocks approval. Keep future exploration outside the bundle.
-
-Keep controls near the behavior they govern. Cite existing repository policies for private, reversible implementation choices. Escalate changes to public behavior, contractual rights, trust boundaries, irreversible data effects or business policy to their responsible authority.
+Keep a clear **Open question** beside the affected rule, naming the decision
+needed, its impact and the next action. Include a decision-maker when useful.
+Use a linked Markdown page in `gaps/` only when an investigation needs its
+own space. Close the question by updating the rule and removing the open
+note or record. Cite the decision on the rule if readers will need it. Git
+keeps the history. A deferred question stays visible with a revisit condition.
+Review whether the selected slice can proceed independently.

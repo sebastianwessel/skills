@@ -5,7 +5,7 @@ business rules, describe system boundaries and explain flows. An engineer
 debugging a repeat request and a product owner checking policy should be able to
 find the same rule. Follow those links before opening tickets or review history.
 
-![The project map links to business rules, solution design and processes. The owning page leads to decisions and gaps.](assets/project-knowledge.svg)
+![The project map links to business rules, solution design and processes. The governing page leads to decisions and open questions.](assets/project-knowledge.svg)
 
 [Full-size diagram](assets/project-knowledge.svg) · [Editable Draw.io source](assets/project-knowledge.drawio)
 
@@ -37,18 +37,31 @@ scenarios:
       - "Repeat the cancellation and verify that the reservation stays cancelled."
 ```
 
-Suppose the policy leaves the response to another member's request unspecified.
-Record the privacy question in a linked `gaps/` record, name the decision owner,
-and keep affected work blocked. The owner can settle the
-response and what may be disclosed. The author then updates the rule and
-adds the corresponding acceptance scenario. Readiness review checks these
-outcomes against the source and asks for approval of that revision.
+Keep independent behavior under a separate heading. Suppose the policy says
+nothing about cancellation by a support agent. Add that question under
+`## Support-assisted cancellation`, with the permission and privacy decision
+the team needs. The member’s own cancellation can proceed if the reviewer
+confirms it has no dependency on that decision.
 
-An implementation ticket cites the approved scenarios. During review, someone
-independent of the implementer follows the cancellation through the real entry
-point, checks the resulting state and examines the verification for each
-outcome. A passing test for the first request alone leaves the repeat
-scenario unverified.
+Ask for review of the `member-cancellation` slice. The reviewer names
+`AC-CANCEL` and `AC-CANCEL-REPEAT` in
+`reviews/readiness/member-cancellation.yaml` and checks the decision, affected
+contracts and failure paths. Once reviewed, approve the exact slice digest
+before making the ticket ready. The ticket inherits both scenarios. The
+implementer adds proof for each and a separate reviewer inspects the results
+at the implemented revision.
+
+As the support policy becomes clearer, revise that section in place. The member
+cancellation approval and its accepted ticket stay current. If a later policy
+change alters a rule both paths depend on, review the slices that cite that rule
+and revisit affected unfinished tickets. For work already accepted, plan a
+follow-up wave that verifies the changed behavior against the current code.
+Leave the original wave as evidence of what was accepted then. A wording
+fix inside a bound section also changes its digest. Git preserves the earlier
+sources and evidence. If readers need to know what is deployed, link to
+release or implementation evidence for the exact revision. Keep that delivery
+information outside the governing section so recording a release leaves the
+slice approval current.
 
 ## Organize around ownership
 
@@ -63,17 +76,21 @@ Use a single topic page when it answers the question. Split it when the
 ownership, recovery behavior or outcome diverges. Group comparable variants
 under stable headings. Link directly to the governing rule and interface.
 When wording changes, edit its owner and inspect the links, scenarios and
-diagrams whose meaning could change. Review and human approval cover the
-whole spec revision, including editorial changes.
+diagrams whose meaning could change. Review covers the selected outcome and any sources it depends on.
 
 ## Decisions, gaps and meetings
 
-Use an architectural decision record (ADR) when people need to understand
-why a choice was made. Put it beside its owner, record its scope, options,
-consequences and approval evidence, and apply the chosen behavior to the
-governing page. Link to an overview when several records need a common entry
-point. For an open gap, give the affected scope, decision owner and next
-action. When it closes, link the resolved rule and how it will be verified.
+Use an architectural decision record (ADR) to explain a material business,
+technical or mixed choice. Put it near the affected subject. Keep a short
+overview when people need to find several decisions. Record the options,
+chosen outcome, consequences and approval evidence. An ADR can be
+`proposed`, `accepted` or `superseded`. Apply an accepted choice to the
+governing rule.
+
+Put open questions next to the affected rule. Name the missing decision, what
+depends on it and how to move it forward. Add a decision-maker when that helps.
+Use a separate linked page for a larger investigation. Once the team decides,
+update the rule and remove the open question. Git records the change.
 
 Record applicable failure paths through their final outcomes. For a retriable
 operation, cover duplicate protection, retry limits, escalation and the last
@@ -84,6 +101,19 @@ access-controlled workspace. Record purpose, date and time zone, decisions
 sought and next actions as appropriate. Transfer decisions into the owning
 rule after confirming authority. If your project exchanges knowledge via OKF,
 use its metadata conventions on the relevant Markdown pages. [OKF specification](https://github.com/open-knowledge-format/open-knowledge-format/blob/527e81aff55992be21507e97004286789126f88c/SPEC.md)
+
+## Files a small project needs
+
+| When | Files |
+| --- | --- |
+| Explore an idea | `specs/index.md` |
+| Define testable behavior | Add `specs/acceptance.yaml` |
+| Approve a slice | Add `reviews/readiness/<slice-id>.yaml` and link the existing review and approval evidence |
+| Plan and implement it | Add the ticket and, when ready, its progress JSON |
+
+Ordinary Markdown pages need no frontmatter. Add metadata if a renderer or
+an integration needs it. The slice records live outside the published spec
+tree.
 
 ## Draw and publish
 

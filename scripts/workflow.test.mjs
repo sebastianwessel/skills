@@ -23,13 +23,13 @@ function passes(...args) {
 }
 
 test("standalone packages agree on the canonical YAML and anchors", () => {
-  for (const filename of ["simple-yaml.mjs", "markdown.mjs"]) {
+  for (const filename of ["simple-yaml.mjs", "markdown.mjs", "slice.mjs"]) {
     assert.deepEqual(fs.readFileSync(path.join(readiness, "lib", filename)),
       fs.readFileSync(path.join(planning, "lib", filename)), filename);
   }
 });
 
-test("source approval through two ordered ticket handoffs", (context) => {
+test("living specs through two approved ticket handoffs and a later refinement", (context) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "skills-workflow-"));
   context.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const specs = path.join(root, "specs");
@@ -51,6 +51,10 @@ Only an active member can create a reservation.
 ## Refusal
 
 For an inactive member, refuse the request and leave the reservation list unchanged.
+
+## Expiry
+
+**Open question.** How long should a reservation last?
 `);
   write("specs/acceptance.yaml", `scenarios:
   - id: HOLD-ELIGIBLE
@@ -61,54 +65,51 @@ For an inactive member, refuse the request and leave the reservation list unchan
     verify: [Refusal test leaves the reservation list unchanged]
 `);
   passes(specCheck, specs);
-  assert.equal(node(specCheck, specs, "--approved").status, 1, "draft cannot authorize planning");
-  passes(path.join(readiness, "generate_spec_manifest.mjs"), specs, "fixture-source");
-  const manifest = fs.readFileSync(path.join(specs, "spec-manifest.yaml"), "utf8");
-  const specDigest = manifest.match(/^content_digest: (sha256:[a-f0-9]{64})$/m)?.[1];
-  assert.ok(specDigest, manifest);
-  write("reviews/approval.md", `Product owner approves the whole bundle at ${specDigest}.\n`);
-  write("reviews/spec-review.md", `The reviewer walked both reservation scenarios at ${specDigest}.\n`);
-  write("specs/.readiness-report.yaml", `status: approved
-approval_evidence:
-  scope: whole_bundle
-  approver_id: library-product
-  approved_at: "2026-11-26T09:20:00Z"
-  approval_ref: reviews/approval.md
-  manifest_digest: ${specDigest}
-semantic_judge_evidence:
-  status: passed
-  judge: library-review
-  reviewed_at: "2026-11-26T09:10:00Z"
-  evidence_ref: reviews/spec-review.md
-  manifest_digest: ${specDigest}
+  const sliceDigests = new Map();
+  function approve(slice, scenario) {
+    const file = `reviews/readiness/${slice}.yaml`;
+    const selection = `scenarios: [${scenario}]\n`;
+    write(file, selection);
+    assert.equal(node(specCheck, specs, "--approved", slice).status, 1, "a named draft cannot authorize work");
+    const output = passes(specCheck, specs, "--digest", slice);
+    const digest = output.match(/^slice_digest: (sha256:[a-f0-9]{64})$/m)?.[1];
+    assert.ok(digest, output);
+    sliceDigests.set(slice, digest);
+    write(`reviews/${slice}-approval.md`, `Product owner approved ${scenario} at ${digest}.\n`);
+    write(`reviews/${slice}-review.md`, `The reviewer walked ${scenario} at ${digest}.\n`);
+    write(file, selection + `digest: ${digest}
+approved_by: library-product
+approval_ref: reviews/${slice}-approval.md
+reviewed_by: library-review
+review_ref: reviews/${slice}-review.md
 `);
-  passes(specCheck, specs, "--approved");
+    passes(specCheck, specs, "--approved", slice);
+  }
+  approve("eligibility", "HOLD-ELIGIBLE");
+  approve("refusal", "HOLD-REFUSED");
 
   const wave = "plans/wave_01_reservations";
   write(wave + "/plan.md", "# Reservations\n\nProve eligibility before enforcing it in the reservation operation.\n");
-  function ticket(id, scope, dependency, scenario, heading) {
+  function ticket(id, scope, dependency, scenario, heading, directory = wave) {
     const definition = `---
 id: ${id}
+slice: ${heading}
 size: S
 depends_on: [${dependency}]
 write_scope: [${scope}]
-spec_refs: ["reservations.md#${heading}"]
-acceptance_ids: [${scenario}]
 ---
 # ${id}
 
 Add the focused test for ${scenario} before implementing the approved rule.
 `;
-    write(`${wave}/tickets/${id}-reservations.md`, definition);
+    write(`${directory}/tickets/${id}-reservations.md`, definition);
     return "sha256:" + crypto.createHash("sha256").update(definition).digest("hex");
   }
   const eligibility = ticket("TICKET-001", "membership", "", "HOLD-ELIGIBLE", "eligibility");
   const refusal = ticket("TICKET-002", "reservations", "TICKET-001", "HOLD-REFUSED", "refusal");
-  passes(path.join(planning, "generate_plan_manifest.mjs"), root);
-  const planPath = path.join(root, "plans/plan-manifest.yaml");
-  const planBytes = fs.readFileSync(planPath);
   const progress = (id, digest, fields) => write(`plans/progress/${id}.json`, {
-    spec_digest: specDigest, ticket_digest: digest, ...fields,
+    slice_digest: sliceDigests.get(id === "TICKET-001" ? "eligibility" : "refusal"),
+    ticket_digest: digest, ...fields,
   });
   const runTicket = (id) => node(planCheck, root, "--ticket", id);
   passes(planCheck, root);
@@ -171,7 +172,7 @@ assert.equal(eligible({ status: "inactive" }), false);
   passes(planCheck, root);
   progress("TICKET-002", refusal, { state: "in_progress", ...dependencies });
   passes(planCheck, root);
-  verifyAndAccept({
+  const initialRefusal = verifyAndAccept({
     id: "TICKET-002", digest: refusal, directory: "reservations", specCase: "HOLD-REFUSED",
     moduleName: "creation",
     baseline: 'export const reserve = (member, holds, id) => [...holds, id];\n',
@@ -189,10 +190,50 @@ assert.deepEqual(existing, ["r1"]);
 `,
     dependencies,
   });
-  assert.deepEqual(fs.readFileSync(planPath), planBytes, "progress and reviews must leave the manifest unchanged");
+  const liveSource = path.join(specs, "reservations.md");
+  const before = fs.readFileSync(liveSource, "utf8");
+  const unaffectedProgress = path.join(root, "plans/progress/TICKET-001.json");
+  const accepted = fs.readFileSync(unaffectedProgress);
+  const historicalProgress = path.join(root, "plans/progress/TICKET-002.json");
+  const historicalAcceptance = fs.readFileSync(historicalProgress);
+  fs.writeFileSync(liveSource, before.replace("How long should a reservation last?", "Should expiry differ by membership type?"));
+  passes(planCheck, root);
+  fs.writeFileSync(liveSource, before.replace("refuse the request", "refuse the request with a membership notice"));
+  assert.match(passes(planCheck, root, "--ticket", "TICKET-001"), /accepted/);
+  assert.match(runTicket("TICKET-002").output, /refusal: stale or missing slice approval/);
+  const rowFile = path.join(specs, "acceptance.yaml");
+  fs.writeFileSync(rowFile, fs.readFileSync(rowFile, "utf8").replace(
+    "Refusal test leaves the reservation list unchanged",
+    "Refusal test leaves the reservation list unchanged and checks the membership notice"));
+  approve("refusal", "HOLD-REFUSED");
+  assert.match(runTicket("TICKET-002").output, /TICKET-002: stale progress/);
+  assert.match(passes(planCheck, root), /no open tickets/);
+  const followUp = ticket("TICKET-003", "reservations", "TICKET-001", "HOLD-REFUSED", "refusal",
+    "plans/wave_02_refusal_notice");
+  progress("TICKET-003", followUp, { state: "ready", ...dependencies });
+  passes(planCheck, root);
+  progress("TICKET-003", followUp, { state: "in_progress", ...dependencies });
+  passes(planCheck, root, "--ticket", "TICKET-003");
+  const baseline = fs.readFileSync(path.join(root, "reservations/creation.mjs"), "utf8");
+  const updatedRefusal = verifyAndAccept({
+    id: "TICKET-003", digest: followUp, directory: "reservations", specCase: "HOLD-REFUSED",
+    moduleName: "creation",
+    baseline,
+    change: baseline + 'export const refusalNotice = (member) => eligible(member) ? null : "Active membership required";\n',
+    assertions: `
+import assert from "node:assert/strict";
+import * as reservations from "./creation.mjs";
+const member = { status: "inactive" };
+const existing = ["r1"];
+assert.equal(reservations.reserve(member, existing, "r2"), existing);
+assert.equal(reservations.refusalNotice?.(member), "Active membership required");
+assert.equal(reservations.refusalNotice?.({ status: "active" }), null);
+`,
+    dependencies,
+  });
+  assert.notEqual(updatedRefusal, initialRefusal);
+  assert.match(passes(planCheck, root), /no open tickets/);
+  assert.deepEqual(fs.readFileSync(unaffectedProgress), accepted);
+  assert.deepEqual(fs.readFileSync(historicalProgress), historicalAcceptance);
 
-  fs.appendFileSync(path.join(specs, "reservations.md"), "\nThe requested function changed after approval.\n");
-  const stale = node(specCheck, specs, "--approved");
-  assert.equal(stale.status, 1);
-  assert.match(stale.output, /no longer matches/);
 });

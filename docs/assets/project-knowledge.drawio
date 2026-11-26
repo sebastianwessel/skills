@@ -73,7 +73,7 @@
         <mxCell id="gaps-title" value="Gaps" style="fontFamily=Arial;verticalAlign=middle;html=0;text;strokeColor=none;fillColor=none;align=left;spacing=0;fontColor=#102b3f;fontSize=18;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="412" y="384" width="289" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="gaps-detail" value="Unresolved scope, owner and next action" style="fontFamily=Arial;verticalAlign=middle;html=0;text;strokeColor=none;fillColor=none;align=left;spacing=0;fontColor=#405c70;fontSize=14;fontStyle=0;" vertex="1" parent="1">
+        <mxCell id="gaps-detail" value="Unresolved scope, impact and next action" style="fontFamily=Arial;verticalAlign=middle;html=0;text;strokeColor=none;fillColor=none;align=left;spacing=0;fontColor=#405c70;fontSize=14;fontStyle=0;" vertex="1" parent="1">
           <mxGeometry x="412" y="415" width="289" height="24" as="geometry" />
         </mxCell>
       </root>

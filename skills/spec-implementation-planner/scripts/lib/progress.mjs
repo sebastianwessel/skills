@@ -23,7 +23,7 @@ export function scopePolicy(root) {
   function check(file, id) {
     insist(safePath(file) && !/[*?\[\]]/.test(file), `${id}: expected literal repository-relative path: ${file}`);
     const segments = file.split("/");
-    insist(![".git", "plans", "specs"].includes(key(segments[0])), `${id}: workflow or Git metadata in write path: ${file}`);
+    insist(![".git", "plans", "reviews", "specs"].includes(key(segments[0])), `${id}: workflow or Git metadata in write path: ${file}`);
     let target = root;
     for (const [index, segment] of segments.entries()) {
       target = path.join(target, segment);
@@ -41,14 +41,16 @@ export function scopePolicy(root) {
   return { check, contains };
 }
 
-const states = new Set(["ready", "in_progress", "blocked", "partial", "implemented", "accepted", "skipped"]);
-const requireAcceptedDeps = new Set(["ready", "in_progress", "implemented", "accepted"]);
+const states = new Set(["ready", "in_progress", "blocked", "implemented", "accepted"]);
 
-function validateRecord(ticket, record, specDigest, paths) {
+function validateRecord(ticket, record, paths) {
   const { id } = ticket;
   insist(isObject(record) && states.has(record.state), `${id}: invalid progress state`);
-  insist(record.spec_digest === specDigest && record.ticket_digest === ticket.digest, `${id}: stale progress; inspect affected work before recording fresh evidence`);
-  if (["blocked", "partial", "skipped"].includes(record.state)) insist(isText(record.note), `${id}: ${record.state} needs a note`);
+  if (record.state === "blocked") {
+    insist(isText(record.note), `${id}: blocked needs a note`);
+    return;
+  }
+  insist(record.slice_digest === ticket.sliceDigest && record.ticket_digest === ticket.digest, `${id}: stale progress; inspect affected work before recording fresh evidence`);
   if (record.state !== "implemented" && record.state !== "accepted") return;
   const implementation = record.implementation;
   insist(isObject(implementation) && isText(implementation.revision) && isText(implementation.by), `${id}: implementation needs by and revision`);
@@ -72,16 +74,7 @@ function validateRecord(ticket, record, specDigest, paths) {
   }
 }
 
-export function validateProgress(root, tickets, specDigest, selected, paths) {
-  const scope = new Set();
-  function include(id) {
-    if (scope.has(id)) return;
-    scope.add(id);
-    for (const dependency of tickets.get(id).depends_on) include(dependency);
-  }
-  if (selected) include(selected);
-  else for (const id of tickets.keys()) include(id);
-
+export function readProgress(root, tickets) {
   const records = new Map();
   const dir = path.join(root, "plans", "progress");
   if (fs.existsSync(dir)) {
@@ -93,13 +86,19 @@ export function validateProgress(root, tickets, specDigest, selected, paths) {
       try { record = JSON.parse(fs.readFileSync(path.join(dir, entry.name), "utf8")); }
       catch { throw new Error(`${entry.name}: invalid progress JSON; cannot establish active writes`); }
       records.set(id, record);
-      if (scope.has(id)) validateRecord(tickets.get(id), record, specDigest, paths);
     }
   }
+  return records;
+}
+
+export function validateProgress(tickets, records, scope, paths) {
   for (const id of scope) {
-    if (!requireAcceptedDeps.has(records.get(id)?.state)) continue;
-    const dependencies = tickets.get(id).depends_on;
+    if (records.has(id)) validateRecord(tickets.get(id), records.get(id), paths);
+  }
+  for (const id of scope) {
     const record = records.get(id);
+    if (!record || record.state === "blocked") continue;
+    const dependencies = tickets.get(id).depends_on;
     for (const dependency of dependencies) {
       insist(records.get(dependency)?.state === "accepted", `${id}: dependency ${dependency} must be accepted`);
     }
@@ -120,5 +119,4 @@ export function validateProgress(root, tickets, specDigest, selected, paths) {
       insist(!overlaps, `${first.id} and ${other.id} have overlapping in_progress write scopes`);
     }
   }
-  return records;
 }

@@ -1,16 +1,31 @@
 ---
 name: spec-architect
-description: Writes and revises project specs. Use when defining a business rule, system behavior, component boundary, failure path, decision, or acceptance scenario, or repairing a finding in a spec.
+description: Writes and refines living project specs. Use when exploring business intent, defining behavior or failure paths, recording decisions, or resolving an open question.
 ---
 
 # Spec Architect
 
-Give the implementing team an answer to three questions. Who needs this outcome? What happens on success and failure? How will someone verify it?
+Start at `specs/index.md`. A project can begin with one page and an idea. Refine
+one behavior at a time while other work proceeds.
 
-1. **Find the owner.** Start at `specs/index.md`. Read the request, the governing policy or approved decision, and affected contracts or code. Cite the source. Distinguish the observed implementation and revision from the intended behavior. Surface conflicts to the accountable business or technical owner.
-2. **Write the smallest complete change.** Put the rule and its acceptance behavior once on the owning page. A small change can fit entirely on the index. For a new project, cover business goals and rules, solution boundaries, and the flows connecting them. Follow the [project knowledge guide](references/project-knowledge.md) for ownership, decisions, gaps, and acceptance records.
-3. **Walk the change.** Start at a real user, API, worker, or operator entrypoint. Follow permissions, state and data effects, failures, recovery and the terminal result. For each material boundary identify its contract, existing implementation or generator, consumers, and verification. Define applicable privacy, security, integrity, performance, operations, rollback and supply-chain requirements. Cite the reason for a material exclusion.
-4. **Reconcile affected sources.** Add or update the relevant rows in `specs/acceptance.yaml`. Follow inbound links and check changed claims. Use the [diagrams and publishing guide](references/diagram-and-publishing.md) for a material visual or publication request. For a wording fix, preserve stable scenario IDs and links.
-5. **Verify and hand off.** Walk each changed scenario from source to expected proof. Run available contract or schema validators and the draft structure check from `spec-readiness-review`. When revising an approved source, return the readiness report to draft before handing off. Identify what changed, any missing evidence, and each owned gap. Readiness review owns independent review and approval.
-
-Stop on the affected decision when authority, a material outcome, or recovery is unknown. Record the question and continue independent work. Before handing off, distinguish verified requirements from assumptions, reconcile contradictory sources, and test that a reader can find the rule, failure outcome, decision and proof from the index.
+1. **Find the governing source.** Read the request, policy, approved decisions,
+   affected contracts, and relevant code. Distinguish observed implementation
+   from intended behavior. Escalate conflicting authority instead of guessing.
+2. **Edit the home of the rule.** Use the [project knowledge guide](references/project-knowledge.md)
+   to organize business rules, solution design, components, and flows. Link
+   directly to governing sections. Keep an open question next to the affected
+   rule, with the decision needed and the behavior it blocks.
+3. **Trace the behavior.** Walk the real entry point through permissions, state
+   and data effects, errors, recovery and the final outcome. Define applicable
+   privacy, redaction, integrity, no-loss and no-leak behavior, performance,
+   operations, release/rollback and supply-chain controls. Cite existing
+   policies when they govern this scope.
+4. **Define the proof.** Add or refine the affected `specs/acceptance.yaml` rows
+   once the outcomes are testable. Keep IDs stable. Reconcile affected
+   consumers, contracts, decisions, links and [diagrams](references/diagram-and-publishing.md).
+   Use project-native validators and the readiness skill's draft checker when
+   relevant to the edit.
+5. **Hand off the affected slices.** Identify changed governing sections and
+   approvals that need review. Preserve independent approvals and evidence.
+   Self-audit the authority, scenario coverage and competing claims. Leave
+   unresolved behavior visible and route just that work to its decision-maker.

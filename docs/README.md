@@ -29,5 +29,6 @@ npx skills add sebastianwessel/skills
 
 Open the project map at `specs/index.md` and follow the rule into its
 acceptance scenarios. When you agree on what happens, ask for a readiness
-review. The reviewer will identify the exact revision that needs your approval.
+review of that outcome. The reviewer will identify the slice and its governing
+sources for your approval.
 [Follow the cancellation example](project-knowledge.md#cancelling-a-reservation)

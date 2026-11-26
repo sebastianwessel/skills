@@ -4,7 +4,7 @@
     {
       "id": "small-change",
       "prompt": "Plan the approved one-field display fix. The source has normal and missing-value scenarios.",
-      "expected_output": "Writes one wave and one relatively sized ticket if the change is independently verifiable. Assigns both scenarios and scopes edits and test-first verification. Runs the approved-source and plan gates."
+      "expected_output": "Writes one relatively sized ticket if independently verifiable. Inherits the slice scenarios and scopes edits and test-first verification. Checks approval and selected ticket without generating a manifest."
     },
     {
       "id": "unapproved",
@@ -23,8 +23,8 @@
     },
     {
       "id": "scope-change",
-      "prompt": "A planned fix now changes a stored record and the rollback path. The old ticket has already passed review.",
-      "expected_output": "Routes undefined migration and recovery behavior to the spec owner. After approval, identifies dependent work, creates or revises the bounded plan and requires fresh evidence for affected tickets."
+      "prompt": "The first wave passed review. An approved follow-up requirement now changes a stored record and rollback path.",
+      "expected_output": "Creates a new wave with fresh IDs and scopes the delta from the accepted implementation. Verifies the new rollback requirements and consumers and preserves earlier evidence."
     },
     {
       "id": "near-miss",

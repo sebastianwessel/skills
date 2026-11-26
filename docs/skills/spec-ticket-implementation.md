@@ -1,7 +1,7 @@
 # Spec Ticket Implementation
 
 Use this skill to implement one ready ticket. Give the agent the ticket ID or
-its path. It checks the approved spec, ticket digest, progress and accepted
+its path. It checks the approved slice, ticket digest, progress and accepted
 dependencies before editing production files.
 
 ## Installation
@@ -15,7 +15,7 @@ npx skills add sebastianwessel/skills
 > Implement the ready cancellation ticket. Follow the referenced spec and
 > show which evidence verifies the first and repeated requests.
 
-The implementer starts with the ticket's acceptance scenarios and writes the
+The implementer reads the governing sections from the ticket check and starts with its acceptance scenarios and writes the
 corresponding tests before the behavior. When a contract generates types or
 clients, it follows the project's generation process. It edits the declared
 write scope, including product documentation when that is a ticket deliverable.

@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "The project has complete rules and acceptance scenarios but the spec digest changed after human approval. Can we start coding?",
-      "expected_output": "Routes to spec-readiness-review and blocks affected planning and execution until the current digest has human and semantic evidence.",
+      "prompt": "An edit changed the retry rule for one approved slice. A second slice references a different heading on the same page. Can we keep working?",
+      "expected_output": "Routes the retry slice to readiness review and pauses only its dependent work. Checks the other slice's actual sources and keeps its work available if unaffected.",
       "files": []
     },
     {
@@ -22,7 +22,13 @@
     {
       "id": 4,
       "prompt": "One dependency was accepted and unrelated work is in progress. Resume the requested ready ticket.",
-      "expected_output": "Checks the current spec, plan, selected progress, dependency acceptance, and overlapping writes. Loads only the selected implementation skill and records any blocker.",
+      "expected_output": "Checks the selected slice, progress, dependency acceptance and overlapping active writes. Loads the relevant implementation skill and records any blocker.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Last month we accepted the reporting wave. A new retention decision changes its behavior, and unrelated exports are in progress. How do we proceed?",
+      "expected_output": "Refines the owning rule, gets approval for the changed slice and plans a follow-up wave with new IDs against the implemented baseline. Preserves historical acceptance and verifies independent work can continue.",
       "files": []
     }
   ]

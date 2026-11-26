@@ -31,12 +31,11 @@ compromise reading. A simple table can be enough for a short mapping.
 4. Open the actual export at normal documentation width and narrow width.
    Inspect contrast, type size, truncation, alignment, spacing, connector
    crossings, reading order and usable zoom. Reconcile material nodes, edges,
-   branches, and outcomes with exact canonical refs. Record owner, reviewed refs,
-   review result, and rendered evidence in the approval review.
+   branches, and outcomes with exact canonical refs. Record reviewed refs, the review result,
+   and rendered evidence for the slice that uses the diagram.
 5. Update the owning text, diagram source and export together when semantics
-   change. Re-export after a source change. The spec digest includes the assets
-   and index pages. It detects content changes. Readiness review assesses
-   visual fidelity, accessibility and correctness.
+   change. Re-export after a source change. The slice digest includes linked diagram files. Readiness review assesses
+   whether the depiction is accurate, readable and accessible.
 
 ## Publish only reviewed content
 

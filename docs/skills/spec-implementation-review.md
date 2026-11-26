@@ -20,7 +20,7 @@ The reviewer traces each affected path from input through the observable
 result. This includes applicable denial, retry, data integrity, redaction,
 recovery and rollback behavior. For a public interface change, it also checks
 the consumers and user-facing documents affected by that change. It compares
-the diff and project verification with the approved scenarios.
+the diff and project verification with the scenarios approved for that slice.
 
 ## Read the decision
 

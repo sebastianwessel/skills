@@ -1,48 +1,66 @@
-# Records and commands
+# Slice records and commands
 
-## What goes in the bundle
-
-The smallest source set has `specs/index.md` and `specs/acceptance.yaml`. The index can own all behavior. Grow topic pages, contracts, scoped `decisions/` or `gaps/` records, and editable diagrams with exports as the project requires them. Link canonical Markdown pages through ordinary inline relative file links from the index or another reachable page. A relative link should resolve inside the bundle. Give diagrams useful alt text and link their editable sources. A diagram export under `visuals/` needs a same-stem `.drawio` file. Keep raw meetings, generated sites and review evidence outside the bundle.
+A living spec starts with `specs/index.md`. Add `specs/acceptance.yaml` when
+the first behavior has verifiable outcomes. Define behavior on the cited page
+and use stable IDs to name the proof.
 
 ```yaml
 scenarios:
   - id: EXPORT-DENIED
     source: flows/export.md#access-denied
-    verify: ["Assert HTTP 403, no queued job and a redacted audit event for a cross-team request."]
+    verify: ["Assert HTTP 403, no queued job and a redacted audit event."]
 ```
 
-A scenario ID is unique and begins with a letter. The source fragment must resolve to a unique Markdown heading or explicit HTML anchor. Use short headings such as `## Access denied` or an explicit `<a id="access-denied"></a>` for a stable target across renderers. Contract semantics, scope and expected results belong to the linked source. The verifier inspects the meaning and adequacy of each proof.
+Use spec-root-relative paths and unique ATX headings or explicit HTML anchors
+such as `<a id="access-denied"></a>` directly above a heading. Use inline
+Markdown links and simple YAML mappings, sequences and scalars.
 
-## Draft, review and approval
+## Bind one outcome
 
-Run these commands using the installed readiness skill root. The draft check validates the source graph and acceptance rows even before a report exists. An existing report must use one of `draft`, `blocked`, `needs_human_review`, or `approved`. An approved report gets the full checks in either mode.
-
-```text
-node <skill-root>/scripts/check_specs.mjs <spec-root>
-node <skill-root>/scripts/generate_spec_manifest.mjs <spec-root> <source-revision>
-node <skill-root>/scripts/check_specs.mjs <spec-root> --approved
-```
-
-The manifest records the inspected source revision, sorted paths and byte digests of every regular file. Its content digest binds the whole tree, excluding `spec-manifest.yaml` itself and `.readiness-report.yaml`. Use a revision identifying the inspected source, such as a commit ID. Regenerate after changes. A draft can proceed to independent review once the source checks pass.
-
-Keep review evidence outside the hashed source set. Evidence references can be durable review URLs or repository-relative paths to evidence files. For local proof, use a path relative to the directory containing the spec root, for example `reviews/spec.md`. The checker verifies local file presence. The reviewer opens the evidence and confirms authorship, independence, authorized scope, and explicit assent to the exact digest. Record the digest in each proof for attribution. A whole-bundle decision covers every row in acceptance.yaml.
+Create `reviews/readiness/export-access.yaml` beside the project spec tree.
+Start with the scenario list and any explicit dependencies. Add the remaining
+fields only after obtaining the review and approval.
 
 ```yaml
-status: approved
-approval_evidence:
-  scope: whole_bundle
-  approver_id: product-owner
-  approved_at: "2026-08-15T12:05:00Z"
-  approval_ref: reviews/human-decision.md
-  manifest_digest: sha256:<digest>
-semantic_judge_evidence:
-  status: passed
-  judge: architecture-reviewer
-  reviewed_at: "2026-08-15T12:04:00Z"
-  evidence_ref: reviews/spec-review.md
-  manifest_digest: sha256:<same-digest>
+scenarios: [EXPORT-DENIED]
+sources: ["architecture/identity.md#team-identity", contracts/export.schema.json]
+digest: sha256:<current-slice-digest>
+approved_by: product-lead
+approval_ref: https://example.org/project/pull/27#issuecomment-42
+reviewed_by: independent-reviewer
+review_ref: reviews/export-access.md
 ```
 
-A passing command verifies structure and freshness. For semantic approval, the reviewer must also establish that the specifications cover the intended behavior and the evidence warrants approval. A subset approval requires a separately scoped candidate before planning.
+The digest includes the selected acceptance rows and their source sections,
+plus `sources` when present. From those Markdown sections the checker follows
+relative links to exact headings, decisions, open question records and
+non-Markdown artifacts, recursively. ADR backlinks describe affected areas
+and leave those areas outside the scope. Add dependencies introduced by an
+ADR explicitly. Ordinary whole-page Markdown links serve navigation. Put a governing whole page or an indirect contract in
+`sources` if the behavior needs it. Whole-file refs bind the whole file.
+Use the printed source list to catch missed indirect dependencies, such as
+external policies or schema imports. For external authority, cite the stable
+version in a bound section, verify it in review and record the evidence.
 
-The included reader handles ordinary indented YAML mappings and sequences, quoted or plain scalars and inline lists. Use spaces for indentation and quote strings containing punctuation that YAML treats specially. For platform-specific contracts such as OpenAPI, use the platform parser and validator.
+An open question record or an unaccepted ADR linked in scope blocks the
+slice. A reviewer also checks inline questions, implied dependencies and
+whether the selected scenarios form a coherent outcome. Decide what can be
+delivered independently before approval.
+
+```sh
+node <readiness>/scripts/check_specs.mjs <spec-root>
+node <readiness>/scripts/check_specs.mjs <spec-root> --digest export-access
+node <readiness>/scripts/check_specs.mjs <spec-root> --approved export-access
+```
+
+The first command is a tree-wide structure check for authors and CI. Run
+project-native validators for contract and schema semantics. The scoped
+commands inspect the selected inputs. The review and human decision must
+explicitly cover the printed digest. Reference a durable HTTPS review URL
+or a repository-relative evidence file outside `specs/`. The checker verifies
+local file existence. The reviewer verifies the actual evidence and
+independence. Review a changed digest before renewing the record. Git carries
+prior approval and review history. Use a stable anchor for each independently
+changing outcome. The digest treats CRLF and LF alike for Markdown and ticket
+text and common UTF-8 contract and diagram formats. Other assets bind their
+bytes.

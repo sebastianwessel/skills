@@ -17,7 +17,7 @@ npx skills add sebastianwessel/skills
 Start in the project workspace. The coordinator reads the spec and approval,
 then the relevant ticket, progress record and review evidence. An implemented
 ticket with fresh verification goes to independent review. If its governing
-rule changed after approval, the spec needs review again first.
+rule changed after approval, that slice needs fresh approval before affected work resumes. Other slices can keep moving.
 
 ## Follow the handoff
 
