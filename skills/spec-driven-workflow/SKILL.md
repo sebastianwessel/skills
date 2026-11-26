@@ -17,8 +17,9 @@ Use the smallest coherent outcome the user asked for.
 2. **Use established decisions.** Check the conversation, governing sources
    and existing review before asking. Apply repository conventions to
    delegated implementation details. When a material decision or required
-   approval is missing, ask about the behavior and its impact in plain
-   language. Prepare what you can and keep independent work moving.
+   approval is missing, prepare what you can and keep independent work
+   moving. Present the decision once at the checkpoint, in plain language
+   about the affected behavior and its impact.
 3. **Arrange independent review.** If available, delegate required independent
    review to a fresh reviewer with the exact scope, sources and evidence.
    Verify the result. Otherwise use existing independent evidence or report
