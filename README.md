@@ -10,27 +10,22 @@ verification are clear.
 In the project where you want to use the skills, run:
 
 ```bash
-npx skills add sebastianwessel/skills
+npx skills add sebastianwessel/skills --skill spec-driven-workflow
 ```
 
-Select the six `spec-*` skills for the development workflow. The seventh,
-`agent-skill-architect`, is for people who build reusable skills.
+After setup, describe the outcome you want. The agent handles the workflow
+stages and asks you for material decisions or approvals when needed.
 
 ## Try it in your project
 
-Give your agent a business rule and its source. For example:
+> Our support policy says a member can cancel their own confirmed
+> reservation. Repeating a cancellation leaves it cancelled. Implement that
+> behavior and show me what you verified.
 
-> Our approved support policy says a member can cancel their own confirmed
-> reservation. Repeating a cancellation leaves it cancelled. Use Spec Architect
-> to document this flow. Flag any decisions the policy leaves open.
+To get a draft or review, ask for that directly. To resume delivery, say
+which outcome to continue. The agent reads the current spec and progress.
 
-Open `specs/index.md`. Follow the link to the cancellation rule and check what
-happens on a repeat request. When the rule matches your intent, ask for a
-readiness review for that slice. Once it is approved, an agent can plan the
-work while you refine other parts of the project. If your project already has tickets, ask Spec Driven Workflow
-which ticket can run next and what evidence supports that choice.
-
-[Choose a skill](docs/README.md) · [Worked acceptance example](docs/project-knowledge.md#cancelling-a-reservation) · [Spec-driven development rationale](https://sebastianwessel.de/articles/spec-driven-development/)
+[Get started](docs/README.md) · [Worked example](docs/project-knowledge.md#cancelling-a-reservation) · [Spec-driven development rationale](https://sebastianwessel.de/articles/spec-driven-development/)
 
 ## Skill index
 
@@ -38,12 +33,7 @@ which ticket can run next and what evidence supports that choice.
 | Skill | Description | Human docs |
 | --- | --- | --- |
 | [agent-skill-architect](skills/agent-skill-architect/SKILL.md) | Creates and improves Agent Skills packages. Use when writing a skill, fixing trigger overlap, shortening instructions, testing scenario behavior, or checking a skill before distribution. | [docs](docs/skills/agent-skill-architect.md) |
-| [spec-architect](skills/spec-architect/SKILL.md) | Writes and refines living project specs. Use when exploring business intent, defining behavior or failure paths, recording decisions, or resolving an open question. | [docs](docs/skills/spec-architect.md) |
-| [spec-driven-workflow](skills/spec-driven-workflow/SKILL.md) | Finds the next step for a change in a living spec. Use when starting or resuming spec-driven work, handling a refinement, or routing a blocker. | [docs](docs/skills/spec-driven-workflow.md) |
-| [spec-implementation-planner](skills/spec-implementation-planner/SKILL.md) | Turns an approved spec slice into sized, dependency-ordered tickets. Use when defining, splitting, requeueing, or preparing tickets for execution. | [docs](docs/skills/spec-implementation-planner.md) |
-| [spec-implementation-review](skills/spec-implementation-review/SKILL.md) | Independently reviews implemented tickets against approved slices. Use when accepting a change or checking integrated behavior for a wave or release. | [docs](docs/skills/spec-implementation-review.md) |
-| [spec-readiness-review](skills/spec-readiness-review/SKILL.md) | Reviews and verifies approval of a defined spec slice. Use when checking whether selected behavior and its governing sources are ready to implement or need decisions. | [docs](docs/skills/spec-readiness-review.md) |
-| [spec-ticket-implementation](skills/spec-ticket-implementation/SKILL.md) | Implements one ready ticket against its approved spec slice. Use when a bounded ticket needs scoped changes and test-first verification. | [docs](docs/skills/spec-ticket-implementation.md) |
+| [spec-driven-workflow](skills/spec-driven-workflow/SKILL.md) | Carries product and engineering changes from a living spec to verified code. Use when turning an idea or requirement into a project spec, changing business or system behavior, planning or completing a delivery slice, resuming work in a spec-driven repo, or checking if a change is ready to ship. Routine edits outside a spec-driven project use the normal development process. | [docs](docs/skills/spec-driven-workflow.md) |
 <!-- skills-index:end -->
 
 ## Maintaining this collection

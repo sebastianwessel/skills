@@ -6,9 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
-const skills = path.resolve(import.meta.dirname, "../skills");
-const readiness = path.join(skills, "spec-readiness-review/scripts");
-const planning = path.join(skills, "spec-implementation-planner/scripts");
+const workflowScripts = path.resolve(import.meta.dirname, "../skills/spec-driven-workflow/scripts");
 
 function node(...args) {
   const result = spawnSync(process.execPath, args, { encoding: "utf8" });
@@ -22,19 +20,12 @@ function passes(...args) {
   return result.output;
 }
 
-test("standalone packages agree on the canonical YAML and anchors", () => {
-  for (const filename of ["simple-yaml.mjs", "markdown.mjs", "slice.mjs"]) {
-    assert.deepEqual(fs.readFileSync(path.join(readiness, "lib", filename)),
-      fs.readFileSync(path.join(planning, "lib", filename)), filename);
-  }
-});
-
 test("living specs through two approved ticket handoffs and a later refinement", (context) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "skills-workflow-"));
   context.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const specs = path.join(root, "specs");
-  const specCheck = path.join(readiness, "check_specs.mjs");
-  const planCheck = path.join(planning, "check_plan.mjs");
+  const specCheck = path.join(workflowScripts, "check_specs.mjs");
+  const planCheck = path.join(workflowScripts, "check_plan.mjs");
   function write(file, value) {
     const absolute = path.join(root, file);
     fs.mkdirSync(path.dirname(absolute), { recursive: true });

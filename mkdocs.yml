@@ -6,13 +6,7 @@ validation:
   links:
     anchors: warn
 nav:
-  - Choose a skill: README.md
+  - Get started: README.md
   - Project knowledge: project-knowledge.md
-  - Development workflow:
-      - Find the next step: skills/spec-driven-workflow.md
-      - Write the spec: skills/spec-architect.md
-      - Review readiness: skills/spec-readiness-review.md
-      - Plan tickets: skills/spec-implementation-planner.md
-      - Implement a ticket: skills/spec-ticket-implementation.md
-      - Accept the change: skills/spec-implementation-review.md
+  - Development workflow: skills/spec-driven-workflow.md
   - Build a reusable skill: skills/agent-skill-architect.md

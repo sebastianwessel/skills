@@ -1,10 +1,25 @@
-# Execution Evidence
+# Ticket execution and evidence
+
+Run `node <skill-dir>/scripts/check_plan.mjs <repo-root> --ticket <ticket-id>`.
+Read the exact governing sources, ticket, progress and baseline. From
+`ready`, claim `in_progress` and run the check again before editing. Use the
+project's controller or lock when writers overlap in time. In a single-agent
+session, record the claim and continue. Resume an existing claim only with
+authority. Work within `write_scope`.
+
+Regenerate affected contracts through project tools. Exercise approved
+success, error and recovery paths before editing behavior. Capture the
+failing assertion or cite existing proof and explain why it applies.
+Implement with approved interfaces and existing patterns. Verify affected
+consumers, privacy, redaction, integrity, recovery, performance and
+operational controls. Refresh affected docs and generated artifacts. Use
+authorized inputs and services.
 
 Keep progress in `plans/progress/<ticket-id>.json`. The ticket file owns its
 definition and the progress file owns its mutable state. Preserve the checked
 slice and ticket digests and the checked `dependency_revisions` while those
-inputs remain current. A new digest
-requires the planner to check the impact and requeue affected work.
+inputs remain current. When an input changes, assess the impact and requeue
+affected unfinished work.
 
 For successful implementation, set `state` to `implemented` and record the
 following fields alongside the current `slice_digest` and `ticket_digest`.
@@ -25,8 +40,7 @@ ticket checker against the updated record.
 
 For blocked work, record the failed check or missing input, work
 already done, and the next action in `note`. Keep unaffected work available.
-The planner checks the fixed scope and dependencies before requeueing the
-ticket. Preserve the previous proof through version history.
+Check the fixed scope and dependencies before requeueing the ticket. Preserve the previous proof through version history.
 
 A green local test with a stub response, disabled authorization, or skipped
 recovery path cannot prove the approved end-to-end outcome. Record evidence

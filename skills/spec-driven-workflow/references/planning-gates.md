@@ -1,5 +1,12 @@
 # Ticket and progress format
 
+Verify the named slice using `node <skill-dir>/scripts/check_specs.mjs specs --approved <slice-id>` from the project root. Start with one ticket. Split
+only when outcomes, writes or prerequisites need independent handoffs. Cover
+each slice scenario with a ticket, the exact commands and proof, with contract
+generation and drift checks ahead of dependent edits. Mark a ticket ready
+when the handoff and accepted prerequisite revisions have been verified.
+Keep future work in the spec until it needs a ticket.
+
 Place a ticket in a wave directory, for example
 `plans/wave_01_identity/tickets/TICKET-001-create-user.md`. An optional
 `plan.md` in the wave can explain shared sequencing, proof or risk.
@@ -41,7 +48,7 @@ the sequencing proof for genuinely atomic work.
 ## Record the current state
 
 ```sh
-node <planner>/scripts/check_plan.mjs <repo-root> --ticket TICKET-001
+node <skill-dir>/scripts/check_plan.mjs <repo-root> --ticket TICKET-001
 ```
 
 The selected check resolves the approval, acceptance IDs, governing sources
@@ -59,7 +66,7 @@ Write `plans/progress/<ticket-id>.json` when execution has something to track.
 | --- | --- |
 | Planned | The ticket exists and has no progress record. |
 | `ready` | The handoff was reviewed and its prerequisites are accepted. |
-| `in_progress` | The controller or project lock has granted a claim. Recheck after claiming. |
+| `in_progress` | The implementer has recorded a claim. Coordinate parallel claims through the controller or project lock. |
 | `blocked` | Record a `note` with the reason, work already done and next action. This state needs no digests. |
 | `implemented` | The scoped change and required checks have concrete proof. |
 | `accepted` | An independent reviewer verified that same implementation revision. |

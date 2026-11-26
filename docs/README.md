@@ -1,34 +1,24 @@
-# Choose a skill
+# Get started
 
-Start with the question you need answered. You can enter at any stage where
-the required evidence already exists.
-
-| What you need | Skill | What to look for |
-| --- | --- | --- |
-| “We paused last week. What can move forward?” | [Spec Driven Workflow](skills/spec-driven-workflow.md) | The next owner, evidence and any blocker |
-| “What should happen when a customer cancels twice?” | [Spec Architect](skills/spec-architect.md) | A governing rule in `specs/` and testable outcomes |
-| “Can the team plan against these requirements?” | [Spec Readiness Review](skills/spec-readiness-review.md) | Findings or approval tied to the reviewed source |
-| “Which parts can we build independently?” | [Spec Implementation Planner](skills/spec-implementation-planner.md) | Tickets with fixed scope, dependencies and acceptance IDs |
-| “Implement this ready ticket.” | [Spec Ticket Implementation](skills/spec-ticket-implementation.md) | A scoped change and verification evidence |
-| “Can we accept this change?” | [Spec Implementation Review](skills/spec-implementation-review.md) | An independent decision backed by path and consumer evidence |
-| “How can I make my own reusable skill reliable?” | [Agent Skill Architect](skills/agent-skill-architect.md) | A skill package, checks and realistic evaluations |
-
-## Your first run
-
-Install the skill collection in your project and select the six `spec-*` skills
-if you want the full development workflow.
+Install the workflow in the project where you work.
 
 ```bash
-npx skills add sebastianwessel/skills
+npx skills add sebastianwessel/skills --skill spec-driven-workflow
 ```
 
-> Use Spec Architect. Our approved support policy allows a member to cancel a
-> confirmed reservation they own. If they repeat the request, the reservation
-> stays cancelled. Document the rule, the repeat request and any unanswered
-> questions.
+After setup, tell your agent what you want to accomplish in your own words.
 
-Open the project map at `specs/index.md` and follow the rule into its
-acceptance scenarios. When you agree on what happens, ask for a readiness
-review of that outcome. The reviewer will identify the slice and its governing
-sources for your approval.
-[Follow the cancellation example](project-knowledge.md#cancelling-a-reservation)
+| What you can ask | What the agent does |
+| --- | --- |
+| “We want members to cancel their own reservations. Write down the rule and flag decisions we still owe.” | Starts or updates the project spec and records open questions |
+| “Customers are seeing a different result the second time they cancel. Fix it so the reservation stays cancelled.” | Checks the governing rule and takes the requested change through delivery as far as the evidence permits |
+| “What can we finish next?” | Reads the spec, approvals and ticket progress and reports the next available outcome |
+| “Can this change ship?” | Reviews the actual change against the agreed behavior, risks and proof |
+
+The agent handles the stages, files and checks. If an authorized decision is
+needed, it will show you the affected behavior and ask about that decision.
+To keep working after a pause, say what you want to continue.
+
+[How the workflow works](skills/spec-driven-workflow.md) · [Worked example](project-knowledge.md#cancelling-a-reservation)
+
+If you maintain agent skills, see the [Agent Skill Architect guide](skills/agent-skill-architect.md).

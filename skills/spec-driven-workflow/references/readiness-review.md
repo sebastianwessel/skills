@@ -14,6 +14,12 @@ Make a finding where an implementer would have to invent behavior.
 - Establish measurable latency, throughput or resource budgets where workloads can exhaust capacity. Check failures under load, visibility of user and operator outcomes, alerting, recovery, rollback and operational readiness. Review dependency provenance and supply-chain controls for changes to build, deployment or runtime inputs.
 - Inspect relevant ADRs, unresolved questions and conflicting policies. Require evidence of accepted decisions, authorized scope and concrete reasons for material exclusions. Each finding identifies its source, impact, owner and the proof needed to close it.
 
+Give the reviewer the exact digest, bound inputs and applicable risk. A fresh
+reviewer inspects the actual sources and planned proof, records the findings,
+and leaves the approval decision to the authorized person. If the task is to
+carry the work through delivery, resolve source or scope issues that already
+have authority and rerun the review before asking for approval.
+
 ## Go deeper where the scope requires it
 
 | Scope trigger | Inspect |

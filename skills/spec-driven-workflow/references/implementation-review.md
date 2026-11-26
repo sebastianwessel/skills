@@ -1,4 +1,10 @@
-# Implementation Review Guide
+# Implementation review
+
+For a ticket, run
+`node <skill-dir>/scripts/check_plan.mjs <repo-root> --ticket <ticket-id>`.
+Read the exact governing sources and evidence. Review the immutable revision
+or exact diff independently of the implementer. Run project checks as needed
+to establish whether the observed outcome matches the spec.
 
 Use the approved scenario IDs as the review index. For each affected
 scenario, cite the governing source, relevant code path, actual outcome, and
@@ -31,8 +37,13 @@ flow. Inspect the actual diff and affected callers.
 
 Give the ticket ID and exact implementation revision, reviewed scope and
 consumers, scenario results and evidence links, findings with owners, and the
-decision. Use one current record per ticket. A change to the inspected
-implementation requires a new review.
+decision. Reuse a durable PR review or put the result in
+`plans/reviews/<ticket-id>.md`. With blockers cleared, record
+`review.reviewer`, `review.revision` and `review.evidence_ref`, then mark
+the matching implementation revision accepted and rerun the ticket check.
+If the record fails validation, withdraw acceptance. With unresolved
+findings, keep the work unaccepted and route the cause to the rule, approval,
+plan or code that needs repair. A changed implementation requires new review.
 
 For a wave or release, link the current acceptance of each in-scope ticket
 and verify the combined outcome on the integration or release revision.

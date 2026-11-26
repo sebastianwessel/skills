@@ -43,13 +43,13 @@ nothing about cancellation by a support agent. Add that question under
 the team needs. The member’s own cancellation can proceed if the reviewer
 confirms it has no dependency on that decision.
 
-Ask for review of the `member-cancellation` slice. The reviewer names
+If you ask the agent to implement this behavior, it prepares the
+`member-cancellation` slice. The reviewer checks
 `AC-CANCEL` and `AC-CANCEL-REPEAT` in
-`reviews/readiness/member-cancellation.yaml` and checks the decision, affected
-contracts and failure paths. Once reviewed, approve the exact slice digest
-before making the ticket ready. The ticket inherits both scenarios. The
-implementer adds proof for each and a separate reviewer inspects the results
-at the implemented revision.
+`reviews/readiness/member-cancellation.yaml`, together with the governing
+decision, affected contracts and failure paths. The agent uses existing
+approval for the reviewed scope or asks for your decision. It then handles
+the ticket, verification and independent review at the implemented revision.
 
 As the support policy becomes clearer, revise that section in place. The member
 cancellation approval and its accepted ticket stay current. If a later policy

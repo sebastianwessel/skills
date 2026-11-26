@@ -6,6 +6,16 @@ change independently. Group related variants by shared rules, boundaries or
 recovery behavior. Give material topics a direct path from the index or
 their section overview.
 
+Read the request, controlling policy, decisions, contracts and code. Separate
+desired behavior from what the code or release currently does. Trace the
+actual entry point through permissions, state and data effects, errors,
+recovery and final state. Define applicable privacy, data classification,
+redaction, integrity, performance, operational, release/rollback and
+supply-chain requirements. Cite the rules that establish them. Run the
+[slice checker's](../scripts/check_specs.mjs) draft structure check and
+project-native validators as relevant. Update linked diagrams, contracts,
+consumer docs and acceptance rows when the behavior they describe changes.
+
 | Subject | Questions its page answers |
 | --- | --- |
 | Business or domain | Who needs the outcome? What policy, terms, measures and exclusions apply? What authorizes them? |

@@ -48,19 +48,27 @@ whether the selected scenarios form a coherent outcome. Decide what can be
 delivered independently before approval.
 
 ```sh
-node <readiness>/scripts/check_specs.mjs <spec-root>
-node <readiness>/scripts/check_specs.mjs <spec-root> --digest export-access
-node <readiness>/scripts/check_specs.mjs <spec-root> --approved export-access
+node <skill-dir>/scripts/check_specs.mjs <spec-root>
+node <skill-dir>/scripts/check_specs.mjs <spec-root> --digest export-access
+node <skill-dir>/scripts/check_specs.mjs <spec-root> --approved export-access
 ```
 
 The first command is a tree-wide structure check for authors and CI. Run
 project-native validators for contract and schema semantics. The scoped
-commands inspect the selected inputs. The review and human decision must
-explicitly cover the printed digest. Reference a durable HTTPS review URL
+commands inspect the selected inputs. Use the packaged script paths relative to the installed skill directory.
+The independent review and human decision must cover the same digest.
+Reuse existing attributable approval for that exact scope when available.
+Otherwise summarize the reviewed behavior, exclusions and tradeoffs, then
+ask the authorized person to approve it in ordinary language. A clear reply
+to that exact proposal is sufficient when the person's authority is
+established and its digest is still current. Capture the approval and
+digest using the project's durable evidence location. An attributable local
+record can cite the reply and summarize its scope when a stable link is
+unavailable. Keep unrelated chat and private material out of the record.
+If the inputs changed while waiting, recompute and review the new scope. Reference a durable HTTPS review URL
 or a repository-relative evidence file outside `specs/`. The checker verifies
 local file existence. The reviewer verifies the actual evidence and
 independence. Review a changed digest before renewing the record. Git carries
 prior approval and review history. Use a stable anchor for each independently
-changing outcome. The digest treats CRLF and LF alike for Markdown and ticket
-text and common UTF-8 contract and diagram formats. Other assets bind their
+changing outcome. The digest treats CRLF and LF alike for Markdown, ticket text and common UTF-8 contract and diagram formats. Other assets bind their
 bytes.

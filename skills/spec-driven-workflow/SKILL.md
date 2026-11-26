@@ -1,30 +1,46 @@
 ---
 name: spec-driven-workflow
-description: Finds the next step for a change in a living spec. Use when starting or resuming spec-driven work, handling a refinement, or routing a blocker.
+description: Carries product and engineering changes from a living spec to verified code. Use when turning an idea or requirement into a project spec, changing business or system behavior, planning or completing a delivery slice, resuming work in a spec-driven repo, or checking if a change is ready to ship. Routine edits outside a spec-driven project use the normal development process.
 ---
 
-# Spec Driven Workflow
+# Spec-driven workflow
 
-Start at `specs/index.md` and choose one outcome to move forward. Different
-parts of the same project can be explored, approved, built and refined in
-parallel. Load the skill for the missing evidence.
+Take the user's request as the outcome. Handle the workflow files, stage
+selection, checks and handoffs yourself. Open `specs/index.md` and relevant
+existing evidence, or start with one page if the request needs a new spec.
+Use the smallest coherent outcome the user asked for.
 
-| Situation | Use | Evidence |
-| --- | --- | --- |
-| Behavior or authority is unknown or changing | `spec-architect` | Governing section, open questions and testable outcomes |
-| A defined slice needs current approval | `spec-readiness-review` | Human approval and independent review of the slice digest |
-| An approved slice needs work organized or requeued | `spec-implementation-planner` | Bounded tickets with accepted prerequisites before execution |
-| One ticket is ready | `spec-ticket-implementation` | Scoped changes and verification at an exact revision |
-| Work is implemented | `spec-implementation-review` | Independent acceptance or an evidenced finding |
+1. **Start where evidence is missing.** Read only the relevant references.
+   A request for a draft, plan, status or review ends with that deliverable.
+   A request to build, fix or finish authorizes the applicable stages within
+   that scope. Resume from verified records and advance in the same turn.
+2. **Use established decisions.** Check the conversation, governing sources
+   and existing review before asking. Apply repository conventions to
+   delegated implementation details. When a material decision or required
+   approval is missing, ask about the behavior and its impact in plain
+   language. Prepare what you can and keep independent work moving.
+3. **Arrange independent review.** If available, delegate required independent
+   review to a fresh reviewer with the exact scope, sources and evidence.
+   Verify the result. Otherwise use existing independent evidence or report
+   what review is still needed. Record actual authority and earned states.
+4. **Close the loop.** Run the packaged checks and project verification
+   yourself. Report the outcome, concrete proof and any user decision
+   that still blocks the requested work. Keep spec, code and evidence in sync.
 
-Read the current ticket progress, when it exists, and use the planner's
-selected ticket check before acting on an approved handoff. A missing progress
-record means planned. When governing behavior changes, reapprove the affected slice. Requeue
-unfinished tickets that depend on it. If the work was already accepted,
-start a follow-up wave against the current code and keep the prior tickets
-and reviews as history. Keep independent work moving. Record a blocker near
-its cause with the next decision or action.
+| What needs work | Read |
+| --- | --- |
+| Define or refine behavior, decisions or open questions | [Writing project knowledge](references/project-knowledge.md) |
+| Review defined behavior and record its approval | [Slice records](references/artifact-shapes.md) and [Readiness review](references/readiness-review.md) |
+| Plan a slice, prepare a ticket or requeue unfinished work | [Planning and progress](references/planning-gates.md) |
+| Implement and verify a ticket | [Execution and evidence](references/execution-evidence.md) |
+| Review implementation, integration or release | [Implementation review](references/implementation-review.md) |
+| Draw or publish project knowledge | [Diagrams and publishing](references/diagram-and-publishing.md) |
 
-Before handing off, verify authority, selected scope, dependency revisions and
-available proof. Name any uncertainty so the next agent can resume without
-assuming a decision was made.
+Use a new follow-up wave for a behavior change after acceptance. Preserve the
+earlier implementation and reviews as history. Requeue affected unfinished
+work against the new inputs.
+
+Before finishing, verify the governing rules, checked paths, applicable risks,
+and source and dependency revisions. Surface contradictions, missing proof
+and uncertainty. Restrict changes, reviews, and publication to the requested
+scope and available authority.
